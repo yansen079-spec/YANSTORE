@@ -155,7 +155,6 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <a class="btn wa" href="https://wa.me/6285783984748" target="_blank">💬 PESAN SEKARANG</a>
 </section>
 </main>
-
 <section id="v6Admin">
 <div class="v6box">
 <div id="v6AdminLogin">
@@ -166,9 +165,9 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 </div>
 <div class="v6actions">
 <button class="v6primary" onclick="v6Login()">LOGIN ADMIN</button>
-<button class="v6ghost" onclick="v6CreateAdmin()">BUAT AKUN ADMIN PERTAMA KALI</button>
+
 </div>
-<div class="v6msg" id="v6LoginMsg">Untuk pertama kali, buat akun dengan password khusus Yanstore. Jika Supabase meminta verifikasi, cek email admin.</div>
+<div class="v6msg" id="v6LoginMsg">Masukkan password khusus Admin Yanstore, lalu tekan LOGIN ADMIN.</div>
 </div>
 <div id="v6AdminPanel">
 <div class="v6head">
@@ -343,5 +342,50 @@ async function v6Delete(id){
  document.getElementById('v6Msg').textContent='✅ Produk berhasil dihapus.';await loadOnlineProducts();await v6LoadList();
 }
 if(v6Session?.access_token) v6ShowPanel();
+</script><script>
+async function v61ValidateSession(){
+  if(!v6Session?.access_token) return false;
+  try{
+    const r=await fetch(V6_URL+'/auth/v1/user',{
+      headers:{apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token}
+    });
+    if(!r.ok) return false;
+    const u=await r.json();
+    return (u.email||'').toLowerCase()===V6_ADMIN.toLowerCase();
+  }catch(e){ return false; }
+}
+
+v6Login = async function(){
+  const pass=document.getElementById('v6Password').value;
+  const msg=document.getElementById('v6LoginMsg');
+  if(!pass){ msg.textContent='Masukkan password Admin terlebih dahulu.'; return; }
+  msg.textContent='Memeriksa login...';
+  try{
+    const data=await v6Auth('token?grant_type=password',{email:V6_ADMIN,password:pass});
+    v6Session=data;
+    localStorage.setItem('yanstore_v6_session',JSON.stringify(data));
+    const ok=await v61ValidateSession();
+    if(!ok) throw new Error('Sesi login tidak valid.');
+    msg.textContent='✅ Login berhasil.';
+    await v6ShowPanel();
+  }catch(e){
+    v6Session=null;
+    localStorage.removeItem('yanstore_v6_session');
+    msg.textContent='❌ Login gagal. Periksa kembali password Admin.';
+  }
+};
+
+(async()=>{
+  if(v6Session?.access_token){
+    const ok=await v61ValidateSession();
+    if(ok) await v6ShowPanel();
+    else {
+      v6Session=null;
+      localStorage.removeItem('yanstore_v6_session');
+      document.getElementById('v6AdminPanel').style.display='none';
+      document.getElementById('v6AdminLogin').style.display='block';
+    }
+  }
+})();
 </script></body>
 </html>
