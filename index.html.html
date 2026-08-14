@@ -689,5 +689,192 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(v63DecorateStaticCards,1500);
 });
 </script>
+
+<style id="v64Style">
+.v64-variant-btn{width:100%;margin-top:12px;display:flex;justify-content:center;align-items:center;gap:8px}
+.v64-pack-count{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;border:1px solid rgba(168,85,247,.35);border-radius:999px;background:rgba(168,85,247,.10);font-size:12px;font-weight:800;color:#d8b4fe}
+.v64-modal{position:fixed;inset:0;z-index:99999;background:rgba(3,5,12,.86);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:18px}
+.v64-modal.show{display:flex}
+.v64-modalbox{width:min(880px,100%);max-height:90vh;overflow:auto;background:linear-gradient(180deg,#111522,#0b0e17);border:1px solid #313956;border-radius:24px;box-shadow:0 30px 90px rgba(0,0,0,.55);padding:22px}
+.v64-modalhead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+.v64-modalhead h2{margin:0 0 6px}.v64-close{border:1px solid #3a4261;background:#171c2c;color:#fff;width:40px;height:40px;border-radius:12px;cursor:pointer;font-size:18px}
+.v64-variant-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.v64-variant-card{border:1px solid #2f3651;background:#111624;border-radius:18px;padding:16px;display:flex;flex-direction:column;min-height:240px}
+.v64-variant-card h3{margin:8px 0}.v64-variant-card .v64-desc{font-size:13px;color:#aeb6ca;line-height:1.55;min-height:42px}
+.v64-variant-card .v64-price{font-size:26px;font-weight:900;margin-top:auto;padding-top:14px}.v64-variant-card .v64-period{font-size:12px;color:#9da7be;margin:4px 0 12px}
+.v64-stock{display:inline-flex;align-self:flex-start;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.4px}.v64-stock.ready{background:rgba(32,199,107,.15);color:#75f0ab;border:1px solid rgba(32,199,107,.35)}.v64-stock.restock{background:rgba(245,158,11,.14);color:#ffd27a;border:1px solid rgba(245,158,11,.35)}.v64-stock.habis{background:rgba(239,68,68,.14);color:#ff9b9b;border:1px solid rgba(239,68,68,.35)}
+.v64-admin{margin-top:28px;padding-top:24px;border-top:1px solid #2b3150}.v64-admin h3{margin:0 0 6px}.v64-admin .v64-sub{color:#aab2c8;margin:0 0 16px;font-size:13px}
+.v64-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.v64-admin-grid .full{grid-column:1/-1}.v64-admin-grid input,.v64-admin-grid select,.v64-admin-grid textarea{width:100%;background:#0b0f19;border:1px solid #303852;color:#fff;border-radius:12px;padding:12px}.v64-admin-grid textarea{min-height:76px;resize:vertical}
+.v64-varlist{display:grid;gap:10px;margin-top:14px}.v64-varitem{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid #2c3450;background:#0e1320;border-radius:14px;padding:12px}.v64-varmeta{min-width:0}.v64-varmeta small{color:#9fa9bf}.v64-varbuttons{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}.v64-varbuttons button{cursor:pointer}
+@media(max-width:760px){.v64-variant-grid{grid-template-columns:1fr}.v64-admin-grid{grid-template-columns:1fr}.v64-admin-grid .full{grid-column:auto}.v64-varitem{align-items:flex-start;flex-direction:column}.v64-varbuttons{justify-content:flex-start}.v64-modalbox{padding:16px;border-radius:18px}}
+</style>
+
+<div class="v64-modal" id="v64VariantModal" aria-hidden="true">
+  <div class="v64-modalbox">
+    <div class="v64-modalhead">
+      <div><h2 id="v64ModalTitle">Pilih Paket</h2><div class="muted" id="v64ModalSubtitle">Pilih paket yang sesuai.</div></div>
+      <button class="v64-close" type="button" onclick="v64CloseVariants()">✕</button>
+    </div>
+    <div class="v64-variant-grid" id="v64VariantGrid"></div>
+  </div>
+</div>
+
+<script id="v64Script">
+let v64Variants=[];
+let v64AdminVariants=[];
+
+function v64StatusOfVariants(rows){
+  if(!rows.length) return 'READY';
+  if(rows.some(v=>(v.stock_status||'READY').toUpperCase()==='READY')) return 'READY';
+  if(rows.some(v=>(v.stock_status||'READY').toUpperCase()==='RESTOCK')) return 'RESTOCK';
+  return 'HABIS';
+}
+function v64VariantsFor(productId){return v64Variants.filter(v=>Number(v.product_id)===Number(productId));}
+
+async function v64LoadVariants(){
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/product_variants?select=*&active=eq.true&order=product_id.asc,sort_order.asc,id.asc`,{
+      headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
+    });
+    if(!r.ok) throw new Error('Gagal mengambil paket produk');
+    const rows=await r.json();
+    v64Variants=Array.isArray(rows)?rows:[];
+    if(Array.isArray(products) && products.length) renderProducts();
+  }catch(e){
+    console.warn('Varian belum dapat dimuat:',e);
+  }
+}
+
+renderProducts = function(){
+ const searchEl=document.getElementById('search'), catEl=document.getElementById('category'), grid=document.getElementById('productGrid');
+ if(!grid) return;
+ const q=(searchEl?.value||'').toLowerCase().trim(),cat=catEl?.value||'all';
+ const list=products.filter(p=>(cat==='all'||p.category===cat)&&(`${p.name} ${p.description}`.toLowerCase().includes(q)));
+ grid.innerHTML=list.map(p=>{
+   const vars=v64VariantsFor(p.id);
+   if(vars.length){
+     const status=v64StatusOfVariants(vars), cls=status.toLowerCase();
+     const usable=vars.filter(v=>(v.stock_status||'READY').toUpperCase()!=='HABIS').length;
+     return `<article class="card">
+       <img class="logo" referrerpolicy="no-referrer" src="${LOGO_DATA[p.logo] || LOGO_DATA.netflix}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+       <div class="logo-fallback">${esc((p.name||'APP').slice(0,3).toUpperCase())}</div>
+       <h3>${esc(p.name)}</h3>
+       <div class="desc">${esc(vars.length+' pilihan paket tersedia')}</div>
+       <span class="stock ${cls}">${esc(status)}</span>
+       <div class="v64-pack-count">📦 ${vars.length} PAKET</div>
+       <div class="price">Mulai ${esc(p.price)}</div>
+       <div class="period">Pilih paket sesuai kebutuhan</div>
+       ${usable===0?'<span class="btn buy disabled">SEMUA PAKET HABIS</span>':`<button class="btn primary buy v64-variant-btn" type="button" onclick="v64OpenVariants(${Number(p.id)})">LIHAT ${vars.length} PAKET</button>`}
+     </article>`;
+   }
+   const status=(p.stockStatus||'READY').toUpperCase();
+   return `<article class="card"><img class="logo" referrerpolicy="no-referrer" src="${LOGO_DATA[p.logo] || LOGO_DATA.netflix}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="logo-fallback">${esc((p.name||'APP').slice(0,3).toUpperCase())}</div><h3>${esc(p.name)}</h3><div class="desc">${esc(p.description)}</div><span class="stock ${status.toLowerCase()}">${esc(status)}</span><div class="price">${esc(p.price)}</div><div class="period">${esc(p.period)}</div>${status==='HABIS'?'<span class="btn buy disabled">STOK HABIS</span>':`<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(p.waText||`Halo Yanstore, saya mau order ${p.name}`)}">PESAN</a>`}</article>`;
+ }).join('') || '<div class="muted">Produk tidak ditemukan.</div>';
+};
+
+window.v64OpenVariants=function(productId){
+  const p=products.find(x=>Number(x.id)===Number(productId));
+  const rows=v64VariantsFor(productId);
+  if(!p||!rows.length) return;
+  document.getElementById('v64ModalTitle').textContent=p.name+' — Pilih Paket';
+  document.getElementById('v64ModalSubtitle').textContent='Pilih paket, cek status stok, lalu pesan langsung melalui WhatsApp.';
+  document.getElementById('v64VariantGrid').innerHTML=rows.map(v=>{
+    const status=(v.stock_status||'READY').toUpperCase(), cls=status.toLowerCase();
+    const wa=v.wa_text||`Halo Yanstore, saya mau order ${v.name}`;
+    return `<div class="v64-variant-card">
+      <span class="v64-stock ${cls}">${esc(status)}</span>
+      <h3>${esc(v.name)}</h3>
+      <div class="v64-desc">${esc(v.description||'')}</div>
+      <div class="v64-price">${esc(v.price||'Tanya Admin')}</div>
+      <div class="v64-period">${esc(v.period||'')}</div>
+      ${status==='HABIS'?'<span class="btn buy disabled">STOK HABIS</span>':`<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(wa)}">PESAN PAKET</a>`}
+    </div>`;
+  }).join('');
+  const modal=document.getElementById('v64VariantModal');modal.classList.add('show');modal.setAttribute('aria-hidden','false');
+};
+window.v64CloseVariants=function(){const modal=document.getElementById('v64VariantModal');modal.classList.remove('show');modal.setAttribute('aria-hidden','true');};
+document.getElementById('v64VariantModal')?.addEventListener('click',e=>{if(e.target.id==='v64VariantModal')v64CloseVariants();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')v64CloseVariants();});
+
+function v64EnsureAdminUI(){
+  const panel=document.getElementById('v6AdminPanel');
+  if(!panel || document.getElementById('v64AdminVariants')) return;
+  const wrap=document.createElement('div');
+  wrap.className='v64-admin';wrap.id='v64AdminVariants';
+  wrap.innerHTML=`<h3>📦 Kelola Paket / Varian Produk</h3>
+    <p class="v64-sub">Contoh: Netflix → 1P1U, 1P2U, Semi Private. Setiap paket punya harga dan stok sendiri.</p>
+    <input type="hidden" id="v64VarId">
+    <div class="v64-admin-grid">
+      <select id="v64Product"></select>
+      <input id="v64VarName" placeholder="Nama paket, contoh Netflix 1P2U Sharing">
+      <input id="v64VarPrice" placeholder="Harga, contoh Rp15K">
+      <input id="v64VarPeriod" placeholder="Durasi, contoh 1 Bulan">
+      <select id="v64VarStock"><option value="READY">READY</option><option value="RESTOCK">RESTOCK</option><option value="HABIS">HABIS</option></select>
+      <input id="v64VarOrder" type="number" min="0" placeholder="Urutan paket, contoh 1">
+      <textarea class="full" id="v64VarDesc" placeholder="Deskripsi paket"></textarea>
+      <textarea class="full" id="v64VarWa" placeholder="Pesan WhatsApp otomatis"></textarea>
+    </div>
+    <div class="v6actions"><button class="v6primary" type="button" onclick="v64SaveVariant()">SIMPAN PAKET</button><button class="v6ghost" type="button" onclick="v64ClearVariant()">BATAL / PAKET BARU</button></div>
+    <div class="v6msg" id="v64VarMsg"></div><div class="v64-varlist" id="v64VarList"></div>`;
+  panel.appendChild(wrap);
+}
+function v64PopulateProductSelect(){
+  v64EnsureAdminUI();
+  const sel=document.getElementById('v64Product');if(!sel)return;
+  const rows=window.v62Rows||[]; const current=sel.value;
+  sel.innerHTML=rows.map(p=>`<option value="${Number(p.id)}">${esc(p.name)}</option>`).join('');
+  if(current && rows.some(p=>String(p.id)===String(current))) sel.value=current;
+}
+function v64Msg(t){const el=document.getElementById('v64VarMsg');if(el)el.textContent=t||'';}
+window.v64ClearVariant=function(){
+  ['v64VarId','v64VarName','v64VarPrice','v64VarPeriod','v64VarDesc','v64VarWa'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  const s=document.getElementById('v64VarStock');if(s)s.value='READY'; const o=document.getElementById('v64VarOrder');if(o)o.value='';v64Msg('');
+};
+async function v64LoadAdminVariants(){
+  if(!v6Session?.access_token) return;
+  v64EnsureAdminUI();v64PopulateProductSelect();
+  const r=await v62Fetch(V6_URL+'/rest/v1/product_variants?select=*&order=product_id.asc,sort_order.asc,id.asc',{method:'GET'});
+  const data=await r.json().catch(()=>null);
+  if(!r.ok) throw new Error((data&&data.message)||('HTTP '+r.status));
+  v64AdminVariants=Array.isArray(data)?data:[];
+  const productMap=Object.fromEntries((window.v62Rows||[]).map(p=>[Number(p.id),p.name]));
+  const box=document.getElementById('v64VarList');if(!box)return;
+  box.innerHTML=v64AdminVariants.length?v64AdminVariants.map(v=>{
+    const status=(v.stock_status||'READY').toUpperCase();
+    return `<div class="v64-varitem"><div class="v64-varmeta"><b>${esc(v.name)}</b> — ${esc(v.price)} <span class="v62badge ${status==='HABIS'?'v62-habis':(status==='RESTOCK'?'v62-restock':'v62-ready')}">${esc(status)}</span><br><small>${esc(productMap[Number(v.product_id)]||'Produk')} • ${esc(v.period||'')}</small></div><div class="v64-varbuttons"><button class="v6ghost" onclick="v64QuickVariantStock(${Number(v.id)},'READY')">READY</button><button class="v6ghost" onclick="v64QuickVariantStock(${Number(v.id)},'RESTOCK')">RESTOCK</button><button class="v6danger" onclick="v64QuickVariantStock(${Number(v.id)},'HABIS')">HABIS</button><button class="v6ghost" onclick="v64EditVariant(${Number(v.id)})">EDIT</button><button class="v6danger" onclick="v64DeleteVariant(${Number(v.id)})">HAPUS</button></div></div>`;
+  }).join(''):'<div class="v6item">Belum ada paket/varian.</div>';
+}
+window.v64EditVariant=function(id){
+  const v=v64AdminVariants.find(x=>Number(x.id)===Number(id));if(!v)return;
+  document.getElementById('v64VarId').value=v.id;document.getElementById('v64Product').value=v.product_id;document.getElementById('v64VarName').value=v.name||'';document.getElementById('v64VarPrice').value=v.price||'';document.getElementById('v64VarPeriod').value=v.period||'';document.getElementById('v64VarStock').value=v.stock_status||'READY';document.getElementById('v64VarOrder').value=v.sort_order||0;document.getElementById('v64VarDesc').value=v.description||'';document.getElementById('v64VarWa').value=v.wa_text||'';document.getElementById('v64AdminVariants').scrollIntoView({behavior:'smooth'});
+};
+window.v64SaveVariant=async function(){
+  const id=document.getElementById('v64VarId').value;
+  const payload={product_id:Number(document.getElementById('v64Product').value),name:document.getElementById('v64VarName').value.trim(),price:document.getElementById('v64VarPrice').value.trim()||'Tanya Admin',period:document.getElementById('v64VarPeriod').value.trim(),stock_status:document.getElementById('v64VarStock').value,sort_order:Number(document.getElementById('v64VarOrder').value)||0,description:document.getElementById('v64VarDesc').value.trim(),wa_text:document.getElementById('v64VarWa').value.trim(),active:true,updated_at:new Date().toISOString()};
+  if(!payload.product_id||!payload.name){v64Msg('Nama produk induk dan nama paket wajib diisi.');return;}
+  let url=V6_URL+'/rest/v1/product_variants',method='POST';if(id){url+='?id=eq.'+encodeURIComponent(id);method='PATCH';}
+  v64Msg('Menyimpan paket...');
+  const r=await v62Fetch(url,{method,headers:{Prefer:'return=representation'},body:JSON.stringify(payload)});const data=await r.json().catch(()=>null);
+  if(!r.ok){v64Msg('Gagal menyimpan: '+((data&&data.message)||('HTTP '+r.status)));return;}
+  v64ClearVariant();await v64LoadAdminVariants();await v64LoadVariants();v64Msg('✅ Paket berhasil disimpan online.');
+};
+window.v64DeleteVariant=async function(id){
+  if(!confirm('Hapus paket ini?'))return;const r=await v62Fetch(V6_URL+'/rest/v1/product_variants?id=eq.'+encodeURIComponent(id),{method:'DELETE'});if(!r.ok){v64Msg('Gagal menghapus paket.');return;}await v64LoadAdminVariants();await v64LoadVariants();v64Msg('✅ Paket berhasil dihapus.');
+};
+window.v64QuickVariantStock=async function(id,status){
+  const r=await v62Fetch(V6_URL+'/rest/v1/product_variants?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({stock_status:status,updated_at:new Date().toISOString()})});if(!r.ok){v64Msg('Gagal mengubah stok paket.');return;}await v64LoadAdminVariants();await v64LoadVariants();v64Msg('✅ Stok paket diubah menjadi '+status+'.');
+};
+
+const v64BaseLoadList=v6LoadList;
+v6LoadList=async function(){await v64BaseLoadList();v64PopulateProductSelect();try{await v64LoadAdminVariants();}catch(e){v64Msg('Daftar paket belum bisa dimuat: '+e.message);}};
+
+const v64BaseLoadOnlineProducts=loadOnlineProducts;
+loadOnlineProducts=async function(){await v64BaseLoadOnlineProducts();await v64LoadVariants();};
+
+v64EnsureAdminUI();
+v64LoadVariants();
+setTimeout(v64LoadVariants,700);
+</script>
+
 </body>
 </html>
