@@ -1332,5 +1332,193 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v68LogoManagerStyle">
+.v68-logo-manager{
+  margin:18px 0;padding:16px;border:1px solid #303852;border-radius:16px;
+  background:linear-gradient(180deg,rgba(20,25,40,.94),rgba(10,14,24,.94))
+}
+.v68-logo-manager h4{margin:0 0 6px;font-size:15px}
+.v68-logo-manager p{margin:0 0 12px;color:#9fa9bf;font-size:12px;line-height:1.5}
+.v68-logo-row{display:grid;grid-template-columns:82px 1fr;gap:14px;align-items:center}
+.v68-logo-preview{
+  width:82px;height:82px;border-radius:18px;border:1px solid #39415e;
+  background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden
+}
+.v68-logo-preview img{width:100%;height:100%;object-fit:contain;padding:8px;box-sizing:border-box}
+.v68-logo-controls{display:grid;gap:8px}
+.v68-logo-controls input[type=file]{width:100%;font-size:13px}
+.v68-logo-controls input[type=url]{
+  width:100%;box-sizing:border-box;padding:11px;border-radius:10px;
+  border:1px solid #303852;background:#080c15;color:#fff;font-size:14px
+}
+.v68-logo-actions{display:flex;flex-wrap:wrap;gap:8px}
+.v68-logo-actions button{
+  border:1px solid #3b4464;background:#171d2d;color:#fff;border-radius:10px;
+  padding:9px 11px;cursor:pointer;font-weight:800;font-size:12px
+}
+.v68-logo-actions .primary{background:#6d4df5;border-color:#8066ff}
+.v68-logo-msg{font-size:12px;color:#aeb7cc;min-height:18px}
+@media(max-width:520px){
+  .v68-logo-row{grid-template-columns:1fr}
+  .v68-logo-preview{width:92px;height:92px}
+  .v68-logo-actions{display:grid;grid-template-columns:1fr}
+}
+</style>
+
+<script id="v68LogoManagerScript">
+(function(){
+  const V68_BUCKET='product-logos';
+  const V68_PUBLIC_BASE=V6_URL+'/storage/v1/object/public/'+V68_BUCKET+'/';
+
+  function v68IsUrl(v){return /^https?:\/\//i.test((v||'').trim());}
+  function v68LogoSrc(p){
+    if(v68IsUrl(p?.logo)) return p.logo.trim();
+    return LOGO_DATA[p?.logo] || LOGO_DATA.netflix;
+  }
+
+  // Override catalog rendering so database logo URLs work directly.
+  renderProducts = function(){
+    const searchEl=document.getElementById('search'),catEl=document.getElementById('category'),grid=document.getElementById('productGrid');
+    if(!grid)return;
+    const q=(searchEl?.value||'').toLowerCase().trim(),cat=catEl?.value||'all';
+    const list=products.filter(p=>(cat==='all'||p.category===cat)&&(`${p.name} ${p.description}`.toLowerCase().includes(q)));
+    grid.innerHTML=list.map(p=>{
+      const vars=v64VariantsFor(p.id);
+      const logoSrc=v68LogoSrc(p);
+      if(vars.length){
+        const status=v64StatusOfVariants(vars),cls=status.toLowerCase(),usable=vars.filter(v=>(v.stock_status||'READY').toUpperCase()!=='HABIS').length;
+        return `<article class="card"><img class="logo" loading="lazy" referrerpolicy="no-referrer" src="${esc(logoSrc)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="logo-fallback">${esc((p.name||'APP').slice(0,3).toUpperCase())}</div><h3>${esc(p.name)}</h3><div class="desc">${esc(vars.length+' pilihan paket tersedia')}</div><span class="stock ${cls}">${esc(status)}</span><div class="v64-pack-count">📦 ${vars.length} PAKET</div><div class="price">Mulai ${esc(p.price)}</div><div class="period">Pilih paket sesuai kebutuhan</div>${usable===0?'<span class="btn buy disabled">SEMUA PAKET HABIS</span>':`<button class="btn primary buy v64-variant-btn" type="button" onclick="v64OpenVariants(${Number(p.id)})">LIHAT ${vars.length} PAKET</button>`}</article>`;
+      }
+      const status=(p.stockStatus||'READY').toUpperCase();
+      return `<article class="card"><img class="logo" loading="lazy" referrerpolicy="no-referrer" src="${esc(logoSrc)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="logo-fallback">${esc((p.name||'APP').slice(0,3).toUpperCase())}</div><h3>${esc(p.name)}</h3><div class="desc">${esc(p.description)}</div><span class="stock ${status.toLowerCase()}">${esc(status)}</span><div class="price">${esc(p.price)}</div><div class="period">${esc(p.period)}</div>${status==='HABIS'?'<span class="btn buy disabled">STOK HABIS</span>':`<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(p.waText||`Halo Yanstore, saya mau order ${p.name}`)}">PESAN</a>`}</article>`;
+    }).join('')||'<div class="muted">Produk tidak ditemukan.</div>';
+  };
+
+  function v68FindProductForm(){
+    const panel=document.getElementById('v6AdminPanel');
+    if(!panel)return null;
+    const nameInput=panel.querySelector('#v6Name') || panel.querySelector('input[placeholder*="Nama"]');
+    if(!nameInput)return panel;
+    return nameInput.closest('.v6form,.v6grid,form') || panel;
+  }
+
+  function v68EnsureUI(){
+    if(document.getElementById('v68LogoManager'))return;
+    const form=v68FindProductForm();if(!form)return;
+    const box=document.createElement('div');
+    box.id='v68LogoManager';box.className='v68-logo-manager';
+    box.innerHTML=`<h4>🖼️ Logo Produk</h4>
+      <p>Upload PNG/JPG/WebP dari HP atau komputer. Maksimal 2 MB. Setelah diupload, logo disimpan di Supabase Storage dan otomatis dipakai di website.</p>
+      <div class="v68-logo-row">
+        <div class="v68-logo-preview"><img id="v68LogoPreview" alt="Preview logo"></div>
+        <div class="v68-logo-controls">
+          <input id="v68LogoFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+          <input id="v68LogoUrl" type="url" placeholder="Atau tempel URL logo https://...">
+          <div class="v68-logo-actions">
+            <button class="primary" type="button" onclick="v68UploadLogo()">UPLOAD LOGO</button>
+            <button type="button" onclick="v68UseUrl()">PAKAI URL</button>
+            <button type="button" onclick="v68ClearLogo()">RESET PILIHAN</button>
+          </div>
+          <div class="v68-logo-msg" id="v68LogoMsg"></div>
+        </div>
+      </div>`;
+    form.appendChild(box);
+    document.getElementById('v68LogoFile').addEventListener('change',e=>{
+      const f=e.target.files?.[0];if(!f)return;
+      const url=URL.createObjectURL(f);document.getElementById('v68LogoPreview').src=url;
+      v68Msg('Preview siap. Klik UPLOAD LOGO untuk menyimpan online.');
+    });
+  }
+
+  function v68Msg(t){const e=document.getElementById('v68LogoMsg');if(e)e.textContent=t||'';}
+  function v68CurrentProductId(){
+    const el=document.getElementById('v6Id');
+    return el?.value ? Number(el.value) : null;
+  }
+  function v68SetLogoField(url){
+    const logo=document.getElementById('v6Logo');
+    if(logo)logo.value=url;
+    const preview=document.getElementById('v68LogoPreview');if(preview)preview.src=url;
+  }
+
+  window.v68UploadLogo=async function(){
+    const file=document.getElementById('v68LogoFile')?.files?.[0];
+    if(!file){v68Msg('Pilih file logo terlebih dahulu.');return;}
+    if(file.size>2*1024*1024){v68Msg('File terlalu besar. Maksimal 2 MB.');return;}
+    if(!v6Session?.access_token){v68Msg('Login Admin terlebih dahulu.');return;}
+    const allowed=['image/png','image/jpeg','image/webp','image/gif'];
+    if(!allowed.includes(file.type)){v68Msg('Format harus PNG, JPG, WebP, atau GIF.');return;}
+
+    const ext=(file.name.split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const productId=v68CurrentProductId()||'new';
+    const path=`product-${productId}-${Date.now()}.${ext}`;
+    v68Msg('Mengupload logo...');
+
+    try{
+      const r=await fetch(V6_URL+'/storage/v1/object/'+V68_BUCKET+'/'+encodeURIComponent(path),{
+        method:'POST',
+        headers:{apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token,'Content-Type':file.type,'x-upsert':'false'},
+        body:file
+      });
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(data.message||data.error||('HTTP '+r.status));
+      const publicUrl=V68_PUBLIC_BASE+encodeURIComponent(path);
+      v68SetLogoField(publicUrl);
+      document.getElementById('v68LogoUrl').value=publicUrl;
+      v68Msg('✅ Logo berhasil diupload. Sekarang klik SIMPAN PRODUK agar logo terhubung ke produk.');
+    }catch(e){
+      v68Msg('Gagal upload logo: '+e.message);
+    }
+  };
+
+  window.v68UseUrl=function(){
+    const url=document.getElementById('v68LogoUrl')?.value.trim();
+    if(!v68IsUrl(url)){v68Msg('Masukkan URL logo yang valid, diawali https://');return;}
+    v68SetLogoField(url);v68Msg('✅ URL logo dipilih. Klik SIMPAN PRODUK.');
+  };
+
+  window.v68ClearLogo=function(){
+    const f=document.getElementById('v68LogoFile');if(f)f.value='';
+    const u=document.getElementById('v68LogoUrl');if(u)u.value='';
+    v68Msg('Pilihan logo direset. Logo lama belum berubah sampai produk disimpan.');
+  };
+
+  // When Edit is pressed, reflect current product logo in manager.
+  const baseEdit=window.v6Edit;
+  if(typeof baseEdit==='function'){
+    window.v6Edit=function(id){
+      baseEdit(id);
+      setTimeout(()=>{
+        v68EnsureUI();
+        const row=(window.v62Rows||[]).find(x=>Number(x.id)===Number(id));
+        if(row){
+          const src=v68LogoSrc(row);
+          document.getElementById('v68LogoPreview').src=src;
+          document.getElementById('v68LogoUrl').value=v68IsUrl(row.logo)?row.logo:'';
+          v68Msg(v68IsUrl(row.logo)?'Logo ini tersimpan di database.':'Produk masih memakai logo bawaan. Kamu bisa upload logo baru.');
+        }
+      },50);
+    };
+  }
+
+  // Preserve full logo URL when saving products.
+  const baseSave=window.v6Save;
+  if(typeof baseSave==='function'){
+    window.v6Save=async function(){
+      await baseSave();
+      setTimeout(()=>{ if(Array.isArray(products)&&products.length) renderProducts(); },250);
+    };
+  }
+
+  function boot(){
+    v68EnsureUI();
+    const obs=new MutationObserver(()=>v68EnsureUI());
+    const admin=document.getElementById('v6Admin');if(admin)obs.observe(admin,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+
 </body>
 </html>
