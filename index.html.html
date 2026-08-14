@@ -70,6 +70,27 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 .stock.habis{background:rgba(255,70,70,.12);border-color:rgba(255,70,70,.45);color:#ff9b9b}
 .stock.restock{background:rgba(255,177,0,.12);border-color:rgba(255,177,0,.45);color:#ffd36b}
 .buy.disabled{pointer-events:none;opacity:.55;background:#30333d!important;color:#aaa!important}
+
+#v6Admin{max-width:1100px;margin:35px auto;padding:0 18px}
+.v6box{background:rgba(12,14,24,.94);border:1px solid rgba(124,92,255,.35);border-radius:22px;padding:20px;box-shadow:0 18px 60px rgba(0,0,0,.35)}
+.v6head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.v6grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.v6grid .full{grid-column:1/-1}
+.v6box input,.v6box select,.v6box textarea{width:100%;box-sizing:border-box;background:#111522;color:#fff;border:1px solid #30384d;border-radius:12px;padding:11px}
+.v6box textarea{min-height:80px;resize:vertical}
+.v6actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.v6msg{margin-top:10px;font-size:13px;color:#cbd3ff}
+.v6list{display:grid;gap:10px;margin-top:16px}
+.v6item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px;border:1px solid #293047;border-radius:14px;background:#0d101a}
+.v6item small{display:block;color:#aab2c8;margin-top:4px}
+.v6mini{display:flex;gap:7px;flex-wrap:wrap}
+.v6mini button,.v6actions button{border:0;border-radius:10px;padding:9px 12px;font-weight:900;cursor:pointer}
+.v6primary{background:linear-gradient(90deg,#7c5cff,#00d7ff);color:white}
+.v6danger{background:#61252d;color:#ffd9dd}
+.v6ghost{background:#22283a;color:white}
+#v6AdminPanel{display:none}
+#v6AdminLogin{display:block}
+@media(max-width:700px){.v6grid{grid-template-columns:1fr}.v6grid .full{grid-column:auto}.v6item{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
@@ -134,6 +155,46 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <a class="btn wa" href="https://wa.me/6285783984748" target="_blank">💬 PESAN SEKARANG</a>
 </section>
 </main>
+
+<section id="v6Admin">
+<div class="v6box">
+<div id="v6AdminLogin">
+<div class="v6head"><div><h2 style="margin:0">🔐 Yanstore Admin Online</h2><p style="margin:6px 0 0;color:#aab2c8">Login khusus pemilik Yanstore.</p></div></div>
+<div class="v6grid">
+<div class="full"><input id="v6Email" readonly="" type="email" value="yanstore2023@gmail.com"/></div>
+<div class="full"><input id="v6Password" placeholder="Password khusus Admin Yanstore" type="password"/></div>
+</div>
+<div class="v6actions">
+<button class="v6primary" onclick="v6Login()">LOGIN ADMIN</button>
+<button class="v6ghost" onclick="v6CreateAdmin()">BUAT AKUN ADMIN PERTAMA KALI</button>
+</div>
+<div class="v6msg" id="v6LoginMsg">Untuk pertama kali, buat akun dengan password khusus Yanstore. Jika Supabase meminta verifikasi, cek email admin.</div>
+</div>
+<div id="v6AdminPanel">
+<div class="v6head">
+<div><h2 style="margin:0">⚡ Kelola Produk Online</h2><p style="margin:6px 0 0;color:#aab2c8">Perubahan tersimpan ke database dan terlihat oleh customer.</p></div>
+<button class="v6ghost" onclick="v6Logout()">LOGOUT</button>
+</div>
+<input id="v6Id" type="hidden"/>
+<div class="v6grid">
+<input id="v6Name" placeholder="Nama produk"/>
+<input id="v6Price" placeholder="Harga, contoh Rp15K"/>
+<input id="v6Period" placeholder="Durasi, contoh 1 Bulan"/>
+<select id="v6Category"><option value="streaming">Streaming</option><option value="editing">Editing</option><option value="music">Music</option><option value="design">Design</option><option value="other">Other</option></select>
+<select id="v6Logo"><option value="netflix">Netflix</option><option value="capcut">CapCut</option><option value="spotify">Spotify</option><option value="youtube">YouTube</option><option value="disney">Disney+</option><option value="vidio">Vidio</option><option value="iqiyi">iQIYI</option><option value="viu">Viu</option><option value="canva">Canva</option><option value="chatgpt">ChatGPT</option><option value="prime">Prime Video</option></select>
+<select id="v6Stock"><option value="READY">READY</option><option value="RESTOCK">RESTOCK</option><option value="HABIS">HABIS</option></select>
+<textarea class="full" id="v6Desc" placeholder="Deskripsi produk"></textarea>
+<textarea class="full" id="v6Wa" placeholder="Pesan WhatsApp otomatis"></textarea>
+</div>
+<div class="v6actions">
+<button class="v6primary" onclick="v6Save()">SIMPAN PRODUK</button>
+<button class="v6ghost" onclick="v6Clear()">BATAL / PRODUK BARU</button>
+</div>
+<div class="v6msg" id="v6Msg"></div>
+<div class="v6list" id="v6List"></div>
+</div>
+</div>
+</section>
 <footer id="cara-order">
 <div class="wrap footgrid">
 <div><div class="brand">YAN<b>STORE</b></div><p>Store digital untuk kebutuhan premium kamu.</p><p>© 2026 Yanstore.</p></div>
@@ -208,5 +269,79 @@ const ADMIN_PASSWORD='yanstore123',loginModal=document.getElementById('loginModa
 footerAdmin.onclick=()=>loginModal.classList.add('show');closeLogin.onclick=()=>loginModal.classList.remove('show');closeModal.onclick=()=>adminModal.classList.remove('show');
 loginForm.addEventListener('submit',e=>{e.preventDefault();if(adminPassword.value===ADMIN_PASSWORD){loginModal.classList.remove('show');adminModal.classList.add('show');loginError.style.display='none'}else loginError.style.display='block'});
 loadOnlineProducts();</script>
-</body>
+<script>
+const V6_URL='https://ivnohbhlahevaihunmbp.supabase.co';
+const V6_KEY='sb_publishable_uyzGj6RZJfhDdGqf2rAldg_NRQTNEZH';
+const V6_ADMIN='yanstore2023@gmail.com';
+let v6Session=JSON.parse(localStorage.getItem('yanstore_v6_session')||'null');
+
+async function v6Auth(path, body){
+  const r=await fetch(V6_URL+'/auth/v1/'+path,{method:'POST',headers:{apikey:V6_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(data.msg||data.message||data.error_description||data.error||'Autentikasi gagal');
+  return data;
+}
+async function v6CreateAdmin(){
+  const pass=document.getElementById('v6Password').value;
+  const msg=document.getElementById('v6LoginMsg');
+  if(pass.length<8){msg.textContent='Gunakan password khusus Admin minimal 8 karakter.';return;}
+  try{
+    const data=await v6Auth('signup',{email:V6_ADMIN,password:pass});
+    if(data.access_token){v6Session=data;localStorage.setItem('yanstore_v6_session',JSON.stringify(data));v6ShowPanel();}
+    else msg.textContent='Akun dibuat. Cek inbox/spam '+V6_ADMIN+' untuk verifikasi email, lalu kembali dan tekan LOGIN ADMIN.';
+  }catch(e){msg.textContent=e.message;}
+}
+async function v6Login(){
+  const pass=document.getElementById('v6Password').value;
+  const msg=document.getElementById('v6LoginMsg');
+  try{
+    const data=await v6Auth('token?grant_type=password',{email:V6_ADMIN,password:pass});
+    v6Session=data;localStorage.setItem('yanstore_v6_session',JSON.stringify(data));v6ShowPanel();
+  }catch(e){msg.textContent='Login gagal: '+e.message;}
+}
+function v6Logout(){v6Session=null;localStorage.removeItem('yanstore_v6_session');document.getElementById('v6AdminPanel').style.display='none';document.getElementById('v6AdminLogin').style.display='block';}
+function v6Headers(extra={}){return Object.assign({apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token,'Content-Type':'application/json'},extra);}
+async function v6ShowPanel(){
+  if(!v6Session?.access_token) return;
+  document.getElementById('v6AdminLogin').style.display='none';
+  document.getElementById('v6AdminPanel').style.display='block';
+  await v6LoadList();
+}
+async function v6LoadList(){
+  const r=await fetch(V6_URL+'/rest/v1/products?select=*&order=sort_order.asc',{headers:v6Headers()});
+  if(r.status===401){v6Logout();return;}
+  const rows=await r.json();
+  const box=document.getElementById('v6List');
+  box.innerHTML=rows.map(p=>`<div class="v6item"><div><b>${esc(p.name)}</b> — ${esc(p.price)} <small>${esc(p.period||'')} • ${esc(p.stock_status||'READY')}</small></div><div class="v6mini"><button class="v6ghost" onclick='v6Edit(${JSON.stringify(p)})'>EDIT</button><button class="v6danger" onclick="v6Delete(${p.id})">HAPUS</button></div></div>`).join('');
+}
+function v6Clear(){
+ ['v6Id','v6Name','v6Price','v6Period','v6Desc','v6Wa'].forEach(id=>document.getElementById(id).value='');
+ document.getElementById('v6Stock').value='READY';document.getElementById('v6Msg').textContent='';
+}
+function v6Edit(p){
+ document.getElementById('v6Id').value=p.id;document.getElementById('v6Name').value=p.name||'';document.getElementById('v6Price').value=p.price||'';
+ document.getElementById('v6Period').value=p.period||'';document.getElementById('v6Category').value=p.category||'other';document.getElementById('v6Logo').value=p.logo||'netflix';
+ document.getElementById('v6Stock').value=p.stock_status||'READY';document.getElementById('v6Desc').value=p.description||'';document.getElementById('v6Wa').value=p.wa_text||'';
+ document.getElementById('v6AdminPanel').scrollIntoView({behavior:'smooth'});
+}
+async function v6Save(){
+ const id=document.getElementById('v6Id').value;
+ const payload={name:document.getElementById('v6Name').value.trim(),price:document.getElementById('v6Price').value.trim(),period:document.getElementById('v6Period').value.trim(),category:document.getElementById('v6Category').value,logo:document.getElementById('v6Logo').value,stock_status:document.getElementById('v6Stock').value,description:document.getElementById('v6Desc').value.trim(),wa_text:document.getElementById('v6Wa').value.trim(),active:true,updated_at:new Date().toISOString()};
+ const msg=document.getElementById('v6Msg');
+ if(!payload.name||!payload.price){msg.textContent='Nama produk dan harga wajib diisi.';return;}
+ let url=V6_URL+'/rest/v1/products',method='POST';
+ if(id){url+='?id=eq.'+encodeURIComponent(id);method='PATCH';}
+ else payload.sort_order=(products?.length||0)+1;
+ const r=await fetch(url,{method,headers:v6Headers({Prefer:'return=representation'}),body:JSON.stringify(payload)});
+ if(!r.ok){const e=await r.text();msg.textContent='Gagal menyimpan: '+e;return;}
+ msg.textContent='✅ Produk berhasil disimpan online.';v6Clear();await loadOnlineProducts();await v6LoadList();
+}
+async function v6Delete(id){
+ if(!confirm('Hapus produk ini dari Yanstore?')) return;
+ const r=await fetch(V6_URL+'/rest/v1/products?id=eq.'+id,{method:'DELETE',headers:v6Headers()});
+ if(!r.ok){document.getElementById('v6Msg').textContent='Gagal menghapus produk.';return;}
+ document.getElementById('v6Msg').textContent='✅ Produk berhasil dihapus.';await loadOnlineProducts();await v6LoadList();
+}
+if(v6Session?.access_token) v6ShowPanel();
+</script></body>
 </html>
