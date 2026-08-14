@@ -387,5 +387,246 @@ v6Login = async function(){
     }
   }
 })();
-</script></body>
+</script>
+<style id="v62-style">
+  .v62stockbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .v62stockbar button{font-size:11px;padding:6px 9px;border-radius:9px}
+  .v62badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;margin-left:6px}
+  .v62-ready{background:rgba(38,208,124,.15);border:1px solid rgba(38,208,124,.45);color:#67eda6}
+  .v62-restock{background:rgba(255,185,59,.14);border:1px solid rgba(255,185,59,.45);color:#ffd27c}
+  .v62-habis{background:rgba(255,75,75,.14);border:1px solid rgba(255,75,75,.45);color:#ff9292}
+  .v62-error{color:#ff9b9b}
+  .v62-ok{color:#77efad}
+</style>
+<script id="v62-upgrade">
+/* Yanstore V6.2 - Admin Online stability + quick stock control */
+window.v62Rows = [];
+
+function v62SetMsg(text, ok=false){
+  const el=document.getElementById('v6Msg');
+  if(!el) return;
+  el.textContent=text||'';
+  el.classList.remove('v62-error','v62-ok');
+  if(text) el.classList.add(ok?'v62-ok':'v62-error');
+}
+
+async function v62TryRefresh(){
+  if(!v6Session?.refresh_token) return false;
+  try{
+    const data=await v6Auth('token?grant_type=refresh_token',{refresh_token:v6Session.refresh_token});
+    if(!data?.access_token) return false;
+    v6Session=data;
+    localStorage.setItem('yanstore_v6_session',JSON.stringify(data));
+    return true;
+  }catch(e){ return false; }
+}
+
+async function v62Fetch(url, options={}){
+  if(!v6Session?.access_token) throw new Error('Sesi Admin belum tersedia.');
+  const make=()=>fetch(url,{
+    ...options,
+    headers:Object.assign({},v6Headers(),options.headers||{})
+  });
+
+  let r=await make();
+  if(r.status===401){
+    const refreshed=await v62TryRefresh();
+    if(refreshed) r=await make();
+  }
+  return r;
+}
+
+v6ShowPanel = async function(){
+  if(!v6Session?.access_token) return;
+  const login=document.getElementById('v6AdminLogin');
+  const panel=document.getElementById('v6AdminPanel');
+  if(login) login.style.display='none';
+  if(panel) panel.style.display='block';
+  v62SetMsg('Mengambil daftar produk...', true);
+  try{
+    await v6LoadList();
+    v62SetMsg('✅ Admin Online siap digunakan.', true);
+  }catch(e){
+    v62SetMsg('Login berhasil, tetapi daftar produk belum bisa dimuat: '+e.message, false);
+  }
+};
+
+v6LoadList = async function(){
+  const r=await v62Fetch(
+    V6_URL+'/rest/v1/products?select=*&order=sort_order.asc,id.asc',
+    {method:'GET'}
+  );
+  const data=await r.json().catch(()=>null);
+
+  if(!r.ok){
+    if(r.status===401){
+      v6Logout();
+      throw new Error('Sesi habis. Silakan login ulang.');
+    }
+    throw new Error((data&&data.message)||('HTTP '+r.status));
+  }
+  if(!Array.isArray(data)) throw new Error('Format data produk tidak valid.');
+
+  window.v62Rows=data;
+  const box=document.getElementById('v6List');
+  if(!box) return;
+
+  if(data.length===0){
+    box.innerHTML='<div class="v6item"><div>Belum ada produk di database.</div></div>';
+    return;
+  }
+
+  box.innerHTML=data.map(p=>{
+    const status=(p.stock_status||'READY').toUpperCase();
+    const cls=status==='HABIS'?'v62-habis':(status==='RESTOCK'?'v62-restock':'v62-ready');
+    return `<div class="v6item">
+      <div style="min-width:0">
+        <div><b>${esc(p.name)}</b> — ${esc(p.price)}
+          <span class="v62badge ${cls}">${esc(status)}</span>
+        </div>
+        <small>${esc(p.period||'')} • ${esc(p.category||'other')}</small>
+        <div class="v62stockbar">
+          <button class="v6ghost" onclick="v62QuickStock(${Number(p.id)},'READY')">READY</button>
+          <button class="v6ghost" onclick="v62QuickStock(${Number(p.id)},'RESTOCK')">RESTOCK</button>
+          <button class="v6danger" onclick="v62QuickStock(${Number(p.id)},'HABIS')">HABIS</button>
+        </div>
+      </div>
+      <div class="v6mini">
+        <button class="v6ghost" onclick="v62EditById(${Number(p.id)})">EDIT</button>
+        <button class="v6danger" onclick="v6Delete(${Number(p.id)})">HAPUS</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.v62EditById=function(id){
+  const p=(window.v62Rows||[]).find(x=>Number(x.id)===Number(id));
+  if(p) v6Edit(p);
+};
+
+window.v62QuickStock=async function(id,status){
+  v62SetMsg('Mengubah stok menjadi '+status+'...', true);
+  try{
+    const r=await v62Fetch(
+      V6_URL+'/rest/v1/products?id=eq.'+encodeURIComponent(id),
+      {
+        method:'PATCH',
+        headers:{Prefer:'return=representation'},
+        body:JSON.stringify({stock_status:status,updated_at:new Date().toISOString()})
+      }
+    );
+    const data=await r.json().catch(()=>null);
+    if(!r.ok) throw new Error((data&&data.message)||('HTTP '+r.status));
+    await v6LoadList();
+    try{ await loadOnlineProducts(); }catch(e){}
+    v62SetMsg('✅ Status stok berhasil diubah menjadi '+status+'.', true);
+  }catch(e){
+    v62SetMsg('Gagal mengubah stok: '+e.message, false);
+  }
+};
+
+v6Save = async function(){
+  const id=document.getElementById('v6Id').value;
+  const payload={
+    name:document.getElementById('v6Name').value.trim(),
+    price:document.getElementById('v6Price').value.trim(),
+    period:document.getElementById('v6Period').value.trim(),
+    category:document.getElementById('v6Category').value,
+    logo:document.getElementById('v6Logo').value,
+    stock_status:document.getElementById('v6Stock').value,
+    description:document.getElementById('v6Desc').value.trim(),
+    wa_text:document.getElementById('v6Wa').value.trim(),
+    active:true,
+    updated_at:new Date().toISOString()
+  };
+
+  if(!payload.name||!payload.price){
+    v62SetMsg('Nama produk dan harga wajib diisi.', false);
+    return;
+  }
+
+  let url=V6_URL+'/rest/v1/products';
+  let method='POST';
+  if(id){
+    url+='?id=eq.'+encodeURIComponent(id);
+    method='PATCH';
+  }else{
+    const maxOrder=(window.v62Rows||[]).reduce((m,p)=>Math.max(m,Number(p.sort_order)||0),0);
+    payload.sort_order=maxOrder+1;
+  }
+
+  v62SetMsg('Menyimpan produk...', true);
+  try{
+    const r=await v62Fetch(url,{
+      method,
+      headers:{Prefer:'return=representation'},
+      body:JSON.stringify(payload)
+    });
+    const data=await r.json().catch(()=>null);
+    if(!r.ok) throw new Error((data&&data.message)||('HTTP '+r.status));
+
+    v6Clear();
+    await v6LoadList();
+    try{ await loadOnlineProducts(); }catch(e){}
+    v62SetMsg('✅ Produk berhasil disimpan ke database online.', true);
+  }catch(e){
+    v62SetMsg('Gagal menyimpan produk: '+e.message, false);
+  }
+};
+
+v6Delete = async function(id){
+  if(!confirm('Hapus produk ini dari Yanstore?')) return;
+  v62SetMsg('Menghapus produk...', true);
+  try{
+    const r=await v62Fetch(
+      V6_URL+'/rest/v1/products?id=eq.'+encodeURIComponent(id),
+      {method:'DELETE'}
+    );
+    const data=await r.json().catch(()=>null);
+    if(!r.ok) throw new Error((data&&data.message)||('HTTP '+r.status));
+    await v6LoadList();
+    try{ await loadOnlineProducts(); }catch(e){}
+    v62SetMsg('✅ Produk berhasil dihapus.', true);
+  }catch(e){
+    v62SetMsg('Gagal menghapus produk: '+e.message, false);
+  }
+};
+
+v6Login = async function(){
+  const pass=document.getElementById('v6Password').value;
+  const msg=document.getElementById('v6LoginMsg');
+  if(!pass){msg.textContent='Masukkan password Admin terlebih dahulu.';return;}
+  msg.textContent='Memeriksa login...';
+  try{
+    const data=await v6Auth('token?grant_type=password',{email:V6_ADMIN,password:pass});
+    if((data?.user?.email||'').toLowerCase()!==V6_ADMIN.toLowerCase()){
+      throw new Error('Email Admin tidak sesuai.');
+    }
+    v6Session=data;
+    localStorage.setItem('yanstore_v6_session',JSON.stringify(data));
+    msg.textContent='✅ Login berhasil.';
+    document.getElementById('v6Password').value='';
+    await v6ShowPanel();
+  }catch(e){
+    v6Session=null;
+    localStorage.removeItem('yanstore_v6_session');
+    msg.textContent='❌ Login gagal. Periksa password Admin.';
+  }
+};
+
+(async function v62Boot(){
+  if(!v6Session?.access_token) return;
+  let ok=false;
+  try{ ok=await v61ValidateSession(); }catch(e){}
+  if(!ok){
+    const refreshed=await v62TryRefresh();
+    if(refreshed){
+      try{ ok=await v61ValidateSession(); }catch(e){}
+    }
+  }
+  if(ok) await v6ShowPanel();
+  else v6Logout();
+})();
+</script>
+</body>
 </html>
