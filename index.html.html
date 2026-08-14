@@ -64,6 +64,12 @@ footer{background:rgba(5,6,11,.93);border-top:1px solid rgba(255,255,255,.1);pad
 .logo-fallback{display:none;width:68px;height:68px;border-radius:16px;background:#fff;color:#111;
 align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-bottom:14px}
 .logo-fallback-show{display:flex!important}
+
+.stock{display:inline-flex;align-items:center;gap:6px;width:max-content;margin:8px 0 2px;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:950;border:1px solid}
+.stock.ready{background:rgba(32,199,107,.12);border-color:rgba(32,199,107,.45);color:#78f0ad}
+.stock.habis{background:rgba(255,70,70,.12);border-color:rgba(255,70,70,.45);color:#ff9b9b}
+.stock.restock{background:rgba(255,177,0,.12);border-color:rgba(255,177,0,.45);color:#ffd36b}
+.buy.disabled{pointer-events:none;opacity:.55;background:#30333d!important;color:#aaa!important}
 </style>
 </head>
 <body>
@@ -160,14 +166,34 @@ const defaultProducts=[
 {id:'p4',name:'YouTube Premium',price:'Tanya Admin',period:'Cek stok',category:'streaming',logo:'youtube',description:'YouTube bebas iklan.',waText:'Halo Yanstore, saya mau tanya YouTube Premium'},
 {id:'p5',name:'Disney+ Hotstar',price:'Rp50K',period:'1 Bulan',category:'streaming',logo:'disney',description:'Streaming Disney+ Hotstar.',waText:'Halo Yanstore, saya mau order Disney+ Hotstar'}
 ];
-let products=loadProducts();
-function loadProducts(){try{const raw=localStorage.getItem('yanstore_products_v3');return raw?JSON.parse(raw):structuredClone(defaultProducts)}catch(e){return structuredClone(defaultProducts)}}
-function saveProducts(){localStorage.setItem('yanstore_products_v3',JSON.stringify(products));renderProducts();renderAdmin()}
+const SUPABASE_URL='https://ivnohbhlahevaihunmbp.supabase.co';
+const SUPABASE_KEY='sb_publishable_uyzGj6RZJfhDdGqf2rAldg_NRQTNEZH';
+let products=[];
+
+async function loadOnlineProducts(){
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&active=eq.true&order=sort_order.asc`,{
+      headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
+    });
+    if(!r.ok) throw new Error('Gagal mengambil produk');
+    const rows=await r.json();
+    products=rows.map(p=>({
+      id:String(p.id),name:p.name,price:p.price,period:p.period||'',category:p.category||'other',
+      logo:p.logo||'netflix',description:p.description||'',waText:p.wa_text||'',
+      stockStatus:p.stock_status||'READY'
+    }));
+    renderProducts();renderAdmin();
+  }catch(e){
+    products=structuredClone(defaultProducts).map(p=>({...p,stockStatus:'READY'}));
+    renderProducts();renderAdmin();
+  }
+}
+function saveProducts(){renderProducts();renderAdmin();alert('Admin online tahap berikutnya akan menyimpan langsung ke database. Saat ini katalog publik sudah membaca database online.');}
 function esc(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]))}
 function renderProducts(){
  const q=document.getElementById('search').value.toLowerCase().trim(),cat=document.getElementById('category').value;
  const list=products.filter(p=>(cat==='all'||p.category===cat)&&(`${p.name} ${p.description}`.toLowerCase().includes(q)));
- document.getElementById('productGrid').innerHTML=list.map(p=>`<article class="card"><img class="logo" referrerpolicy="no-referrer" src="${LOGO_DATA[p.logo] || LOGO_DATA.netflix}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="logo-fallback">${esc((p.name||'APP').slice(0,3).toUpperCase())}</div><h3>${esc(p.name)}</h3><div class="desc">${esc(p.description)}</div><div class="price">${esc(p.price)}</div><div class="period">${esc(p.period)}</div><a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(p.waText||`Halo Yanstore, saya mau order ${p.name}`)}">PESAN</a></article>`).join('') || '<div class="muted">Produk tidak ditemukan.</div>';
+ document.getElementById('productGrid').innerHTML=list.map(p=>`<article class="card"><img class="logo" referrerpolicy="no-referrer" src="${LOGO_DATA[p.logo] || LOGO_DATA.netflix}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="logo-fallback">${esc((p.name||'APP').slice(0,3).toUpperCase())}</div><h3>${esc(p.name)}</h3><div class="desc">${esc(p.description)}</div><span class="stock ${(p.stockStatus||'READY').toLowerCase()}">${esc(p.stockStatus||'READY')}</span><div class="price">${esc(p.price)}</div><div class="period">${esc(p.period)}</div>${(p.stockStatus||'READY')==='HABIS'?'<span class="btn buy disabled">STOK HABIS</span>':`<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(p.waText||`Halo Yanstore, saya mau order ${p.name}`)}">PESAN</a>`}</article>`).join('') || '<div class="muted">Produk tidak ditemukan.</div>';
 }
 function renderAdmin(){
  document.getElementById('adminList').innerHTML=products.map(p=>`<div class="adminitem"><div><b>${esc(p.name)}</b><br><small class="muted">${esc(p.category)}</small></div><div>${esc(p.price)}</div><div>${esc(p.period)}</div><div><button class="btn ghost" onclick="editProduct('${p.id}')">Edit</button> <button class="btn danger" onclick="deleteProduct('${p.id}')">Hapus</button></div></div>`).join('');
@@ -181,7 +207,6 @@ search.addEventListener('input',renderProducts);category.addEventListener('chang
 const ADMIN_PASSWORD='yanstore123',loginModal=document.getElementById('loginModal'),adminModal=document.getElementById('adminModal');
 footerAdmin.onclick=()=>loginModal.classList.add('show');closeLogin.onclick=()=>loginModal.classList.remove('show');closeModal.onclick=()=>adminModal.classList.remove('show');
 loginForm.addEventListener('submit',e=>{e.preventDefault();if(adminPassword.value===ADMIN_PASSWORD){loginModal.classList.remove('show');adminModal.classList.add('show');loginError.style.display='none'}else loginError.style.display='block'});
-renderProducts();renderAdmin();
-</script>
+loadOnlineProducts();</script>
 </body>
 </html>
