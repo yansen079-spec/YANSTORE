@@ -876,5 +876,174 @@ v64LoadVariants();
 setTimeout(v64LoadVariants,700);
 </script>
 
+
+<style id="v65RecoveryStyle">
+#v65RecoveryOverlay{
+  position:fixed; inset:0; z-index:100000; display:none;
+  align-items:center; justify-content:center; padding:20px;
+  background:rgba(3,5,12,.94); backdrop-filter:blur(12px);
+}
+#v65RecoveryOverlay.show{display:flex}
+.v65-recovery-box{
+  width:min(480px,100%); padding:26px;
+  border:1px solid #333b59; border-radius:24px;
+  background:linear-gradient(180deg,#121725,#090d16);
+  box-shadow:0 30px 100px rgba(0,0,0,.65);
+}
+.v65-recovery-icon{font-size:42px;margin-bottom:8px}
+.v65-recovery-box h2{margin:0 0 8px;font-size:26px}
+.v65-recovery-box p{color:#aeb7cc;line-height:1.6;margin:0 0 18px}
+.v65-field{margin:12px 0}
+.v65-field label{display:block;font-size:12px;font-weight:800;margin-bottom:7px;color:#d8def0}
+.v65-field input{
+  width:100%; box-sizing:border-box; padding:14px;
+  border-radius:12px; border:1px solid #343d5a;
+  background:#080c15; color:white; outline:none; font-size:15px;
+}
+.v65-field input:focus{border-color:#8b5cf6}
+.v65-pass-wrap{position:relative}
+.v65-pass-wrap input{padding-right:82px}
+.v65-showpass{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  border:0;background:#20273a;color:#fff;border-radius:8px;
+  padding:7px 9px;cursor:pointer;font-size:11px;font-weight:800
+}
+.v65-recovery-btn{
+  width:100%; margin-top:10px; padding:14px; border:0;
+  border-radius:12px; cursor:pointer; font-weight:900; font-size:14px;
+  background:linear-gradient(90deg,#7c3aed,#a855f7); color:white;
+}
+.v65-recovery-btn:disabled{opacity:.55;cursor:not-allowed}
+#v65RecoveryMsg{
+  margin-top:14px; padding:11px 12px; border-radius:10px;
+  background:#0c111d; color:#b9c2d8; font-size:13px; line-height:1.5;
+  display:none;
+}
+#v65RecoveryMsg.show{display:block}
+#v65RecoveryMsg.ok{border:1px solid rgba(34,197,94,.35);color:#86efac}
+#v65RecoveryMsg.err{border:1px solid rgba(239,68,68,.35);color:#fca5a5}
+.v65-note{font-size:11px!important;margin-top:14px!important;color:#78839c!important}
+</style>
+
+<div id="v65RecoveryOverlay" aria-hidden="true">
+  <div class="v65-recovery-box">
+    <div class="v65-recovery-icon">🔐</div>
+    <h2>Buat Password Admin Baru</h2>
+    <p>Link recovery berhasil dikenali. Buat password baru untuk Admin Yanstore.</p>
+
+    <div class="v65-field">
+      <label>PASSWORD BARU</label>
+      <div class="v65-pass-wrap">
+        <input id="v65NewPassword" type="password" autocomplete="new-password"
+               placeholder="Minimal 8 karakter">
+        <button class="v65-showpass" type="button" onclick="v65TogglePass('v65NewPassword',this)">LIHAT</button>
+      </div>
+    </div>
+
+    <div class="v65-field">
+      <label>ULANGI PASSWORD BARU</label>
+      <div class="v65-pass-wrap">
+        <input id="v65ConfirmPassword" type="password" autocomplete="new-password"
+               placeholder="Ketik ulang password">
+        <button class="v65-showpass" type="button" onclick="v65TogglePass('v65ConfirmPassword',this)">LIHAT</button>
+      </div>
+    </div>
+
+    <button class="v65-recovery-btn" id="v65SavePassword" type="button"
+            onclick="v65UpdatePassword()">SIMPAN PASSWORD BARU</button>
+    <div id="v65RecoveryMsg"></div>
+    <p class="v65-note">Password tidak disimpan di kode website. Password dikirim langsung ke sistem autentikasi Supabase melalui koneksi HTTPS.</p>
+  </div>
+</div>
+
+<script id="v65RecoveryScript">
+(function(){
+  const V65_URL = (typeof V6_URL!=='undefined' ? V6_URL : 'https://ivnohbhlahevaihunmbp.supabase.co');
+  const V65_KEY = (typeof V6_KEY!=='undefined' ? V6_KEY : 'sb_publishable_uyzGj6RZJfhDdGqf2rAldg_NRQTNEZH');
+  let v65AccessToken = null;
+  let v65RefreshToken = null;
+
+  function msg(text,type){
+    const el=document.getElementById('v65RecoveryMsg');
+    if(!el)return;
+    el.textContent=text; el.className='show'+(type?' '+type:'');
+  }
+
+  function parseRecovery(){
+    const hash=new URLSearchParams(location.hash.replace(/^#/,''));
+    const query=new URLSearchParams(location.search);
+    const error=hash.get('error_description')||query.get('error_description');
+    const type=hash.get('type')||query.get('type');
+    v65AccessToken=hash.get('access_token')||query.get('access_token');
+    v65RefreshToken=hash.get('refresh_token')||query.get('refresh_token');
+
+    if(error){
+      if((type==='recovery') || /expired|otp|link/i.test(error)){
+        document.getElementById('v65RecoveryOverlay')?.classList.add('show');
+        msg('Link reset password tidak berlaku atau sudah kedaluwarsa. Nanti minta 1 email reset baru dan gunakan link yang paling baru.','err');
+      }
+      return;
+    }
+
+    if(type==='recovery' && v65AccessToken){
+      const overlay=document.getElementById('v65RecoveryOverlay');
+      overlay?.classList.add('show');
+      overlay?.setAttribute('aria-hidden','false');
+      setTimeout(()=>document.getElementById('v65NewPassword')?.focus(),150);
+    }
+  }
+
+  window.v65TogglePass=function(id,btn){
+    const input=document.getElementById(id); if(!input)return;
+    input.type=input.type==='password'?'text':'password';
+    btn.textContent=input.type==='password'?'LIHAT':'SEMBUNYIKAN';
+  };
+
+  window.v65UpdatePassword=async function(){
+    const p=document.getElementById('v65NewPassword').value;
+    const c=document.getElementById('v65ConfirmPassword').value;
+    const btn=document.getElementById('v65SavePassword');
+
+    if(!v65AccessToken){msg('Token recovery tidak ditemukan. Gunakan link reset password terbaru dari email Supabase.','err');return;}
+    if(p.length<8){msg('Password minimal 8 karakter.','err');return;}
+    if(p!==c){msg('Password dan konfirmasi password belum sama.','err');return;}
+
+    btn.disabled=true; btn.textContent='MENYIMPAN...';
+    try{
+      const r=await fetch(V65_URL+'/auth/v1/user',{
+        method:'PUT',
+        headers:{
+          apikey:V65_KEY,
+          Authorization:'Bearer '+v65AccessToken,
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({password:p})
+      });
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(data.msg||data.message||data.error_description||data.error||('HTTP '+r.status));
+
+      try{ localStorage.removeItem('yanstore_v6_session'); }catch(e){}
+      history.replaceState({},document.title,location.pathname);
+      msg('✅ Password Admin berhasil dibuat! Sekarang kamu bisa login ke Admin Yanstore memakai password baru ini.','ok');
+      btn.textContent='PASSWORD BERHASIL DISIMPAN';
+      document.getElementById('v65NewPassword').value='';
+      document.getElementById('v65ConfirmPassword').value='';
+
+      setTimeout(()=>{
+        document.getElementById('v65RecoveryOverlay')?.classList.remove('show');
+        const admin=document.getElementById('v6Admin');
+        if(admin) admin.scrollIntoView({behavior:'smooth'});
+      },2200);
+    }catch(e){
+      msg('Gagal menyimpan password: '+e.message+'. Jika link sudah kedaluwarsa, gunakan email reset terbaru.','err');
+      btn.disabled=false; btn.textContent='SIMPAN PASSWORD BARU';
+    }
+  };
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',parseRecovery);
+  else parseRecovery();
+})();
+</script>
+
 </body>
 </html>
