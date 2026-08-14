@@ -29,7 +29,7 @@
   </style>
 </head>
 <body>
-  <nav class="nav"><div class="wrap navin"><div class="brand">YAN<span>STORE</span></div><div class="navbtns"><button class="btn ghost" id="adminBtn">⚙️ Admin Produk</button><a class="btn primary" href="https://wa.me/6285783984748" target="_blank">WhatsApp</a></div></div></nav>
+  <nav class="nav"><div class="wrap navin"><div class="brand">YAN<span>STORE</span></div><div class="navbtns"><a class="btn primary" href="https://wa.me/6285783984748" target="_blank">WhatsApp</a></div></div></nav>
 
   <main>
     <section class="hero"><div class="wrap"><span class="eyebrow">Premium apps • fast order • friendly price</span><h1>Premium Apps,<br>lebih hemat.</h1><p class="lead">Pilih produk digital favorit kamu, cek harga, lalu pesan langsung melalui WhatsApp Yanstore.</p>
@@ -39,7 +39,12 @@
 
     <section class="section"><div class="wrap"><h2>Cara order</h2><p class="muted">Gampang dan cepat, cukup tiga langkah.</p><div class="steps"><div class="step"><b>1. Pilih produk</b><span class="muted">Cari produk yang kamu mau dari katalog.</span></div><div class="step"><b>2. Klik Beli</b><span class="muted">Kamu akan diarahkan ke WhatsApp dengan format order otomatis.</span></div><div class="step"><b>3. Konfirmasi</b><span class="muted">Konfirmasi stok dan pembayaran ke admin Yanstore.</span></div></div></div></section>
   </main>
-  <footer><div class="wrap">© 2026 Yanstore • WhatsApp 085783984748</div></footer>
+  <footer><div class="wrap">© 2026 Yanstore • WhatsApp 085783984748 • <button id="footerAdmin" style="background:none;border:0;color:#89919d;cursor:pointer;padding:0;text-decoration:underline">Admin</button></div></footer>
+
+
+  <div class="modal" id="loginModal"><div class="panel" style="width:min(460px,100%)"><div class="panelhead"><div><h2>Login Admin</h2><div class="muted" style="margin-top:6px">Masukkan password untuk membuka pengelolaan produk.</div></div><button class="close" id="closeLogin">✕</button></div>
+    <form id="loginForm" style="margin-top:18px"><div class="field"><label>Password Admin</label><input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Masukkan password"/></div><div class="notice" id="loginError" style="display:none;background:#2a1518;border-color:#5a242b;color:#ffb2ba;margin-top:12px">Password salah.</div><div class="adminactions"><button class="btn primary" type="submit">Masuk</button></div></form>
+  </div></div>
 
   <div class="modal" id="adminModal"><div class="panel"><div class="panelhead"><div><h2>Admin Produk Yanstore</h2><div class="muted" style="margin-top:6px">Tambah, edit, dan hapus produk tanpa mengubah kode.</div></div><button class="close" id="closeModal">✕</button></div>
     <div class="notice" id="notice">Perubahan tersimpan di browser perangkat ini.</div>
@@ -89,7 +94,15 @@ function deleteProduct(id){if(confirm('Hapus produk ini?')){products=products.fi
 document.getElementById('productForm').addEventListener('submit',e=>{e.preventDefault();const id=document.getElementById('editId').value;const item={id:id||('p'+Date.now()),name:document.getElementById('name').value.trim(),price:document.getElementById('price').value.trim(),period:document.getElementById('period').value.trim(),category:document.getElementById('cat').value,badge:document.getElementById('badge').value.trim(),icon:document.getElementById('icon').value.trim().toUpperCase(),description:document.getElementById('description').value.trim(),tags:document.getElementById('tags').value.split(',').map(x=>x.trim()).filter(Boolean),waText:document.getElementById('waText').value.trim()};if(id){products=products.map(p=>p.id===id?item:p)}else{products.push(item)}saveProducts();clearForm()});
 document.getElementById('resetProducts').onclick=()=>{if(confirm('Kembalikan semua produk ke daftar awal?')){products=structuredClone(defaultProducts);saveProducts();clearForm()}};
 document.getElementById('cancelEdit').onclick=clearForm;document.getElementById('search').addEventListener('input',renderProducts);document.getElementById('category').addEventListener('change',renderProducts);
-const modal=document.getElementById('adminModal');document.getElementById('adminBtn').onclick=()=>modal.classList.add('show');document.getElementById('closeModal').onclick=()=>modal.classList.remove('show');modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
+const ADMIN_PASSWORD='yanstore123';
+const modal=document.getElementById('adminModal');
+const loginModal=document.getElementById('loginModal');
+function openAdminLogin(){document.getElementById('adminPassword').value='';document.getElementById('loginError').style.display='none';loginModal.classList.add('show');setTimeout(()=>document.getElementById('adminPassword').focus(),50)}
+document.getElementById('footerAdmin').onclick=openAdminLogin;
+document.getElementById('closeLogin').onclick=()=>loginModal.classList.remove('show');
+loginModal.addEventListener('click',e=>{if(e.target===loginModal)loginModal.classList.remove('show')});
+document.getElementById('loginForm').addEventListener('submit',e=>{e.preventDefault();if(document.getElementById('adminPassword').value===ADMIN_PASSWORD){loginModal.classList.remove('show');modal.classList.add('show')}else{document.getElementById('loginError').style.display='block'}});
+document.getElementById('closeModal').onclick=()=>modal.classList.remove('show');modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
 renderProducts();renderAdmin();
 </script>
 </body></html>
