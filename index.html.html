@@ -1520,5 +1520,315 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v69PromoStyle">
+/* V6.9 — Promo & Flash Sale Manager */
+#v69PromoSection{display:none;padding-top:16px}
+.v69-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.v69-head h2{margin:0;font-size:28px}
+.v69-sub{color:#9fa9bf;font-size:13px;margin-top:5px}
+.v69-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.v69-card{
+  position:relative;overflow:hidden;border:1px solid #343c58;border-radius:20px;
+  background:linear-gradient(180deg,rgba(28,20,42,.96),rgba(10,14,24,.98));
+  padding:18px;box-shadow:0 16px 38px rgba(0,0,0,.18)
+}
+.v69-card:before{
+  content:"";position:absolute;inset:-80px auto auto -60px;width:160px;height:160px;
+  border-radius:50%;background:rgba(124,92,255,.15);filter:blur(8px);pointer-events:none
+}
+.v69-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;
+  border:1px solid rgba(255,188,66,.45);background:rgba(255,173,31,.12);
+  color:#ffd37b;font-size:11px;font-weight:900;letter-spacing:.7px
+}
+.v69-title{font-size:21px;font-weight:900;margin:14px 0 5px;line-height:1.2}
+.v69-product{color:#c8d0e5;font-size:13px;font-weight:700}
+.v69-desc{color:#9fa9bf;font-size:13px;line-height:1.55;margin:10px 0 14px;min-height:40px}
+.v69-prices{display:flex;align-items:end;gap:9px;flex-wrap:wrap;margin:6px 0}
+.v69-normal{text-decoration:line-through;color:#7e879c;font-size:14px}
+.v69-promo{font-size:27px;font-weight:950;letter-spacing:-.5px}
+.v69-period{font-size:12px;color:#9fa9bf;margin-bottom:13px}
+.v69-buy{
+  display:flex;width:100%;box-sizing:border-box;min-height:45px;align-items:center;justify-content:center;
+  text-decoration:none;border-radius:12px;font-weight:900;background:linear-gradient(135deg,#704cff,#9d5cff);color:#fff
+}
+.v69-time{font-size:11px;color:#8791a8;margin:8px 0 0}
+
+#v69AdminPromo{
+  margin-top:20px;padding:17px;border:1px solid #343c58;border-radius:18px;
+  background:linear-gradient(180deg,rgba(20,25,40,.96),rgba(9,13,23,.96))
+}
+#v69AdminPromo h3{margin:0 0 4px}
+#v69AdminPromo .v69-note{color:#9fa9bf;font-size:12px;margin-bottom:14px;line-height:1.5}
+.v69-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.v69-admin-grid .full{grid-column:1/-1}
+#v69AdminPromo input,#v69AdminPromo select,#v69AdminPromo textarea{
+  width:100%;box-sizing:border-box;border:1px solid #343c58;border-radius:10px;
+  background:#080c15;color:#fff;padding:10px;font-size:14px
+}
+#v69AdminPromo textarea{min-height:76px;resize:vertical}
+.v69-check{display:flex;align-items:center;gap:8px;color:#dce2ef;font-size:13px}
+.v69-check input{width:auto!important}
+.v69-admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.v69-admin-actions button,.v69-mini-actions button{
+  border:1px solid #3c4668;background:#171d2d;color:#fff;border-radius:10px;
+  padding:9px 12px;font-weight:850;cursor:pointer
+}
+.v69-admin-actions .primary{background:#694af0;border-color:#7c62ff}
+#v69PromoMsg{font-size:12px;color:#aeb8ce;min-height:18px;margin-top:8px}
+#v69PromoList{display:grid;gap:8px;margin-top:14px}
+.v69-row{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+  border:1px solid #2e3650;border-radius:13px;padding:11px;background:#0c111d
+}
+.v69-row strong{display:block}
+.v69-row small{color:#929db5;display:block;margin-top:3px}
+.v69-mini-actions{display:flex;gap:6px;flex-wrap:wrap}
+.v69-mini-actions button{padding:7px 9px;font-size:11px}
+.v69-mini-actions .danger{border-color:#6a3543;color:#ff9aad}
+@media(max-width:900px){
+  .v69-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .v69-head{align-items:start}
+  .v69-head h2{font-size:23px}
+  .v69-grid{grid-template-columns:1fr}
+  .v69-card{padding:16px}
+  .v69-desc{min-height:0}
+  .v69-admin-grid{grid-template-columns:1fr}
+  .v69-admin-grid .full{grid-column:auto}
+  .v69-row{align-items:flex-start;flex-direction:column}
+  .v69-mini-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .v69-mini-actions button{width:100%}
+}
+</style>
+
+<script id="v69PromoScript">
+(function(){
+  let v69Promos=[];
+  let v69AdminPromos=[];
+
+  function e69(s){return typeof esc==='function'?esc(String(s??'')):String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+  function v69Msg(t){const el=document.getElementById('v69PromoMsg');if(el)el.textContent=t||''}
+  function v69FormatTime(s){
+    if(!s)return '';
+    try{return new Date(s).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'})}catch(_){return s}
+  }
+  function v69LocalInputValue(s){
+    if(!s)return '';
+    const d=new Date(s);if(Number.isNaN(d.getTime()))return '';
+    const p=n=>String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+  function v69ToIso(v){return v?new Date(v).toISOString():null}
+
+  function v69EnsurePublicSection(){
+    if(document.getElementById('v69PromoSection'))return;
+    const grid=document.getElementById('productGrid');if(!grid)return;
+    const productSection=grid.closest('section')||grid.parentElement;
+    const section=document.createElement('section');
+    section.id='v69PromoSection';
+    section.innerHTML=`<div class="container">
+      <div class="v69-head">
+        <div><h2>⚡ FLASH SALE & PROMO</h2><div class="v69-sub">Promo aktif Yanstore — stok dan waktu promo dapat berubah.</div></div>
+      </div>
+      <div id="v69PromoGrid" class="v69-grid"></div>
+    </div>`;
+    productSection.parentNode.insertBefore(section,productSection);
+  }
+
+  function v69Render(){
+    v69EnsurePublicSection();
+    const section=document.getElementById('v69PromoSection'),grid=document.getElementById('v69PromoGrid');
+    if(!section||!grid)return;
+    if(!v69Promos.length){section.style.display='none';grid.innerHTML='';return}
+    section.style.display='';
+    grid.innerHTML=v69Promos.map(p=>{
+      const wa=p.wa_text||`Halo Yanstore, saya mau promo ${p.title}${p.product_name?' - '+p.product_name:''}`;
+      let timing='';
+      if(p.end_at)timing=`Berakhir ${v69FormatTime(p.end_at)}`;
+      else if(p.start_at)timing=`Mulai ${v69FormatTime(p.start_at)}`;
+      return `<article class="v69-card">
+        <span class="v69-badge">⚡ ${e69(p.badge||'FLASH SALE')}</span>
+        <div class="v69-title">${e69(p.title)}</div>
+        ${p.product_name?`<div class="v69-product">${e69(p.product_name)}</div>`:''}
+        ${p.description?`<div class="v69-desc">${e69(p.description)}</div>`:'<div class="v69-desc"></div>'}
+        <div class="v69-prices">
+          ${p.normal_price?`<span class="v69-normal">${e69(p.normal_price)}</span>`:''}
+          <span class="v69-promo">${e69(p.promo_price||'Tanya Admin')}</span>
+        </div>
+        ${p.period?`<div class="v69-period">${e69(p.period)}</div>`:''}
+        <a class="v69-buy" target="_blank" rel="noopener" href="https://wa.me/${PHONE}?text=${encodeURIComponent(wa)}">AMBIL PROMO</a>
+        ${timing?`<div class="v69-time">⏱ ${e69(timing)}</div>`:''}
+      </article>`;
+    }).join('');
+  }
+
+  async function v69LoadPublic(){
+    try{
+      const r=await fetch(V6_URL+'/rest/v1/promotions?select=*&order=sort_order.asc,created_at.desc',{
+        headers:{apikey:V6_KEY,Authorization:'Bearer '+V6_KEY}
+      });
+      const d=await r.json();
+      if(!r.ok)throw new Error(d.message||('HTTP '+r.status));
+      v69Promos=Array.isArray(d)?d:[];
+      v69Render();
+    }catch(e){
+      console.warn('Promo load:',e);
+      v69Promos=[];v69Render();
+    }
+  }
+
+  function v69EnsureAdmin(){
+    if(document.getElementById('v69AdminPromo'))return;
+    const panel=document.getElementById('v6AdminPanel');if(!panel)return;
+    const box=document.createElement('div');
+    box.id='v69AdminPromo';
+    box.innerHTML=`<h3>⚡ Promo & Flash Sale Manager</h3>
+      <div class="v69-note">Fitur ini terpisah dari produk utama. Menambah atau menghapus promo tidak mengubah kategori, harga, logo, stok, maupun paket produk yang sudah kamu edit.</div>
+      <input type="hidden" id="v69Id">
+      <div class="v69-admin-grid">
+        <input id="v69Title" placeholder="Judul promo, contoh: FLASH SALE WEEKEND">
+        <input id="v69Product" placeholder="Nama produk, contoh: CapCut Private">
+        <input id="v69Normal" placeholder="Harga normal, contoh: Rp25K">
+        <input id="v69Price" placeholder="Harga promo, contoh: Rp21K">
+        <input id="v69Period" placeholder="Durasi/paket, contoh: 1 Bulan">
+        <input id="v69Badge" placeholder="Badge" value="FLASH SALE">
+        <input id="v69Start" type="datetime-local" title="Mulai promo">
+        <input id="v69End" type="datetime-local" title="Berakhir promo">
+        <input id="v69Order" type="number" value="0" placeholder="Urutan">
+        <label class="v69-check"><input id="v69Active" type="checkbox" checked> Promo aktif</label>
+        <textarea class="full" id="v69Desc" placeholder="Deskripsi singkat promo"></textarea>
+        <textarea class="full" id="v69Wa" placeholder="Pesan WhatsApp khusus (opsional)"></textarea>
+      </div>
+      <div class="v69-admin-actions">
+        <button class="primary" type="button" onclick="v69SavePromo()">SIMPAN PROMO</button>
+        <button type="button" onclick="v69ResetPromo()">FORM BARU</button>
+        <button type="button" onclick="v69LoadAdminPromos()">REFRESH LIST</button>
+      </div>
+      <div id="v69PromoMsg"></div>
+      <div id="v69PromoList"></div>`;
+    panel.appendChild(box);
+  }
+
+  window.v69ResetPromo=function(){
+    ['v69Id','v69Title','v69Product','v69Normal','v69Price','v69Period','v69Start','v69End','v69Desc','v69Wa'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+    document.getElementById('v69Badge').value='FLASH SALE';
+    document.getElementById('v69Order').value='0';
+    document.getElementById('v69Active').checked=true;
+    v69Msg('Form promo baru siap.');
+  };
+
+  window.v69LoadAdminPromos=async function(){
+    v69EnsureAdmin();
+    if(!v6Session?.access_token){v69Msg('Login Admin terlebih dahulu.');return}
+    v69Msg('Memuat promo...');
+    try{
+      const r=await v62Fetch(V6_URL+'/rest/v1/promotions?select=*&order=sort_order.asc,created_at.desc',{headers:{apikey:V6_KEY}});
+      const d=await r.json();
+      if(!r.ok)throw new Error(d.message||('HTTP '+r.status));
+      v69AdminPromos=Array.isArray(d)?d:[];
+      const list=document.getElementById('v69PromoList');
+      list.innerHTML=v69AdminPromos.length?v69AdminPromos.map(p=>`<div class="v69-row">
+        <div><strong>${e69(p.title)}</strong><small>${e69(p.product_name||'Tanpa nama produk')} • ${e69(p.promo_price||'Tanya Admin')} • ${p.active?'AKTIF':'NONAKTIF'}</small></div>
+        <div class="v69-mini-actions">
+          <button type="button" onclick="v69EditPromo(${Number(p.id)})">EDIT</button>
+          <button class="danger" type="button" onclick="v69DeletePromo(${Number(p.id)})">HAPUS</button>
+        </div>
+      </div>`).join(''):'<div class="v69-note">Belum ada promo. Buat promo pertama dari form di atas.</div>';
+      v69Msg(`✅ ${v69AdminPromos.length} promo dimuat.`);
+    }catch(e){v69Msg('Gagal memuat promo: '+e.message)}
+  };
+
+  window.v69EditPromo=function(id){
+    const p=v69AdminPromos.find(x=>Number(x.id)===Number(id));if(!p)return;
+    document.getElementById('v69Id').value=p.id;
+    document.getElementById('v69Title').value=p.title||'';
+    document.getElementById('v69Product').value=p.product_name||'';
+    document.getElementById('v69Normal').value=p.normal_price||'';
+    document.getElementById('v69Price').value=p.promo_price||'';
+    document.getElementById('v69Period').value=p.period||'';
+    document.getElementById('v69Badge').value=p.badge||'FLASH SALE';
+    document.getElementById('v69Start').value=v69LocalInputValue(p.start_at);
+    document.getElementById('v69End').value=v69LocalInputValue(p.end_at);
+    document.getElementById('v69Order').value=p.sort_order??0;
+    document.getElementById('v69Active').checked=!!p.active;
+    document.getElementById('v69Desc').value=p.description||'';
+    document.getElementById('v69Wa').value=p.wa_text||'';
+    document.getElementById('v69AdminPromo').scrollIntoView({behavior:'smooth',block:'start'});
+    v69Msg('Mode edit promo.');
+  };
+
+  window.v69SavePromo=async function(){
+    if(!v6Session?.access_token){v69Msg('Login Admin terlebih dahulu.');return}
+    const id=document.getElementById('v69Id').value;
+    const title=document.getElementById('v69Title').value.trim();
+    const price=document.getElementById('v69Price').value.trim();
+    if(!title){v69Msg('Judul promo wajib diisi.');return}
+    if(!price){v69Msg('Harga promo wajib diisi.');return}
+    const start=document.getElementById('v69Start').value,end=document.getElementById('v69End').value;
+    if(start&&end&&new Date(end)<=new Date(start)){v69Msg('Waktu berakhir harus setelah waktu mulai.');return}
+    const payload={
+      title,
+      product_name:document.getElementById('v69Product').value.trim(),
+      normal_price:document.getElementById('v69Normal').value.trim(),
+      promo_price:price,
+      period:document.getElementById('v69Period').value.trim(),
+      description:document.getElementById('v69Desc').value.trim(),
+      badge:document.getElementById('v69Badge').value.trim()||'FLASH SALE',
+      wa_text:document.getElementById('v69Wa').value.trim(),
+      start_at:v69ToIso(start),
+      end_at:v69ToIso(end),
+      sort_order:Number(document.getElementById('v69Order').value||0),
+      active:document.getElementById('v69Active').checked,
+      updated_at:new Date().toISOString()
+    };
+    v69Msg('Menyimpan promo...');
+    try{
+      const url=V6_URL+'/rest/v1/promotions'+(id?`?id=eq.${encodeURIComponent(id)}`:'');
+      const r=await v62Fetch(url,{
+        method:id?'PATCH':'POST',
+        headers:{apikey:V6_KEY,'Content-Type':'application/json',Prefer:'return=representation'},
+        body:JSON.stringify(payload)
+      });
+      const d=await r.json().catch(()=>[]);
+      if(!r.ok)throw new Error(d.message||('HTTP '+r.status));
+      v69Msg('✅ Promo berhasil disimpan.');
+      v69ResetPromo();
+      await v69LoadAdminPromos();
+      await v69LoadPublic();
+    }catch(e){v69Msg('Gagal menyimpan promo: '+e.message)}
+  };
+
+  window.v69DeletePromo=async function(id){
+    if(!confirm('Hapus promo ini? Produk utama tidak akan ikut terhapus.'))return;
+    try{
+      const r=await v62Fetch(V6_URL+'/rest/v1/promotions?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{apikey:V6_KEY}});
+      if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.message||('HTTP '+r.status))}
+      v69Msg('✅ Promo dihapus.');
+      await v69LoadAdminPromos();
+      await v69LoadPublic();
+    }catch(e){v69Msg('Gagal menghapus promo: '+e.message)}
+  };
+
+  function v69Boot(){
+    v69EnsurePublicSection();v69LoadPublic();v69EnsureAdmin();
+    const admin=document.getElementById('v6Admin');
+    if(admin)new MutationObserver(()=>v69EnsureAdmin()).observe(admin,{childList:true,subtree:true});
+    const oldShow=window.v6ShowPanel;
+    if(typeof oldShow==='function'){
+      window.v6ShowPanel=async function(){
+        const x=await oldShow.apply(this,arguments);
+        v69EnsureAdmin();
+        setTimeout(()=>{if(v6Session?.access_token)v69LoadAdminPromos()},150);
+        return x;
+      };
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',v69Boot);else v69Boot();
+})();
+</script>
+
 </body>
 </html>
