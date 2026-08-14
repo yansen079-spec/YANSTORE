@@ -1,117 +1,189 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Yanstore — Premium Apps</title>
-  <style>
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,Arial,sans-serif;
-      color:#f5f7fb;
-      background:
-        linear-gradient(rgba(5,6,12,.70),rgba(5,6,12,.86)),
-        url("background-yanstore.jpg") center top / cover fixed no-repeat;
-      min-height:100vh;
-    }
-    a{text-decoration:none;color:inherit} button,input,select,textarea{font:inherit}
-    .wrap{width:min(1120px,92%);margin:auto}.nav{position:sticky;top:0;z-index:10;background:rgba(11,13,18,.9);backdrop-filter:blur(14px);border-bottom:1px solid #20242d}
-    .navin{display:flex;align-items:center;justify-content:space-between;padding:15px 0}.brand{font-weight:900;font-size:22px}.brand span{opacity:.55}.navbtns{display:flex;gap:10px}
-    .btn{border:0;border-radius:12px;padding:11px 16px;cursor:pointer;font-weight:800}.btn.primary{background:#fff;color:#111}.btn.ghost{background:#171a21;color:#fff;border:1px solid #2b303a}.btn.danger{background:#2a1518;color:#ffb2ba;border:1px solid #5a242b}
-    .hero{padding:72px 0 34px}.eyebrow{display:inline-block;padding:8px 12px;border:1px solid #2a2f39;border-radius:999px;background:#12151b;color:#cfd5df;font-size:13px;font-weight:800}
-    h1{font-size:clamp(38px,7vw,74px);line-height:.98;margin:18px 0 16px;letter-spacing:-2px}.lead{color:#adb4c0;max-width:680px;font-size:18px;line-height:1.7}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 22px}.search{flex:1;min-width:240px;background:#12151b;border:1px solid #272c35;color:#fff;padding:13px 15px;border-radius:12px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-bottom:60px}.card{background:linear-gradient(180deg,rgba(21,24,32,.92),rgba(17,20,26,.94));border:1px solid #272c35;border-radius:18px;padding:18px;display:flex;flex-direction:column;min-height:270px}
-    .topline{display:flex;align-items:center;justify-content:space-between;gap:10px}.icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:#fff;color:#111;font-weight:950}.badge{font-size:11px;font-weight:900;padding:7px 9px;border:1px solid #353b47;border-radius:999px;color:#c7ced9}
-    .card h3{font-size:22px;margin:18px 0 8px}.desc{color:#9fa7b5;line-height:1.55;min-height:48px}.tags{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.tag{font-size:12px;background:#1c2028;border:1px solid #2c323c;padding:6px 8px;border-radius:999px;color:#c5ccd7}
-    .price{font-size:27px;font-weight:950;margin-top:auto}.period{font-size:13px;color:#8f97a4;font-weight:700}.buy{margin-top:14px;width:100%}
-    .section{padding:52px 0;border-top:1px solid #20242d}.section h2{font-size:34px;margin:0 0 12px}.muted{color:#9da5b2}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.step{background:rgba(18,21,27,.90);border:1px solid #272c35;border-radius:16px;padding:20px}.step b{display:block;font-size:18px;margin-bottom:8px}
-    footer{padding:30px 0;border-top:1px solid #20242d;color:#89919d}
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:flex-start;justify-content:center;padding:40px 14px;z-index:30;overflow:auto}.modal.show{display:flex}.panel{width:min(820px,100%);background:#10131a;border:1px solid #2a303b;border-radius:20px;padding:22px}
-    .panelhead{display:flex;align-items:center;justify-content:space-between;gap:10px}.panelhead h2{margin:0}.close{background:#1a1e26;color:#fff;border:1px solid #303642;border-radius:10px;padding:9px 12px;cursor:pointer}
-    .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:13px;color:#c7ced8;font-weight:800}.field input,.field select,.field textarea{background:#171a21;border:1px solid #303642;color:#fff;border-radius:10px;padding:11px 12px}.field textarea{min-height:80px;resize:vertical}
-    .adminactions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.adminlist{margin-top:24px;border-top:1px solid #272c35;padding-top:18px}.adminitem{display:grid;grid-template-columns:1.3fr .8fr .8fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #222731}.adminitem small{color:#8f97a4}.empty{padding:26px;border:1px dashed #343a45;border-radius:14px;color:#9aa2af;text-align:center}
-    .notice{margin-top:14px;background:#111b16;border:1px solid #274433;color:#b9e7c8;border-radius:12px;padding:12px;display:none}.notice.show{display:block}
-    @media(max-width:850px){.grid,.steps{grid-template-columns:1fr 1fr}.adminitem{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
-    @media(max-width:580px){.grid,.steps{grid-template-columns:1fr}.hero{padding-top:48px}.navin{align-items:flex-start}.navbtns{flex-direction:column}.adminitem{grid-template-columns:1fr}.panel{padding:16px}}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Yanstore — Premium Apps</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#070811;--panel:#111420;--panel2:#151927;--line:#2b3150;--text:#f8f9ff;--muted:#a8afc4;--purple:#a855f7;--green:#20c76b}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;color:var(--text);background:#06070c}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:url("assets/hero-bg.png") center top/cover no-repeat}
+body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(3,4,10,.30) 0%,rgba(3,4,10,.58) 36%,rgba(3,4,10,.92) 62%,#06070c 100%)}
+a{text-decoration:none;color:inherit}
+button,input,select{font:inherit}
+.wrap{width:min(1180px,92%);margin:auto}
+.nav{position:sticky;top:0;z-index:30;background:rgba(4,5,11,.72);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08)}
+.navin{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:20px}
+.brand{font-size:24px;font-weight:950;letter-spacing:-1px;text-shadow:0 0 20px rgba(168,85,247,.4)} .brand b{color:#ffb000}
+.navlinks{display:flex;gap:24px;color:#e9eaff;font-weight:700;font-size:14px}
+.navbtns{display:flex;gap:10px;align-items:center}
+.btn{border:0;border-radius:13px;padding:12px 16px;font-weight:900;cursor:pointer;display:inline-flex;justify-content:center;align-items:center;gap:8px}
+.btn.primary{background:#fff;color:#111} .btn.wa{background:#1fca69;color:white} .btn.ghost{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.16)}
+.hero{padding:70px 0 38px;min-height:600px;display:flex;align-items:center}
+.heroCard{max-width:690px}
+.eyebrow{display:inline-block;padding:9px 13px;border-radius:999px;background:rgba(12,14,24,.78);border:1px solid rgba(255,255,255,.16);font-size:13px;font-weight:850}
+h1{font-size:clamp(44px,7vw,78px);line-height:.95;letter-spacing:-3px;margin:20px 0 18px} h1 span{color:#ffad12}
+.lead{font-size:18px;line-height:1.7;color:#eef0f6;max-width:600px;text-shadow:0 2px 16px rgba(0,0,0,.6)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 20px}
+.search{flex:1;min-width:230px;padding:14px 15px;border-radius:13px;border:1px solid rgba(255,255,255,.18);background:rgba(9,11,19,.82);color:#fff}
+.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.trust .item{background:rgba(12,14,24,.82);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px;font-size:13px} .trust b{display:block;margin-bottom:4px}
+.banner{margin:8px 0 24px;border:1px solid #9b4dff;background:linear-gradient(90deg,rgba(88,28,135,.45),rgba(18,12,32,.85));border-radius:18px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 0 30px rgba(168,85,247,.18)}
+.banner h2{margin:0;font-size:30px} .banner h2 span{color:#b65cff}
+.sectionTitle{display:flex;justify-content:space-between;align-items:center;margin:24px 0 14px} .sectionTitle h2{font-size:18px;margin:0}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:15px}
+.card{background:linear-gradient(180deg,rgba(19,22,34,.94),rgba(10,12,20,.96));border:1px solid rgba(255,255,255,.15);border-radius:17px;padding:16px;display:flex;flex-direction:column;min-height:310px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.logo{width:68px;height:68px;border-radius:16px;object-fit:cover;margin-bottom:14px;background:#fff}
+.card h3{font-size:18px;margin:0 0 7px} .desc{font-size:13px;color:var(--muted);line-height:1.5;min-height:38px}
+.price{font-size:24px;font-weight:950;margin-top:auto} .period{font-size:12px;color:#aeb4c5}
+.buy{margin-top:13px;width:100%}
+.categories{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:16px 0 28px}
+.cat{background:rgba(16,18,29,.92);border:1px solid rgba(255,255,255,.13);padding:18px 12px;border-radius:15px;text-align:center;font-size:13px;font-weight:800}
+.catIcon{font-size:26px;display:block;margin-bottom:8px}
+.popular{padding-bottom:28px}
+.cta{margin:20px 0 36px;border:1px solid #a54cff;background:linear-gradient(90deg,rgba(86,25,132,.44),rgba(10,12,20,.92));border-radius:18px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.cta h3{margin:0 0 6px;font-size:24px} .muted{color:var(--muted)}
+footer{background:rgba(5,6,11,.93);border-top:1px solid rgba(255,255,255,.1);padding:34px 0;color:#aab0c0}
+.footgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;gap:24px} footer h4{color:#fff;margin:0 0 12px} footer p{margin:7px 0;font-size:14px}
+.adminlink{background:none;border:0;color:#aab0c0;padding:0;text-decoration:underline;cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.76);display:none;align-items:flex-start;justify-content:center;padding:40px 14px;z-index:50;overflow:auto} .modal.show{display:flex}
+.panel{width:min(820px,100%);background:#10131a;border:1px solid #30364a;border-radius:20px;padding:22px}
+.panelhead{display:flex;align-items:center;justify-content:space-between;gap:10px} .close{background:#1a1e26;color:#fff;border:1px solid #303642;border-radius:10px;padding:9px 12px;cursor:pointer}
+.field{display:flex;flex-direction:column;gap:7px} .field label{font-size:13px;font-weight:800;color:#c7ced8} .field input,.field select,.field textarea{background:#171a21;border:1px solid #303642;color:#fff;border-radius:10px;padding:11px 12px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px} .field.full{grid-column:1/-1} textarea{min-height:80px;resize:vertical}
+.adminactions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px} .danger{background:#35181d;color:#ffc3c8;border:1px solid #643039}
+.adminitem{display:grid;grid-template-columns:1.3fr .8fr .8fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #222731}
+@media(max-width:980px){.grid{grid-template-columns:repeat(3,1fr)}.categories{grid-template-columns:repeat(3,1fr)}.navlinks{display:none}}
+@media(max-width:680px){.grid{grid-template-columns:1fr 1fr}.trust{grid-template-columns:1fr}.banner,.cta{align-items:flex-start;flex-direction:column}.footgrid{grid-template-columns:1fr 1fr}.hero{min-height:auto;padding-top:50px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.categories{grid-template-columns:1fr 1fr}.footgrid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <nav class="nav"><div class="wrap navin"><div class="brand">YAN<span>STORE</span></div><div class="navbtns"><a class="btn primary" href="https://wa.me/6285783984748" target="_blank">WhatsApp</a></div></div></nav>
+<nav class="nav">
+  <div class="wrap navin">
+    <div class="brand">YAN<b>STORE</b></div>
+    <div class="navlinks"><a href="#produk">Produk</a><a href="#cara-order">Cara Order</a><a href="#kategori">Kategori</a><a href="#bantuan">Bantuan</a></div>
+    <div class="navbtns"><a class="btn ghost" href="#produk">🛒 Katalog</a><a class="btn wa" href="https://wa.me/6285783984748" target="_blank">WhatsApp</a></div>
+  </div>
+</nav>
 
-  <main>
-    <section class="hero"><div class="wrap"><span class="eyebrow">Premium apps • fast order • friendly price</span><h1>Premium Apps,<br>lebih hemat.</h1><p class="lead">Pilih produk digital favorit kamu, cek harga, lalu pesan langsung melalui WhatsApp Yanstore.</p>
-      <div class="toolbar"><input id="search" class="search" placeholder="Cari Netflix, CapCut, Spotify..."/><select id="category" class="search" style="flex:0 0 190px"><option value="all">Semua kategori</option><option value="streaming">Streaming</option><option value="editing">Editing</option><option value="music">Music</option><option value="design">Design</option><option value="other">Lainnya</option></select></div>
-      <div id="productGrid" class="grid"></div>
-    </div></section>
-
-    <section class="section"><div class="wrap"><h2>Cara order</h2><p class="muted">Gampang dan cepat, cukup tiga langkah.</p><div class="steps"><div class="step"><b>1. Pilih produk</b><span class="muted">Cari produk yang kamu mau dari katalog.</span></div><div class="step"><b>2. Klik Beli</b><span class="muted">Kamu akan diarahkan ke WhatsApp dengan format order otomatis.</span></div><div class="step"><b>3. Konfirmasi</b><span class="muted">Konfirmasi stok dan pembayaran ke admin Yanstore.</span></div></div></div></section>
-  </main>
-  <footer><div class="wrap">© 2026 Yanstore • WhatsApp 085783984748 • <button id="footerAdmin" style="background:none;border:0;color:#89919d;cursor:pointer;padding:0;text-decoration:underline">Admin</button></div></footer>
-
-
-  <div class="modal" id="loginModal"><div class="panel" style="width:min(460px,100%)"><div class="panelhead"><div><h2>Login Admin</h2><div class="muted" style="margin-top:6px">Masukkan password untuk membuka pengelolaan produk.</div></div><button class="close" id="closeLogin">✕</button></div>
-    <form id="loginForm" style="margin-top:18px"><div class="field"><label>Password Admin</label><input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Masukkan password"/></div><div class="notice" id="loginError" style="display:none;background:#2a1518;border-color:#5a242b;color:#ffb2ba;margin-top:12px">Password salah.</div><div class="adminactions"><button class="btn primary" type="submit">Masuk</button></div></form>
-  </div></div>
-
-  <div class="modal" id="adminModal"><div class="panel"><div class="panelhead"><div><h2>Admin Produk Yanstore</h2><div class="muted" style="margin-top:6px">Tambah, edit, dan hapus produk tanpa mengubah kode.</div></div><button class="close" id="closeModal">✕</button></div>
-    <div class="notice" id="notice">Perubahan tersimpan di browser perangkat ini.</div>
-    <form id="productForm"><input type="hidden" id="editId"/>
-      <div class="formgrid">
-        <div class="field"><label>Nama Produk</label><input id="name" required placeholder="Contoh: Netflix"/></div>
-        <div class="field"><label>Harga</label><input id="price" required placeholder="Contoh: Rp15K"/></div>
-        <div class="field"><label>Periode</label><input id="period" placeholder="Contoh: / 1 bulan"/></div>
-        <div class="field"><label>Kategori</label><select id="cat"><option value="streaming">Streaming</option><option value="editing">Editing</option><option value="music">Music</option><option value="design">Design</option><option value="other">Lainnya</option></select></div>
-        <div class="field"><label>Badge</label><input id="badge" placeholder="Contoh: BEST SELLER / NEW"/></div>
-        <div class="field"><label>Icon Singkat</label><input id="icon" maxlength="3" placeholder="Contoh: N / CC / SP"/></div>
-        <div class="field full"><label>Deskripsi</label><textarea id="description" placeholder="Deskripsi singkat produk"></textarea></div>
-        <div class="field full"><label>Tag (pisahkan dengan koma)</label><input id="tags" placeholder="Contoh: 1P2U Sharing, No VPN, Full Garansi"/></div>
-        <div class="field full"><label>Pesan WhatsApp</label><textarea id="waText" placeholder="Halo Yanstore, saya mau order ..."></textarea></div>
+<header class="hero">
+  <div class="wrap">
+    <div class="heroCard">
+      <div class="eyebrow">⚡ Premium apps • fast order • friendly price</div>
+      <h1>Premium Apps,<br>lebih <span>hemat.</span></h1>
+      <p class="lead">Pilih produk digital favorit kamu, cek harga, lalu pesan langsung melalui WhatsApp Yanstore.</p>
+      <div class="toolbar">
+        <input id="search" class="search" placeholder="Cari Netflix, CapCut, Spotify...">
+        <select id="category" class="search" style="flex:0 0 200px">
+          <option value="all">Semua kategori</option>
+          <option value="streaming">Streaming</option><option value="editing">Editing</option>
+          <option value="music">Music</option><option value="design">Design</option><option value="ai">AI Tools</option>
+        </select>
       </div>
-      <div class="adminactions"><button class="btn primary" type="submit" id="saveBtn">Simpan Produk</button><button class="btn ghost" type="button" id="cancelEdit">Batal Edit</button><button class="btn danger" type="button" id="resetProducts">Reset Produk Awal</button></div>
-    </form>
-    <div class="adminlist"><h3>Daftar Produk</h3><div id="adminList"></div></div>
-  </div></div>
+      <div class="trust">
+        <div class="item"><b>⚡ FAST PROCESS</b><span class="muted">Proses cepat & otomatis</span></div>
+        <div class="item"><b>🛡 GARANSI AMAN</b><span class="muted">Garansi pembelian</span></div>
+        <div class="item"><b>🎧 CS 24/7</b><span class="muted">Siap membantu kapan saja</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="banner"><div><h2>LAYANAN <span>STREAMING ONLINE</span></h2><div class="muted">Daftar sekarang & nikmati konten terbaik!</div></div><div style="font-size:44px">🚀</div></div>
+
+  <section id="produk">
+    <div class="sectionTitle"><h2>🔥 BEST SELLER</h2></div>
+    <div id="productGrid" class="grid"></div>
+  </section>
+
+  <section id="kategori">
+    <div class="sectionTitle"><h2>🗂 KATEGORI POPULER</h2></div>
+    <div class="categories">
+      <div class="cat"><span class="catIcon">📺</span>Streaming</div>
+      <div class="cat"><span class="catIcon">✂️</span>Editing</div>
+      <div class="cat"><span class="catIcon">🎵</span>Musik</div>
+      <div class="cat"><span class="catIcon">🧠</span>AI Tools</div>
+      <div class="cat"><span class="catIcon">☁️</span>Cloud & Drive</div>
+      <div class="cat"><span class="catIcon">•••</span>Lainnya</div>
+    </div>
+  </section>
+
+  <section class="popular">
+    <div class="sectionTitle"><h2>🎬 PRODUK POPULER</h2></div>
+    <div class="grid">
+      <article class="card"><img class="logo" src="assets/vidio.svg"><h3>Vidio Premium</h3><div class="desc">Streaming olahraga dan hiburan.</div><div class="price">Rp23RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20Vidio" target="_blank">PESAN</a></article>
+      <article class="card"><img class="logo" src="assets/iqiyi.svg"><h3>iQIYI VIP</h3><div class="desc">Drama, anime dan series premium.</div><div class="price">Rp6RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20iQIYI" target="_blank">PESAN</a></article>
+      <article class="card"><img class="logo" src="assets/viu.svg"><h3>VIU Premium</h3><div class="desc">Streaming drama favorit.</div><div class="price">Rp13RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20VIU" target="_blank">PESAN</a></article>
+      <article class="card"><img class="logo" src="assets/canva.svg"><h3>Canva Pro</h3><div class="desc">Desain premium via invite.</div><div class="price">Rp5RB</div><div class="period">1 Bulan</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20Canva" target="_blank">PESAN</a></article>
+      <article class="card"><img class="logo" src="assets/chatgpt.svg"><h3>ChatGPT Plus</h3><div class="desc">AI tools untuk produktivitas.</div><div class="price">Tanya Admin</div><div class="period">Cek stok</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20tanya%20ChatGPT%20Plus" target="_blank">PESAN</a></article>
+    </div>
+  </section>
+
+  <section class="cta" id="bantuan">
+    <div><h3>Order cepat & aman via WhatsApp!</h3><div class="muted">Klik tombol untuk mulai chat dengan admin Yanstore.</div></div>
+    <a class="btn wa" href="https://wa.me/6285783984748" target="_blank">💬 PESAN SEKARANG</a>
+  </section>
+</main>
+
+<footer id="cara-order">
+  <div class="wrap footgrid">
+    <div><div class="brand">YAN<b>STORE</b></div><p>Store digital untuk kebutuhan premium kamu.</p><p>© 2026 Yanstore.</p></div>
+    <div><h4>QUICK LINK</h4><p>Produk</p><p>Cara Order</p><p>Kategori</p></div>
+    <div><h4>KEUNGGULAN</h4><p>⚡ Harga hemat</p><p>⚡ Proses cepat</p><p>⚡ Support admin</p></div>
+    <div><h4>HUBUNGI KAMI</h4><p>WhatsApp 085783984748</p><p><button class="adminlink" id="footerAdmin">Admin</button></p></div>
+  </div>
+</footer>
+
+<div class="modal" id="loginModal"><div class="panel" style="width:min(460px,100%)"><div class="panelhead"><div><h2>Login Admin</h2><div class="muted">Masukkan password admin.</div></div><button class="close" id="closeLogin">✕</button></div><form id="loginForm" style="margin-top:18px"><div class="field"><label>Password</label><input id="adminPassword" type="password" required></div><div id="loginError" style="display:none;color:#ffb2ba;margin-top:10px">Password salah.</div><div class="adminactions"><button class="btn primary" type="submit">Masuk</button></div></form></div></div>
+
+<div class="modal" id="adminModal"><div class="panel"><div class="panelhead"><div><h2>Admin Produk Yanstore</h2><div class="muted">Edit produk utama tanpa mengubah kode.</div></div><button class="close" id="closeModal">✕</button></div>
+<form id="productForm"><input type="hidden" id="editId"><div class="formgrid">
+<div class="field"><label>Nama Produk</label><input id="name" required></div>
+<div class="field"><label>Harga</label><input id="price" required></div>
+<div class="field"><label>Periode</label><input id="period"></div>
+<div class="field"><label>Kategori</label><select id="cat"><option value="streaming">Streaming</option><option value="editing">Editing</option><option value="music">Music</option><option value="design">Design</option><option value="ai">AI Tools</option></select></div>
+<div class="field"><label>Logo</label><select id="logo"><option value="netflix">Netflix</option><option value="capcut">CapCut</option><option value="spotify">Spotify</option><option value="youtube">YouTube</option><option value="disney">Disney+</option><option value="canva">Canva</option><option value="chatgpt">ChatGPT</option></select></div>
+<div class="field full"><label>Deskripsi</label><textarea id="description"></textarea></div>
+<div class="field full"><label>Pesan WhatsApp</label><textarea id="waText"></textarea></div>
+</div><div class="adminactions"><button class="btn primary" type="submit" id="saveBtn">Simpan Produk</button><button class="btn ghost" type="button" id="cancelEdit">Batal</button><button class="btn danger" type="button" id="resetProducts">Reset Produk</button></div></form>
+<div style="margin-top:24px"><h3>Daftar Produk</h3><div id="adminList"></div></div>
+</div></div>
 
 <script>
 const PHONE='6285783984748';
 const defaultProducts=[
-{id:'p1',name:'Netflix',price:'Rp15K',period:'/ 1 bulan',category:'streaming',badge:'BEST SELLER',icon:'N',description:'Paket sharing untuk nonton film dan serial favorit.',tags:['1P2U Sharing','No VPN'],waText:'Halo Yanstore, saya mau order Netflix 1 bulan Rp15.000'},
-{id:'p2',name:'CapCut',price:'Rp17K',period:'/ 1 bulan',category:'editing',badge:'POPULAR',icon:'CC',description:'CapCut premium untuk kebutuhan editing video.',tags:['Sharing','No Renew'],waText:'Halo Yanstore, saya mau order CapCut Sharing 1 bulan Rp17.000'},
-{id:'p3',name:'Spotify',price:'Rp11K',period:'/ 1 bulan',category:'music',badge:'',icon:'SP',description:'Spotify premium untuk dengar musik tanpa iklan.',tags:['Indplan','Premium'],waText:'Halo Yanstore, saya mau order Spotify 1 bulan Rp11.000'},
-{id:'p4',name:'WeTV',price:'Rp13K',period:'/ mulai',category:'streaming',badge:'',icon:'W',description:'Streaming drama dan series favorit di WeTV.',tags:['Premium'],waText:'Halo Yanstore, saya mau order WeTV mulai Rp13.000'},
-{id:'p5',name:'iQIYI',price:'Rp6K',period:'/ mulai',category:'streaming',badge:'HEMAT',icon:'IQ',description:'Nonton drama, anime, dan series premium iQIYI.',tags:['Premium'],waText:'Halo Yanstore, saya mau order iQIYI mulai Rp6.000'},
-{id:'p6',name:'Canva',price:'Rp5K',period:'/ 1 bulan',category:'design',badge:'',icon:'CV',description:'Canva premium untuk desain dan konten.',tags:['Via Invite'],waText:'Halo Yanstore, saya mau order Canva 1 bulan Rp5.000'}
+{id:'p1',name:'Netflix',price:'Rp15K',period:'1 Bulan',category:'streaming',logo:'netflix',description:'1P2U Sharing • No VPN',waText:'Halo Yanstore, saya mau order Netflix 1 bulan Rp15.000'},
+{id:'p2',name:'CapCut',price:'Rp17K',period:'1 Bulan',category:'editing',logo:'capcut',description:'Sharing • No Renew',waText:'Halo Yanstore, saya mau order CapCut Sharing 1 bulan Rp17.000'},
+{id:'p3',name:'Spotify',price:'Rp11K',period:'1 Bulan',category:'music',logo:'spotify',description:'Indplan • Premium',waText:'Halo Yanstore, saya mau order Spotify 1 bulan Rp11.000'},
+{id:'p4',name:'YouTube Premium',price:'Tanya Admin',period:'Cek stok',category:'streaming',logo:'youtube',description:'YouTube bebas iklan.',waText:'Halo Yanstore, saya mau tanya YouTube Premium'},
+{id:'p5',name:'Disney+ Hotstar',price:'Rp50K',period:'1 Bulan',category:'streaming',logo:'disney',description:'Streaming Disney+ Hotstar.',waText:'Halo Yanstore, saya mau order Disney+ Hotstar'}
 ];
 let products=loadProducts();
-function loadProducts(){try{const raw=localStorage.getItem('yanstore_products');return raw?JSON.parse(raw):structuredClone(defaultProducts)}catch(e){return structuredClone(defaultProducts)}}
-function saveProducts(){localStorage.setItem('yanstore_products',JSON.stringify(products));renderProducts();renderAdmin();showNotice()}
-function showNotice(){const n=document.getElementById('notice');n.classList.add('show');setTimeout(()=>n.classList.remove('show'),1800)}
-function escapeHtml(s=''){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]))}
+function loadProducts(){try{const raw=localStorage.getItem('yanstore_products_v3');return raw?JSON.parse(raw):structuredClone(defaultProducts)}catch(e){return structuredClone(defaultProducts)}}
+function saveProducts(){localStorage.setItem('yanstore_products_v3',JSON.stringify(products));renderProducts();renderAdmin()}
+function esc(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]))}
 function renderProducts(){
- const q=document.getElementById('search').value.toLowerCase().trim(); const cat=document.getElementById('category').value;
- const list=products.filter(p=>(cat==='all'||p.category===cat)&&(`${p.name} ${p.description} ${(p.tags||[]).join(' ')}`.toLowerCase().includes(q)));
- const grid=document.getElementById('productGrid');
- if(!list.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">Produk tidak ditemukan.</div>';return}
- grid.innerHTML=list.map(p=>`<article class="card"><div class="topline"><div class="icon">${escapeHtml(p.icon||p.name.slice(0,2).toUpperCase())}</div>${p.badge?`<span class="badge">${escapeHtml(p.badge)}</span>`:''}</div><h3>${escapeHtml(p.name)}</h3><div class="desc">${escapeHtml(p.description||'')}</div><div class="tags">${(p.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}</div><div class="price">${escapeHtml(p.price)} <span class="period">${escapeHtml(p.period||'')}</span></div><a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(p.waText||`Halo Yanstore, saya mau order ${p.name}`)}">Beli Sekarang</a></article>`).join('')
+ const q=document.getElementById('search').value.toLowerCase().trim(),cat=document.getElementById('category').value;
+ const list=products.filter(p=>(cat==='all'||p.category===cat)&&(`${p.name} ${p.description}`.toLowerCase().includes(q)));
+ document.getElementById('productGrid').innerHTML=list.map(p=>`<article class="card"><img class="logo" src="assets/${esc(p.logo)}.svg"><h3>${esc(p.name)}</h3><div class="desc">${esc(p.description)}</div><div class="price">${esc(p.price)}</div><div class="period">${esc(p.period)}</div><a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(p.waText||`Halo Yanstore, saya mau order ${p.name}`)}">PESAN</a></article>`).join('') || '<div class="muted">Produk tidak ditemukan.</div>';
 }
-function renderAdmin(){const wrap=document.getElementById('adminList');if(!products.length){wrap.innerHTML='<div class="empty">Belum ada produk.</div>';return}wrap.innerHTML=products.map(p=>`<div class="adminitem"><div><strong>${escapeHtml(p.name)}</strong><br><small>${escapeHtml(p.category)}</small></div><div>${escapeHtml(p.price)}</div><div>${escapeHtml(p.period||'-')}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" onclick="editProduct('${p.id}')">Edit</button><button class="btn danger" onclick="deleteProduct('${p.id}')">Hapus</button></div></div>`).join('')}
-function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;document.getElementById('editId').value=p.id;document.getElementById('name').value=p.name;document.getElementById('price').value=p.price;document.getElementById('period').value=p.period||'';document.getElementById('cat').value=p.category||'other';document.getElementById('badge').value=p.badge||'';document.getElementById('icon').value=p.icon||'';document.getElementById('description').value=p.description||'';document.getElementById('tags').value=(p.tags||[]).join(', ');document.getElementById('waText').value=p.waText||'';document.getElementById('saveBtn').textContent='Update Produk';document.getElementById('productForm').scrollIntoView({behavior:'smooth',block:'start'})}
-function clearForm(){document.getElementById('productForm').reset();document.getElementById('editId').value='';document.getElementById('saveBtn').textContent='Simpan Produk'}
+function renderAdmin(){
+ document.getElementById('adminList').innerHTML=products.map(p=>`<div class="adminitem"><div><b>${esc(p.name)}</b><br><small class="muted">${esc(p.category)}</small></div><div>${esc(p.price)}</div><div>${esc(p.period)}</div><div><button class="btn ghost" onclick="editProduct('${p.id}')">Edit</button> <button class="btn danger" onclick="deleteProduct('${p.id}')">Hapus</button></div></div>`).join('');
+}
+function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;editId.value=p.id;name.value=p.name;price.value=p.price;period.value=p.period;cat.value=p.category;logo.value=p.logo;description.value=p.description;waText.value=p.waText;saveBtn.textContent='Update Produk'}
 function deleteProduct(id){if(confirm('Hapus produk ini?')){products=products.filter(p=>p.id!==id);saveProducts()}}
-document.getElementById('productForm').addEventListener('submit',e=>{e.preventDefault();const id=document.getElementById('editId').value;const item={id:id||('p'+Date.now()),name:document.getElementById('name').value.trim(),price:document.getElementById('price').value.trim(),period:document.getElementById('period').value.trim(),category:document.getElementById('cat').value,badge:document.getElementById('badge').value.trim(),icon:document.getElementById('icon').value.trim().toUpperCase(),description:document.getElementById('description').value.trim(),tags:document.getElementById('tags').value.split(',').map(x=>x.trim()).filter(Boolean),waText:document.getElementById('waText').value.trim()};if(id){products=products.map(p=>p.id===id?item:p)}else{products.push(item)}saveProducts();clearForm()});
-document.getElementById('resetProducts').onclick=()=>{if(confirm('Kembalikan semua produk ke daftar awal?')){products=structuredClone(defaultProducts);saveProducts();clearForm()}};
-document.getElementById('cancelEdit').onclick=clearForm;document.getElementById('search').addEventListener('input',renderProducts);document.getElementById('category').addEventListener('change',renderProducts);
-const ADMIN_PASSWORD='yanstore123';
-const modal=document.getElementById('adminModal');
-const loginModal=document.getElementById('loginModal');
-function openAdminLogin(){document.getElementById('adminPassword').value='';document.getElementById('loginError').style.display='none';loginModal.classList.add('show');setTimeout(()=>document.getElementById('adminPassword').focus(),50)}
-document.getElementById('footerAdmin').onclick=openAdminLogin;
-document.getElementById('closeLogin').onclick=()=>loginModal.classList.remove('show');
-loginModal.addEventListener('click',e=>{if(e.target===loginModal)loginModal.classList.remove('show')});
-document.getElementById('loginForm').addEventListener('submit',e=>{e.preventDefault();if(document.getElementById('adminPassword').value===ADMIN_PASSWORD){loginModal.classList.remove('show');modal.classList.add('show')}else{document.getElementById('loginError').style.display='block'}});
-document.getElementById('closeModal').onclick=()=>modal.classList.remove('show');modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
+productForm.addEventListener('submit',e=>{e.preventDefault();const id=editId.value;const item={id:id||('p'+Date.now()),name:name.value.trim(),price:price.value.trim(),period:period.value.trim(),category:cat.value,logo:logo.value,description:description.value.trim(),waText:waText.value.trim()};products=id?products.map(p=>p.id===id?item:p):[...products,item];saveProducts();productForm.reset();editId.value='';saveBtn.textContent='Simpan Produk'});
+cancelEdit.onclick=()=>{productForm.reset();editId.value='';saveBtn.textContent='Simpan Produk'};
+resetProducts.onclick=()=>{if(confirm('Reset produk ke daftar awal?')){products=structuredClone(defaultProducts);saveProducts()}};
+search.addEventListener('input',renderProducts);category.addEventListener('change',renderProducts);
+const ADMIN_PASSWORD='yanstore123',loginModal=document.getElementById('loginModal'),adminModal=document.getElementById('adminModal');
+footerAdmin.onclick=()=>loginModal.classList.add('show');closeLogin.onclick=()=>loginModal.classList.remove('show');closeModal.onclick=()=>adminModal.classList.remove('show');
+loginForm.addEventListener('submit',e=>{e.preventDefault();if(adminPassword.value===ADMIN_PASSWORD){loginModal.classList.remove('show');adminModal.classList.add('show');loginError.style.display='none'}else loginError.style.display='block'});
 renderProducts();renderAdmin();
 </script>
-</body></html>
+</body>
+</html>
