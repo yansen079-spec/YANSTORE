@@ -1830,5 +1830,82 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v691VariantLabelStyle">
+/* V6.9.1 — pisahkan nama produk dan nama varian pada kartu paket */
+.v691-product-label{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  max-width:100%;
+  margin:8px 0 2px;
+  padding:5px 9px;
+  border-radius:999px;
+  border:1px solid #39415f;
+  background:#171d2d;
+  color:#aeb9d3;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+}
+.v64-variant-card .v691-variant-name{
+  margin:7px 0 8px;
+  font-size:20px;
+  line-height:1.25;
+  font-weight:900;
+}
+</style>
+
+<script id="v691VariantLabelFix">
+(function(){
+  /*
+    Nama produk dan nama varian sengaja dipisah.
+    Contoh:
+      label produk : NETFLIX
+      nama varian  : 1P1U Sharing
+    Jadi admin tidak perlu menulis "Netflix 1P1U Sharing" sebagai satu nama.
+  */
+  window.v64OpenVariants=function(productId){
+    const p=products.find(x=>Number(x.id)===Number(productId));
+    const rows=v64VariantsFor(productId);
+    if(!p||!rows.length)return;
+
+    const modalTitle=document.getElementById('v64ModalTitle');
+    const modalSubtitle=document.getElementById('v64ModalSubtitle');
+    const grid=document.getElementById('v64VariantGrid');
+
+    if(modalTitle) modalTitle.textContent=(p.name||'Produk')+' — Pilih Paket';
+    if(modalSubtitle) modalSubtitle.textContent='Nama aplikasi dan nama paket ditampilkan terpisah supaya lebih jelas.';
+
+    if(grid){
+      grid.innerHTML=rows.map(v=>{
+        const status=(v.stock_status||'READY').toUpperCase();
+        const cls=status.toLowerCase();
+        const wa=v.wa_text||`Halo Yanstore, saya mau order ${p.name} - ${v.name}`;
+
+        return `<div class="v64-variant-card">
+          <span class="v64-stock ${cls}">${esc(status)}</span>
+          <div class="v691-product-label">${esc(p.name||'Produk')}</div>
+          <div class="v691-variant-name">${esc(v.name||'Paket')}</div>
+          <div class="v64-desc">${esc(v.description||'')}</div>
+          <div class="v64-price">${esc(v.price||'Tanya Admin')}</div>
+          <div class="v64-period">${esc(v.period||'')}</div>
+          ${status==='HABIS'
+            ? '<span class="btn buy disabled">STOK HABIS</span>'
+            : `<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(wa)}">PESAN PAKET</a>`}
+        </div>`;
+      }).join('');
+    }
+
+    const modal=document.getElementById('v64VariantModal');
+    if(modal){
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden','false');
+    }
+  };
+})();
+</script>
+
 </body>
 </html>
