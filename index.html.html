@@ -1,8 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="id">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Yanstore — Premium Apps</title>
 <style>
 *{box-sizing:border-box}
@@ -35,7 +36,7 @@ h1{font-size:clamp(44px,7vw,78px);line-height:.95;letter-spacing:-3px;margin:20p
 .sectionTitle{display:flex;justify-content:space-between;align-items:center;margin:24px 0 14px} .sectionTitle h2{font-size:18px;margin:0}
 .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:15px}
 .card{background:linear-gradient(180deg,rgba(19,22,34,.94),rgba(10,12,20,.96));border:1px solid rgba(255,255,255,.15);border-radius:17px;padding:16px;display:flex;flex-direction:column;min-height:310px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.logo{width:68px;height:68px;border-radius:16px;object-fit:cover;margin-bottom:14px;background:#fff}
+.logo{width:68px;height:68px;border-radius:16px;object-fit:contain;margin-bottom:14px;background:rgba(255,255,255,.96);padding:10px}
 .card h3{font-size:18px;margin:0 0 7px} .desc{font-size:13px;color:var(--muted);line-height:1.5;min-height:38px}
 .price{font-size:24px;font-weight:950;margin-top:auto} .period{font-size:12px;color:#aeb4c5}
 .buy{margin-top:13px;width:100%}
@@ -62,100 +63,90 @@ footer{background:rgba(5,6,11,.93);border-top:1px solid rgba(255,255,255,.1);pad
 </head>
 <body>
 <nav class="nav">
-  <div class="wrap navin">
-    <div class="brand">YAN<b>STORE</b></div>
-    <div class="navlinks"><a href="#produk">Produk</a><a href="#cara-order">Cara Order</a><a href="#kategori">Kategori</a><a href="#bantuan">Bantuan</a></div>
-    <div class="navbtns"><a class="btn ghost" href="#produk">🛒 Katalog</a><a class="btn wa" href="https://wa.me/6285783984748" target="_blank">WhatsApp</a></div>
-  </div>
+<div class="wrap navin">
+<div class="brand">YAN<b>STORE</b></div>
+<div class="navlinks"><a href="#produk">Produk</a><a href="#cara-order">Cara Order</a><a href="#kategori">Kategori</a><a href="#bantuan">Bantuan</a></div>
+<div class="navbtns"><a class="btn ghost" href="#produk">🛒 Katalog</a><a class="btn wa" href="https://wa.me/6285783984748" target="_blank">WhatsApp</a></div>
+</div>
 </nav>
-
 <header class="hero">
-  <div class="wrap">
-    <div class="heroCard">
-      <div class="eyebrow">⚡ Premium apps • fast order • friendly price</div>
-      <h1>Premium Apps,<br>lebih <span>hemat.</span></h1>
-      <p class="lead">Pilih produk digital favorit kamu, cek harga, lalu pesan langsung melalui WhatsApp Yanstore.</p>
-      <div class="toolbar">
-        <input id="search" class="search" placeholder="Cari Netflix, CapCut, Spotify...">
-        <select id="category" class="search" style="flex:0 0 200px">
-          <option value="all">Semua kategori</option>
-          <option value="streaming">Streaming</option><option value="editing">Editing</option>
-          <option value="music">Music</option><option value="design">Design</option><option value="ai">AI Tools</option>
-        </select>
-      </div>
-      <div class="trust">
-        <div class="item"><b>⚡ FAST PROCESS</b><span class="muted">Proses cepat & otomatis</span></div>
-        <div class="item"><b>🛡 GARANSI AMAN</b><span class="muted">Garansi pembelian</span></div>
-        <div class="item"><b>🎧 CS 24/7</b><span class="muted">Siap membantu kapan saja</span></div>
-      </div>
-    </div>
-  </div>
+<div class="wrap">
+<div class="heroCard">
+<div class="eyebrow">⚡ Premium apps • fast order • friendly price</div>
+<h1>Premium Apps,<br/>lebih <span>hemat.</span></h1>
+<p class="lead">Pilih produk digital favorit kamu, cek harga, lalu pesan langsung melalui WhatsApp Yanstore.</p>
+<div class="toolbar">
+<input class="search" id="search" placeholder="Cari Netflix, CapCut, Spotify..."/>
+<select class="search" id="category" style="flex:0 0 200px">
+<option value="all">Semua kategori</option>
+<option value="streaming">Streaming</option><option value="editing">Editing</option>
+<option value="music">Music</option><option value="design">Design</option><option value="ai">AI Tools</option>
+</select>
+</div>
+<div class="trust">
+<div class="item"><b>⚡ FAST PROCESS</b><span class="muted">Proses cepat &amp; otomatis</span></div>
+<div class="item"><b>🛡 GARANSI AMAN</b><span class="muted">Garansi pembelian</span></div>
+<div class="item"><b>🎧 CS 24/7</b><span class="muted">Siap membantu kapan saja</span></div>
+</div>
+</div>
+</div>
 </header>
-
 <main class="wrap">
-  <div class="banner"><div><h2>LAYANAN <span>STREAMING ONLINE</span></h2><div class="muted">Daftar sekarang & nikmati konten terbaik!</div></div><div style="font-size:44px">🚀</div></div>
-
-  <section id="produk">
-    <div class="sectionTitle"><h2>🔥 BEST SELLER</h2></div>
-    <div id="productGrid" class="grid"></div>
-  </section>
-
-  <section id="kategori">
-    <div class="sectionTitle"><h2>🗂 KATEGORI POPULER</h2></div>
-    <div class="categories">
-      <div class="cat"><span class="catIcon">📺</span>Streaming</div>
-      <div class="cat"><span class="catIcon">✂️</span>Editing</div>
-      <div class="cat"><span class="catIcon">🎵</span>Musik</div>
-      <div class="cat"><span class="catIcon">🧠</span>AI Tools</div>
-      <div class="cat"><span class="catIcon">☁️</span>Cloud & Drive</div>
-      <div class="cat"><span class="catIcon">•••</span>Lainnya</div>
-    </div>
-  </section>
-
-  <section class="popular">
-    <div class="sectionTitle"><h2>🎬 PRODUK POPULER</h2></div>
-    <div class="grid">
-      <article class="card"><img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjRTUxQzI0Ii8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5WPC90ZXh0PgogICAgPC9zdmc+"><h3>Vidio Premium</h3><div class="desc">Streaming olahraga dan hiburan.</div><div class="price">Rp23RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20Vidio" target="_blank">PESAN</a></article>
-      <article class="card"><img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjMDBCRTA2Ii8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjU0IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5pUUk8L3RleHQ+CiAgICA8L3N2Zz4="><h3>iQIYI VIP</h3><div class="desc">Drama, anime dan series premium.</div><div class="price">Rp6RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20iQIYI" target="_blank">PESAN</a></article>
-      <article class="card"><img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjRkZCMDAwIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjU0IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5WSVU8L3RleHQ+CiAgICA8L3N2Zz4="><h3>VIU Premium</h3><div class="desc">Streaming drama favorit.</div><div class="price">Rp13RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20VIU" target="_blank">PESAN</a></article>
-      <article class="card"><img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjMDBDNENDIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5DPC90ZXh0PgogICAgPC9zdmc+"><h3>Canva Pro</h3><div class="desc">Desain premium via invite.</div><div class="price">Rp5RB</div><div class="period">1 Bulan</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20Canva" target="_blank">PESAN</a></article>
-      <article class="card"><img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjMTBBMzdGIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5BSTwvdGV4dD4KICAgIDwvc3ZnPg=="><h3>ChatGPT Plus</h3><div class="desc">AI tools untuk produktivitas.</div><div class="price">Tanya Admin</div><div class="period">Cek stok</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20tanya%20ChatGPT%20Plus" target="_blank">PESAN</a></article>
-    </div>
-  </section>
-
-  <section class="cta" id="bantuan">
-    <div><h3>Order cepat & aman via WhatsApp!</h3><div class="muted">Klik tombol untuk mulai chat dengan admin Yanstore.</div></div>
-    <a class="btn wa" href="https://wa.me/6285783984748" target="_blank">💬 PESAN SEKARANG</a>
-  </section>
+<div class="banner"><div><h2>LAYANAN <span>STREAMING ONLINE</span></h2><div class="muted">Daftar sekarang &amp; nikmati konten terbaik!</div></div><div style="font-size:44px">🚀</div></div>
+<section id="produk">
+<div class="sectionTitle"><h2>🔥 BEST SELLER</h2></div>
+<div class="grid" id="productGrid"></div>
+</section>
+<section id="kategori">
+<div class="sectionTitle"><h2>🗂 KATEGORI POPULER</h2></div>
+<div class="categories">
+<div class="cat"><span class="catIcon">📺</span>Streaming</div>
+<div class="cat"><span class="catIcon">✂️</span>Editing</div>
+<div class="cat"><span class="catIcon">🎵</span>Musik</div>
+<div class="cat"><span class="catIcon">🧠</span>AI Tools</div>
+<div class="cat"><span class="catIcon">☁️</span>Cloud &amp; Drive</div>
+<div class="cat"><span class="catIcon">•••</span>Lainnya</div>
+</div>
+</section>
+<section class="popular">
+<div class="sectionTitle"><h2>🎬 PRODUK POPULER</h2></div>
+<div class="grid">
+<article class="card"><img alt="Logo Vidio Premium" class="logo" src="https://cdn.simpleicons.org/vidio/FF0000"/><h3>Vidio Premium</h3><div class="desc">Streaming olahraga dan hiburan.</div><div class="price">Rp23RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20Vidio" target="_blank">PESAN</a></article>
+<article class="card"><img alt="Logo iQIYI VIP" class="logo" src="https://cdn.simpleicons.org/iqiyi/00BE06"/><h3>iQIYI VIP</h3><div class="desc">Drama, anime dan series premium.</div><div class="price">Rp6RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20iQIYI" target="_blank">PESAN</a></article>
+<article class="card"><img alt="Logo VIU Premium" class="logo" src="https://cdn.simpleicons.org/viu/FFB000"/><h3>VIU Premium</h3><div class="desc">Streaming drama favorit.</div><div class="price">Rp13RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20VIU" target="_blank">PESAN</a></article>
+<article class="card"><img alt="Logo Canva Pro" class="logo" src="https://cdn.simpleicons.org/canva/00C4CC"/><h3>Canva Pro</h3><div class="desc">Desain premium via invite.</div><div class="price">Rp5RB</div><div class="period">1 Bulan</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20Canva" target="_blank">PESAN</a></article>
+<article class="card"><img alt="Logo ChatGPT Plus" class="logo" src="https://cdn.simpleicons.org/openai/FFFFFF"/><h3>ChatGPT Plus</h3><div class="desc">AI tools untuk produktivitas.</div><div class="price">Tanya Admin</div><div class="period">Cek stok</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20tanya%20ChatGPT%20Plus" target="_blank">PESAN</a></article>
+</div>
+</section>
+<section class="cta" id="bantuan">
+<div><h3>Order cepat &amp; aman via WhatsApp!</h3><div class="muted">Klik tombol untuk mulai chat dengan admin Yanstore.</div></div>
+<a class="btn wa" href="https://wa.me/6285783984748" target="_blank">💬 PESAN SEKARANG</a>
+</section>
 </main>
-
 <footer id="cara-order">
-  <div class="wrap footgrid">
-    <div><div class="brand">YAN<b>STORE</b></div><p>Store digital untuk kebutuhan premium kamu.</p><p>© 2026 Yanstore.</p></div>
-    <div><h4>QUICK LINK</h4><p>Produk</p><p>Cara Order</p><p>Kategori</p></div>
-    <div><h4>KEUNGGULAN</h4><p>⚡ Harga hemat</p><p>⚡ Proses cepat</p><p>⚡ Support admin</p></div>
-    <div><h4>HUBUNGI KAMI</h4><p>WhatsApp 085783984748</p><p><button class="adminlink" id="footerAdmin">Admin</button></p></div>
-  </div>
+<div class="wrap footgrid">
+<div><div class="brand">YAN<b>STORE</b></div><p>Store digital untuk kebutuhan premium kamu.</p><p>© 2026 Yanstore.</p></div>
+<div><h4>QUICK LINK</h4><p>Produk</p><p>Cara Order</p><p>Kategori</p></div>
+<div><h4>KEUNGGULAN</h4><p>⚡ Harga hemat</p><p>⚡ Proses cepat</p><p>⚡ Support admin</p></div>
+<div><h4>HUBUNGI KAMI</h4><p>WhatsApp 085783984748</p><p><button class="adminlink" id="footerAdmin">Admin</button></p></div>
+</div>
 </footer>
-
-<div class="modal" id="loginModal"><div class="panel" style="width:min(460px,100%)"><div class="panelhead"><div><h2>Login Admin</h2><div class="muted">Masukkan password admin.</div></div><button class="close" id="closeLogin">✕</button></div><form id="loginForm" style="margin-top:18px"><div class="field"><label>Password</label><input id="adminPassword" type="password" required></div><div id="loginError" style="display:none;color:#ffb2ba;margin-top:10px">Password salah.</div><div class="adminactions"><button class="btn primary" type="submit">Masuk</button></div></form></div></div>
-
+<div class="modal" id="loginModal"><div class="panel" style="width:min(460px,100%)"><div class="panelhead"><div><h2>Login Admin</h2><div class="muted">Masukkan password admin.</div></div><button class="close" id="closeLogin">✕</button></div><form id="loginForm" style="margin-top:18px"><div class="field"><label>Password</label><input id="adminPassword" required="" type="password"/></div><div id="loginError" style="display:none;color:#ffb2ba;margin-top:10px">Password salah.</div><div class="adminactions"><button class="btn primary" type="submit">Masuk</button></div></form></div></div>
 <div class="modal" id="adminModal"><div class="panel"><div class="panelhead"><div><h2>Admin Produk Yanstore</h2><div class="muted">Edit produk utama tanpa mengubah kode.</div></div><button class="close" id="closeModal">✕</button></div>
-<form id="productForm"><input type="hidden" id="editId"><div class="formgrid">
-<div class="field"><label>Nama Produk</label><input id="name" required></div>
-<div class="field"><label>Harga</label><input id="price" required></div>
-<div class="field"><label>Periode</label><input id="period"></div>
+<form id="productForm"><input id="editId" type="hidden"/><div class="formgrid">
+<div class="field"><label>Nama Produk</label><input id="name" required=""/></div>
+<div class="field"><label>Harga</label><input id="price" required=""/></div>
+<div class="field"><label>Periode</label><input id="period"/></div>
 <div class="field"><label>Kategori</label><select id="cat"><option value="streaming">Streaming</option><option value="editing">Editing</option><option value="music">Music</option><option value="design">Design</option><option value="ai">AI Tools</option></select></div>
 <div class="field"><label>Logo</label><select id="logo"><option value="netflix">Netflix</option><option value="capcut">CapCut</option><option value="spotify">Spotify</option><option value="youtube">YouTube</option><option value="disney">Disney+</option><option value="canva">Canva</option><option value="chatgpt">ChatGPT</option></select></div>
 <div class="field full"><label>Deskripsi</label><textarea id="description"></textarea></div>
 <div class="field full"><label>Pesan WhatsApp</label><textarea id="waText"></textarea></div>
-</div><div class="adminactions"><button class="btn primary" type="submit" id="saveBtn">Simpan Produk</button><button class="btn ghost" type="button" id="cancelEdit">Batal</button><button class="btn danger" type="button" id="resetProducts">Reset Produk</button></div></form>
+</div><div class="adminactions"><button class="btn primary" id="saveBtn" type="submit">Simpan Produk</button><button class="btn ghost" id="cancelEdit" type="button">Batal</button><button class="btn danger" id="resetProducts" type="button">Reset Produk</button></div></form>
 <div style="margin-top:24px"><h3>Daftar Produk</h3><div id="adminList"></div></div>
 </div></div>
-
 <script>
 const PHONE='6285783984748';
-const LOGO_DATA={"capcut": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjRkZGRkZGIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjMTExMTExIj5DQzwvdGV4dD4KICAgIDwvc3ZnPg==", "disney": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjMTEzQ0NGIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5EKzwvdGV4dD4KICAgIDwvc3ZnPg==", "iqiyi": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjMDBCRTA2Ii8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjU0IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5pUUk8L3RleHQ+CiAgICA8L3N2Zz4=", "vidio": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjRTUxQzI0Ii8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5WPC90ZXh0PgogICAgPC9zdmc+", "spotify": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjMURCOTU0Ii8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj7il488L3RleHQ+CiAgICA8L3N2Zz4=", "prime": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjMDBBOEUxIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5QPC90ZXh0PgogICAgPC9zdmc+", "viu": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjRkZCMDAwIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjU0IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5WSVU8L3RleHQ+CiAgICA8L3N2Zz4=", "youtube": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjRkYwMDAwIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj7ilrY8L3RleHQ+CiAgICA8L3N2Zz4=", "canva": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjMDBDNENDIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5DPC90ZXh0PgogICAgPC9zdmc+", "netflix": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjRTUwOTE0Ii8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5OPC90ZXh0PgogICAgPC9zdmc+", "chatgpt": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgcng9IjUyIiBmaWxsPSIjMTBBMzdGIi8+CiAgICA8dGV4dCB4PSIxMjgiIHk9IjE0OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiCiAgICAgICAgICBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIj5BSTwvdGV4dD4KICAgIDwvc3ZnPg=="};
+const LOGO_DATA={"netflix":"https://cdn.simpleicons.org/netflix/E50914","capcut":"https://cdn.simpleicons.org/capcut/FFFFFF","spotify":"https://cdn.simpleicons.org/spotify/1ED760","youtube":"https://cdn.simpleicons.org/youtube/FF0000","disney":"https://cdn.simpleicons.org/disneyplus/FFFFFF","vidio":"https://cdn.simpleicons.org/vidio/FF0000","iqiyi":"https://cdn.simpleicons.org/iqiyi/00BE06","viu":"https://cdn.simpleicons.org/viu/FFB000","canva":"https://cdn.simpleicons.org/canva/00C4CC","chatgpt":"https://cdn.simpleicons.org/openai/FFFFFF","prime":"https://cdn.simpleicons.org/primevideo/00A8E1"};
 
 const defaultProducts=[
 {id:'p1',name:'Netflix',price:'Rp15K',period:'1 Bulan',category:'streaming',logo:'netflix',description:'1P2U Sharing • No VPN',waText:'Halo Yanstore, saya mau order Netflix 1 bulan Rp15.000'},
