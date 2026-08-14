@@ -126,7 +126,7 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <main class="wrap">
 <div class="banner"><div><h2>LAYANAN <span>STREAMING ONLINE</span></h2><div class="muted">Daftar sekarang &amp; nikmati konten terbaik!</div></div><div style="font-size:44px">🚀</div></div>
 <section id="produk">
-<div class="sectionTitle"><h2>🔥 BEST SELLER</h2></div>
+<div class="sectionTitle"><h2>🛍️ SEMUA PRODUK</h2><div class="muted">Harga, paket, dan status stok terhubung langsung ke database Yanstore.</div></div>
 <div class="grid" id="productGrid"></div>
 </section>
 <section id="kategori">
@@ -138,16 +138,6 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <div class="cat"><span class="catIcon">🧠</span>AI Tools</div>
 <div class="cat"><span class="catIcon">☁️</span>Cloud &amp; Drive</div>
 <div class="cat"><span class="catIcon">•••</span>Lainnya</div>
-</div>
-</section>
-<section class="popular">
-<div class="sectionTitle"><h2>🎬 PRODUK POPULER</h2></div>
-<div class="grid">
-<article class="card"><img alt="Logo Vidio Premium" class="logo" onerror="this.style.display='none';this.nextElementSibling?.classList.add('logo-fallback-show')" referrerpolicy="no-referrer" src="https://www.vidio.com/favicon.ico"/><div class="logo-fallback">VID</div><h3>Vidio Premium</h3><div class="desc">Streaming olahraga dan hiburan.</div><div class="price">Rp23RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20Vidio" target="_blank">PESAN</a></article>
-<article class="card"><img alt="Logo iQIYI VIP" class="logo" onerror="this.style.display='none';this.nextElementSibling?.classList.add('logo-fallback-show')" referrerpolicy="no-referrer" src="https://www.iq.com/favicon.ico"/><div class="logo-fallback">IQI</div><h3>iQIYI VIP</h3><div class="desc">Drama, anime dan series premium.</div><div class="price">Rp6RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20iQIYI" target="_blank">PESAN</a></article>
-<article class="card"><img alt="Logo VIU Premium" class="logo" onerror="this.style.display='none';this.nextElementSibling?.classList.add('logo-fallback-show')" referrerpolicy="no-referrer" src="https://www.viu.com/favicon.ico"/><div class="logo-fallback">VIU</div><h3>VIU Premium</h3><div class="desc">Streaming drama favorit.</div><div class="price">Rp13RB</div><div class="period">Mulai dari</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20VIU" target="_blank">PESAN</a></article>
-<article class="card"><img alt="Logo Canva Pro" class="logo" onerror="this.style.display='none';this.nextElementSibling?.classList.add('logo-fallback-show')" referrerpolicy="no-referrer" src="https://www.canva.com/favicon.ico"/><div class="logo-fallback">CAN</div><h3>Canva Pro</h3><div class="desc">Desain premium via invite.</div><div class="price">Rp5RB</div><div class="period">1 Bulan</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20order%20Canva" target="_blank">PESAN</a></article>
-<article class="card"><img alt="Logo ChatGPT Plus" class="logo" onerror="this.style.display='none';this.nextElementSibling?.classList.add('logo-fallback-show')" referrerpolicy="no-referrer" src="https://openai.com/favicon.ico"/><div class="logo-fallback">CHA</div><h3>ChatGPT Plus</h3><div class="desc">AI tools untuk produktivitas.</div><div class="price">Tanya Admin</div><div class="period">Cek stok</div><a class="btn primary buy" href="https://wa.me/6285783984748?text=Halo%20Yanstore,%20saya%20mau%20tanya%20ChatGPT%20Plus" target="_blank">PESAN</a></article>
 </div>
 </section>
 <section class="cta" id="bantuan">
@@ -629,67 +619,6 @@ v6Login = async function(){
 })();
 </script>
 
-<style id="v63-stock-all-style">
-  .v63-stock-badge{
-    display:inline-flex;align-items:center;gap:5px;
-    padding:5px 9px;border-radius:999px;
-    font-size:11px;font-weight:800;margin:10px 0 8px;
-    width:max-content
-  }
-  .v63-ready{background:rgba(38,208,124,.15);border:1px solid rgba(38,208,124,.45);color:#67eda6}
-  .v63-restock{background:rgba(255,185,59,.14);border:1px solid rgba(255,185,59,.45);color:#ffd27c}
-  .v63-habis{background:rgba(255,75,75,.14);border:1px solid rgba(255,75,75,.45);color:#ff9292}
-</style>
-<script id="v63-stock-all-script">
-function v63NormalizeStatus(txt){
-  txt=(txt||'').toUpperCase();
-  if(txt.includes('HABIS')) return 'HABIS';
-  if(txt.includes('RESTOCK')) return 'RESTOCK';
-  return 'READY';
-}
-function v63DecorateStaticCards(){
-  const selectors=[
-    '.product-card','.card','.popular-card','.category-card',
-    '[class*="product"][class*="card"]'
-  ];
-  const cards=[...new Set(selectors.flatMap(s=>[...document.querySelectorAll(s)]))];
-  cards.forEach(card=>{
-    // Skip cards that are clearly category/navigation tiles or already have a status badge.
-    if(card.closest('#v6Admin')) return;
-    if(card.querySelector('.stock-badge,.v63-stock-badge,[class*="stock"]')) return;
-
-    const text=(card.innerText||'').trim();
-    if(!text) return;
-
-    const looksLikeProduct =
-      /Rp\s?\d|Tanya Admin|1 Bulan|Premium|Sharing|Private|Indplan|No Renew|No VPN/i.test(text);
-
-    if(!looksLikeProduct) return;
-
-    const status=v63NormalizeStatus(text);
-    const cls=status==='HABIS'?'v63-habis':(status==='RESTOCK'?'v63-restock':'v63-ready');
-    const badge=document.createElement('div');
-    badge.className='v63-stock-badge '+cls;
-    badge.textContent=status;
-
-    const priceNode=[...card.querySelectorAll('*')].find(el =>
-      /Rp\s?\d|Tanya Admin/i.test((el.textContent||'').trim())
-    );
-    if(priceNode && priceNode.parentNode){
-      priceNode.parentNode.insertBefore(badge, priceNode);
-    }else{
-      const btn=card.querySelector('button,a');
-      if(btn) card.insertBefore(badge,btn);
-      else card.appendChild(badge);
-    }
-  });
-}
-document.addEventListener('DOMContentLoaded',()=>{
-  setTimeout(v63DecorateStaticCards,500);
-  setTimeout(v63DecorateStaticCards,1500);
-});
-</script>
-
 <style id="v64Style">
 .v64-variant-btn{width:100%;margin-top:12px;display:flex;justify-content:center;align-items:center;gap:8px}
 .v64-pack-count{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;border:1px solid rgba(168,85,247,.35);border-radius:999px;background:rgba(168,85,247,.10);font-size:12px;font-weight:800;color:#d8b4fe}
@@ -1042,6 +971,106 @@ setTimeout(v64LoadVariants,700);
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',parseRecovery);
   else parseRecovery();
+})();
+</script>
+
+
+<style id="v66FullDbStyle">
+  /* Legacy local-only admin is retired. The real Admin Online remains active. */
+  #loginModal,#adminModal{display:none!important}
+  #footerAdmin{display:none!important}
+
+  .v66-db-note{
+    margin:14px 0 18px;
+    display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+    padding:10px 12px;border:1px solid rgba(34,197,94,.28);
+    background:rgba(34,197,94,.08);border-radius:12px;
+    color:#b8f7ce;font-size:12px;font-weight:700
+  }
+  .v66-db-dot{
+    width:9px;height:9px;border-radius:50%;
+    background:#22c55e;box-shadow:0 0 14px rgba(34,197,94,.85)
+  }
+  .categories .cat{cursor:pointer;transition:.18s ease}
+  .categories .cat:hover{transform:translateY(-2px);border-color:#6d5dfc}
+  .categories .cat.v66-active{
+    outline:2px solid rgba(124,92,255,.65);
+    background:linear-gradient(180deg,rgba(124,92,255,.18),rgba(20,24,38,.9))
+  }
+
+  /* Make database cards more consistent on phone and desktop. */
+  #productGrid .card{
+    display:flex;flex-direction:column;
+    min-height:100%;
+  }
+  #productGrid .card .buy{margin-top:auto}
+  #productGrid .card .desc{min-height:42px}
+  @media(max-width:640px){
+    #productGrid{grid-template-columns:1fr!important}
+    #productGrid .card{padding:16px}
+    .sectionTitle{align-items:flex-start;gap:6px}
+  }
+</style>
+
+<script id="v66FullDbScript">
+(function(){
+  function v66AddDatabaseNote(){
+    const grid=document.getElementById('productGrid');
+    if(!grid || document.getElementById('v66DbNote')) return;
+    const note=document.createElement('div');
+    note.id='v66DbNote';
+    note.className='v66-db-note';
+    note.innerHTML='<span class="v66-db-dot"></span><span>LIVE DATABASE • Semua produk dan stok di bawah ini dibaca langsung dari Supabase.</span>';
+    grid.parentNode.insertBefore(note,grid);
+  }
+
+  function v66MapCategory(label){
+    const t=(label||'').toLowerCase();
+    if(t.includes('stream')) return 'streaming';
+    if(t.includes('edit')) return 'editing';
+    if(t.includes('musik') || t.includes('music')) return 'music';
+    if(t.includes('ai')) return 'ai';
+    if(t.includes('cloud')) return 'other';
+    if(t.includes('lain')) return 'all';
+    return 'all';
+  }
+
+  function v66BindCategoryTiles(){
+    const select=document.getElementById('category');
+    const tiles=[...document.querySelectorAll('#kategori .cat')];
+    if(!select || !tiles.length) return;
+
+    tiles.forEach(tile=>{
+      if(tile.dataset.v66Bound) return;
+      tile.dataset.v66Bound='1';
+      tile.addEventListener('click',()=>{
+        const value=v66MapCategory(tile.textContent);
+        const has=[...select.options].some(o=>o.value===value);
+        select.value=has?value:'all';
+        select.dispatchEvent(new Event('change',{bubbles:true}));
+        tiles.forEach(x=>x.classList.remove('v66-active'));
+        tile.classList.add('v66-active');
+        document.getElementById('produk')?.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    });
+
+    select.addEventListener('change',()=>{
+      tiles.forEach(tile=>{
+        const val=v66MapCategory(tile.textContent);
+        tile.classList.toggle('v66-active',val===select.value);
+      });
+    });
+  }
+
+  // Ensure public products are never decorated by old cosmetic stock logic.
+  window.v63DecorateStaticCards=function(){};
+
+  function boot(){
+    v66AddDatabaseNote();
+    v66BindCategoryTiles();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
+  else boot();
 })();
 </script>
 
