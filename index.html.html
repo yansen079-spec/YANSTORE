@@ -628,5 +628,66 @@ v6Login = async function(){
   else v6Logout();
 })();
 </script>
+
+<style id="v63-stock-all-style">
+  .v63-stock-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:5px 9px;border-radius:999px;
+    font-size:11px;font-weight:800;margin:10px 0 8px;
+    width:max-content
+  }
+  .v63-ready{background:rgba(38,208,124,.15);border:1px solid rgba(38,208,124,.45);color:#67eda6}
+  .v63-restock{background:rgba(255,185,59,.14);border:1px solid rgba(255,185,59,.45);color:#ffd27c}
+  .v63-habis{background:rgba(255,75,75,.14);border:1px solid rgba(255,75,75,.45);color:#ff9292}
+</style>
+<script id="v63-stock-all-script">
+function v63NormalizeStatus(txt){
+  txt=(txt||'').toUpperCase();
+  if(txt.includes('HABIS')) return 'HABIS';
+  if(txt.includes('RESTOCK')) return 'RESTOCK';
+  return 'READY';
+}
+function v63DecorateStaticCards(){
+  const selectors=[
+    '.product-card','.card','.popular-card','.category-card',
+    '[class*="product"][class*="card"]'
+  ];
+  const cards=[...new Set(selectors.flatMap(s=>[...document.querySelectorAll(s)]))];
+  cards.forEach(card=>{
+    // Skip cards that are clearly category/navigation tiles or already have a status badge.
+    if(card.closest('#v6Admin')) return;
+    if(card.querySelector('.stock-badge,.v63-stock-badge,[class*="stock"]')) return;
+
+    const text=(card.innerText||'').trim();
+    if(!text) return;
+
+    const looksLikeProduct =
+      /Rp\s?\d|Tanya Admin|1 Bulan|Premium|Sharing|Private|Indplan|No Renew|No VPN/i.test(text);
+
+    if(!looksLikeProduct) return;
+
+    const status=v63NormalizeStatus(text);
+    const cls=status==='HABIS'?'v63-habis':(status==='RESTOCK'?'v63-restock':'v63-ready');
+    const badge=document.createElement('div');
+    badge.className='v63-stock-badge '+cls;
+    badge.textContent=status;
+
+    const priceNode=[...card.querySelectorAll('*')].find(el =>
+      /Rp\s?\d|Tanya Admin/i.test((el.textContent||'').trim())
+    );
+    if(priceNode && priceNode.parentNode){
+      priceNode.parentNode.insertBefore(badge, priceNode);
+    }else{
+      const btn=card.querySelector('button,a');
+      if(btn) card.insertBefore(badge,btn);
+      else card.appendChild(badge);
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(v63DecorateStaticCards,500);
+  setTimeout(v63DecorateStaticCards,1500);
+});
+</script>
 </body>
 </html>
