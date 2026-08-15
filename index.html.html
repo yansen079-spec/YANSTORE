@@ -2338,5 +2338,191 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v696CaraOrderStyle">
+#cara-order{
+  scroll-margin-top:90px;
+  padding:34px 0 18px;
+}
+.v696-wrap{
+  width:min(1180px,calc(100% - 32px));
+  margin:0 auto;
+}
+.v696-head{
+  display:flex;justify-content:space-between;align-items:end;gap:16px;
+  margin-bottom:16px;
+}
+.v696-head h2{margin:0;font-size:30px}
+.v696-head p{margin:6px 0 0;color:#aab4c8;font-size:13px;line-height:1.6}
+.v696-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:12px;
+}
+.v696-step{
+  position:relative;
+  min-height:190px;
+  border:1px solid #343c58;
+  border-radius:20px;
+  padding:18px;
+  background:linear-gradient(180deg,rgba(17,22,36,.96),rgba(8,12,22,.96));
+  overflow:hidden;
+}
+.v696-step:before{
+  content:"";
+  position:absolute;
+  width:120px;height:120px;
+  border-radius:50%;
+  right:-40px;top:-40px;
+  background:rgba(132,76,255,.13);
+  filter:blur(3px);
+}
+.v696-num{
+  width:38px;height:38px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#6a4cf0,#a75cff);
+  font-size:15px;font-weight:950;
+  margin-bottom:14px;
+}
+.v696-step h3{margin:0 0 8px;font-size:17px}
+.v696-step p{margin:0;color:#aab4c8;font-size:12px;line-height:1.6}
+.v696-icon{font-size:22px;margin-bottom:9px}
+.v696-cta{
+  margin-top:16px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 18px;
+  border:1px solid #3f3568;
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(80,52,160,.28),rgba(15,20,34,.92));
+}
+.v696-cta div:first-child{font-weight:900}
+.v696-cta small{display:block;color:#aab4c8;margin-top:4px}
+.v696-wa{
+  text-decoration:none;color:#fff;font-weight:900;
+  background:#20c96b;border-radius:12px;padding:11px 15px;
+  white-space:nowrap;
+}
+@media(max-width:1000px){
+  .v696-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  #cara-order{padding-top:24px}
+  .v696-head{align-items:flex-start}
+  .v696-head h2{font-size:24px}
+  .v696-grid{grid-template-columns:1fr}
+  .v696-step{min-height:0}
+  .v696-cta{flex-direction:column;align-items:stretch}
+  .v696-wa{text-align:center}
+}
+</style>
+
+<script id="v696CaraOrderScript">
+(function(){
+  function v696EnsureSection(){
+    if(document.getElementById('cara-order')) return;
+
+    const anchorTarget =
+      document.getElementById('v69PromoSection') ||
+      document.getElementById('productGrid')?.closest('section') ||
+      document.querySelector('main') ||
+      document.body;
+
+    const section=document.createElement('section');
+    section.id='cara-order';
+    section.innerHTML=`
+      <div class="v696-wrap">
+        <div class="v696-head">
+          <div>
+            <h2>🛒 CARA ORDER</h2>
+            <p>Order di Yanstore gampang dan cepat. Ikuti langkah di bawah ini sampai pesananmu diproses.</p>
+          </div>
+        </div>
+
+        <div class="v696-grid">
+          <article class="v696-step">
+            <div class="v696-num">1</div>
+            <div class="v696-icon">🔍</div>
+            <h3>Pilih Produk</h3>
+            <p>Cari aplikasi yang kamu inginkan lewat katalog atau kolom pencarian.</p>
+          </article>
+
+          <article class="v696-step">
+            <div class="v696-num">2</div>
+            <div class="v696-icon">📦</div>
+            <h3>Pilih Paket</h3>
+            <p>Kalau produk memiliki beberapa paket, pilih paket yang paling sesuai kebutuhanmu.</p>
+          </article>
+
+          <article class="v696-step">
+            <div class="v696-num">3</div>
+            <div class="v696-icon">💬</div>
+            <h3>Klik Pesan</h3>
+            <p>Tekan tombol PESAN. Kamu akan langsung diarahkan ke WhatsApp Yanstore.</p>
+          </article>
+
+          <article class="v696-step">
+            <div class="v696-num">4</div>
+            <div class="v696-icon">💳</div>
+            <h3>Lakukan Pembayaran</h3>
+            <p>Ikuti instruksi pembayaran dari admin sesuai metode yang tersedia.</p>
+          </article>
+
+          <article class="v696-step">
+            <div class="v696-num">5</div>
+            <div class="v696-icon">✅</div>
+            <h3>Pesanan Diproses</h3>
+            <p>Setelah pembayaran dikonfirmasi, pesanan akan segera diproses dan dikirim.</p>
+          </article>
+        </div>
+
+        <div class="v696-cta">
+          <div>
+            Masih bingung?
+            <small>Langsung chat admin Yanstore, nanti dibantu pilih produk dan paketnya.</small>
+          </div>
+          <a class="v696-wa" target="_blank" rel="noopener"
+             href="https://wa.me/${PHONE}?text=${encodeURIComponent('Halo Yanstore, saya mau tanya cara order.')}">
+             Chat WhatsApp
+          </a>
+        </div>
+      </div>`;
+
+    if(anchorTarget.parentNode){
+      anchorTarget.parentNode.insertBefore(section, anchorTarget);
+    }else{
+      document.body.appendChild(section);
+    }
+  }
+
+  function v696BindNav(){
+    const links=[...document.querySelectorAll('a,button')];
+    links.forEach(el=>{
+      const text=(el.textContent||'').trim().toLowerCase();
+      if(text==='cara order' && !el.dataset.v696){
+        el.dataset.v696='1';
+        if(el.tagName==='A') el.setAttribute('href','#cara-order');
+        el.addEventListener('click',function(e){
+          e.preventDefault();
+          v696EnsureSection();
+          document.getElementById('cara-order')?.scrollIntoView({behavior:'smooth',block:'start'});
+        });
+      }
+    });
+  }
+
+  function boot(){
+    v696EnsureSection();
+    v696BindNav();
+    new MutationObserver(v696BindNav).observe(document.body,{childList:true,subtree:true});
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot);
+  }else{
+    boot();
+  }
+})();
+</script>
+
 </body>
 </html>
