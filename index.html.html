@@ -2763,5 +2763,149 @@ a[href="#cara-order"]:hover::after,
 })();
 </script>
 
+
+<style id="v6910CaraOrderIdFixStyle">
+#yanstore-cara-order{
+  scroll-margin-top:96px;
+  padding:34px 0 28px;
+  display:block;
+}
+a[href="#yanstore-cara-order"]{
+  position:relative;
+}
+</style>
+
+<script id="v6910CaraOrderIdConflictFix">
+(function(){
+  /*
+    ROOT CAUSE FIX:
+    Footer lama ternyata sudah memakai id="cara-order".
+    Akibatnya semua script sebelumnya mengira footer = section tutorial,
+    sehingga klik Cara Order selalu lompat ke bawah.
+  */
+
+  function buildRealCaraOrder(){
+    const oldFooter=document.querySelector('footer#cara-order');
+    if(oldFooter){
+      oldFooter.id='yanstore-footer';
+    }
+
+    let section=document.getElementById('yanstore-cara-order');
+    if(section) return section;
+
+    section=document.createElement('section');
+    section.id='yanstore-cara-order';
+    section.innerHTML=`
+      <div class="v696-wrap">
+        <div class="v696-head">
+          <div>
+            <h2>🛒 CARA ORDER DI YANSTORE</h2>
+            <p>Ikuti 5 langkah mudah berikut untuk melakukan pemesanan dengan cepat dan aman.</p>
+          </div>
+        </div>
+
+        <div class="v696-grid">
+          <article class="v696-step">
+            <div class="v696-num">1</div>
+            <div class="v696-icon">🔍</div>
+            <h3>Pilih Produk</h3>
+            <p>Cari dan pilih produk atau aplikasi yang kamu inginkan di katalog Yanstore.</p>
+          </article>
+
+          <article class="v696-step">
+            <div class="v696-num">2</div>
+            <div class="v696-icon">📦</div>
+            <h3>Pilih Paket</h3>
+            <p>Pilih paket atau varian yang sesuai dengan kebutuhan dan durasi yang kamu mau.</p>
+          </article>
+
+          <article class="v696-step">
+            <div class="v696-num">3</div>
+            <div class="v696-icon">💬</div>
+            <h3>Klik Pesan</h3>
+            <p>Tekan tombol PESAN untuk langsung terhubung dengan admin Yanstore melalui WhatsApp.</p>
+          </article>
+
+          <article class="v696-step">
+            <div class="v696-num">4</div>
+            <div class="v696-icon">💳</div>
+            <h3>Lakukan Pembayaran</h3>
+            <p>Ikuti instruksi pembayaran dari admin lalu kirim bukti pembayaran.</p>
+          </article>
+
+          <article class="v696-step">
+            <div class="v696-num">5</div>
+            <div class="v696-icon">✅</div>
+            <h3>Pesanan Diproses</h3>
+            <p>Setelah pembayaran dikonfirmasi, pesanan akan segera diproses dan dikirim.</p>
+          </article>
+        </div>
+
+        <div class="v696-cta">
+          <div>
+            Masih bingung?
+            <small>Langsung chat admin Yanstore, nanti dibantu sampai selesai.</small>
+          </div>
+          <a class="v696-wa" target="_blank" rel="noopener"
+             href="https://wa.me/${PHONE}?text=${encodeURIComponent('Halo Yanstore, saya mau tanya cara order.')}">
+             Chat WhatsApp
+          </a>
+        </div>
+      </div>`;
+
+    const footer=document.querySelector('footer');
+    if(footer && footer.parentNode){
+      footer.parentNode.insertBefore(section,footer);
+    }else{
+      document.body.appendChild(section);
+    }
+
+    return section;
+  }
+
+  function bindFinalCaraOrder(){
+    document.querySelectorAll('a,button').forEach(el=>{
+      const text=(el.textContent||'').trim().toLowerCase();
+      if(text==='cara order'){
+        if(el.tagName==='A') el.setAttribute('href','#yanstore-cara-order');
+      }
+    });
+  }
+
+  // Override klik dalam capture phase agar handler lama tidak mengambil alih.
+  document.addEventListener('click',function(e){
+    const el=e.target.closest('a,button');
+    if(!el) return;
+    if((el.textContent||'').trim().toLowerCase()!=='cara order') return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    const section=buildRealCaraOrder();
+    try{ history.replaceState(null,'','#yanstore-cara-order'); }catch(_){}
+
+    requestAnimationFrame(()=>{
+      const y=section.getBoundingClientRect().top + window.scrollY - 82;
+      window.scrollTo({top:y,behavior:'smooth'});
+      section.classList.remove('v699-highlight');
+      void section.offsetWidth;
+      section.classList.add('v699-highlight');
+    });
+  },true);
+
+  function boot(){
+    buildRealCaraOrder();
+    bindFinalCaraOrder();
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot,{once:true});
+  }else{
+    boot();
+  }
+})();
+</script>
+
 </body>
 </html>
