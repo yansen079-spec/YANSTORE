@@ -2188,5 +2188,54 @@ img{max-width:100%}
 })();
 </script>
 
+
+<script id="v694AlphabeticalProductSort">
+(function(){
+  /*
+    V6.9.4 — Produk A-Z
+    Hanya mengatur URUTAN TAMPILAN di website.
+    Tidak mengubah nama, harga, kategori, logo, stok, varian, promo,
+    atau data sort_order di Supabase.
+  */
+  function v694SortAZ(){
+    if(!Array.isArray(window.products)) return;
+    window.products.sort((a,b)=>
+      String(a?.name||'').localeCompare(
+        String(b?.name||''),
+        'id',
+        {sensitivity:'base', numeric:true}
+      )
+    );
+  }
+
+  // Bungkus renderer final V6.9.3 agar sebelum katalog/pencarian/filter
+  // dirender, produk selalu diurutkan A-Z.
+  const previousRender = window.renderProducts;
+  if(typeof previousRender === 'function'){
+    window.renderProducts = function(){
+      v694SortAZ();
+      return previousRender.apply(this, arguments);
+    };
+  }
+
+  // Safety setelah data Supabase selesai dimuat.
+  function refreshAZ(){
+    try{
+      v694SortAZ();
+      if(typeof window.renderProducts === 'function') window.renderProducts();
+    }catch(_){}
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>setTimeout(refreshAZ,150));
+  }else{
+    setTimeout(refreshAZ,150);
+  }
+
+  setTimeout(refreshAZ,700);
+  setTimeout(refreshAZ,1600);
+})();
+</script>
+
 </body>
 </html>
