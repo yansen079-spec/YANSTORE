@@ -2046,5 +2046,147 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v693LogoFinalStyle">
+/* V6.9.3 — satu sumber logo untuk katalog, pencarian, dan filter */
+.logo-fallback.v693{
+  width:68px;height:68px;border-radius:16px;margin-bottom:14px;
+  align-items:center;justify-content:center;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  color:#fff;font-weight:950;font-size:15px;letter-spacing:.5px;
+}
+</style>
+
+<script id="v693LogoFinalFix">
+(function(){
+  function v693IsUrl(v){
+    return /^https?:\/\//i.test(String(v||'').trim());
+  }
+
+  function v693LogoSrc(p){
+    const raw=String(p?.logo||'').trim();
+
+    // PRIORITAS 1: URL upload sendiri dari Supabase Storage / URL manual.
+    if(v693IsUrl(raw)) return raw;
+
+    // PRIORITAS 2: key logo bawaan yang memang cocok dengan produk.
+    if(raw && typeof LOGO_DATA==='object' && LOGO_DATA[raw]) return LOGO_DATA[raw];
+
+    // Tidak pernah fallback ke Netflix / aplikasi lain.
+    return '';
+  }
+
+  function v693LogoHtml(p){
+    const src=v693LogoSrc(p);
+    const initials=esc((p?.name||'APP').slice(0,3).toUpperCase());
+
+    if(!src){
+      return `<div class="logo-fallback v693" style="display:flex">${initials}</div>`;
+    }
+
+    return `<img class="logo"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      src="${esc(src)}"
+      data-product-logo="${esc(String(p?.logo||''))}"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="logo-fallback v693">${initials}</div>`;
+  }
+
+  /*
+    FINAL renderer.
+    Search, kategori, dan katalog semuanya lewat fungsi yang sama,
+    sehingga logo produk tidak dapat berubah saat dicari/difilter.
+  */
+  window.renderProducts = function(){
+    const searchEl=document.getElementById('search');
+    const catEl=document.getElementById('category');
+    const grid=document.getElementById('productGrid');
+    if(!grid)return;
+
+    const q=(searchEl?.value||'').toLowerCase().trim();
+    const cat=catEl?.value||'all';
+
+    const list=products.filter(p =>
+      (cat==='all'||p.category===cat) &&
+      (`${p.name||''} ${p.description||''}`.toLowerCase().includes(q))
+    );
+
+    grid.innerHTML=list.map(p=>{
+      const vars=(typeof v64VariantsFor==='function') ? v64VariantsFor(p.id) : [];
+      const logoHtml=v693LogoHtml(p);
+
+      if(vars.length){
+        const status=(typeof v64StatusOfVariants==='function')
+          ? v64StatusOfVariants(vars)
+          : (p.stockStatus||'READY').toUpperCase();
+
+        const cls=status.toLowerCase();
+        const usable=vars.filter(v=>(v.stock_status||'READY').toUpperCase()!=='HABIS').length;
+
+        return `<article class="card">
+          ${logoHtml}
+          <h3>${esc(p.name)}</h3>
+          <div class="desc">${esc(vars.length+' pilihan paket tersedia')}</div>
+          <span class="stock ${cls}">${esc(status)}</span>
+          <div class="v64-pack-count">📦 ${vars.length} PAKET</div>
+          <div class="price">Mulai ${esc(p.price)}</div>
+          <div class="period">Pilih paket sesuai kebutuhan</div>
+          ${usable===0
+            ? '<span class="btn buy disabled">SEMUA PAKET HABIS</span>'
+            : `<button class="btn primary buy v64-variant-btn" type="button" onclick="v64OpenVariants(${Number(p.id)})">LIHAT ${vars.length} PAKET</button>`
+          }
+        </article>`;
+      }
+
+      const status=(p.stockStatus||'READY').toUpperCase();
+      return `<article class="card">
+        ${logoHtml}
+        <h3>${esc(p.name)}</h3>
+        <div class="desc">${esc(p.description||'')}</div>
+        <span class="stock ${status.toLowerCase()}">${esc(status)}</span>
+        <div class="price">${esc(p.price)}</div>
+        <div class="period">${esc(p.period||'')}</div>
+        ${status==='HABIS'
+          ? '<span class="btn buy disabled">STOK HABIS</span>'
+          : `<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(p.waText||`Halo Yanstore, saya mau order ${p.name}`)}">PESAN</a>`
+        }
+      </article>`;
+    }).join('') || '<div class="muted">Produk tidak ditemukan.</div>';
+  };
+
+  // Pastikan event pencarian/filter memakai FINAL renderer.
+  function bindFinalRenderer(){
+    const searchEl=document.getElementById('search');
+    const catEl=document.getElementById('category');
+
+    if(searchEl && !searchEl.dataset.v693){
+      searchEl.dataset.v693='1';
+      searchEl.addEventListener('input',()=>window.renderProducts());
+      searchEl.addEventListener('change',()=>window.renderProducts());
+    }
+
+    if(catEl && !catEl.dataset.v693){
+      catEl.dataset.v693='1';
+      catEl.addEventListener('change',()=>window.renderProducts());
+    }
+
+    // Render ulang dari data produk yang sudah ada.
+    try{ window.renderProducts(); }catch(_){}
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>setTimeout(bindFinalRenderer,100));
+  }else{
+    setTimeout(bindFinalRenderer,100);
+  }
+
+  // Setelah produk selesai di-load dari Supabase, renderer final tetap dipakai.
+  setTimeout(bindFinalRenderer,600);
+  setTimeout(bindFinalRenderer,1500);
+})();
+</script>
+
 </body>
 </html>
