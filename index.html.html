@@ -1907,5 +1907,144 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v692LogoFixStyle">
+#v692LogoLockNote{
+  margin-top:8px;padding:9px 11px;border:1px solid #315b48;border-radius:10px;
+  background:rgba(22,163,74,.08);color:#8ff0b3;font-size:12px;line-height:1.45
+}
+</style>
+
+<script id="v692LogoChoiceFix">
+(function(){
+  /*
+    V6.9.2
+    Fix utama:
+    #v6Logo adalah <select>. Versi sebelumnya mencoba memasukkan URL upload
+    langsung sebagai value select tanpa membuat <option>, sehingga browser
+    dapat mengosongkan value tersebut saat SIMPAN PRODUK.
+    Patch ini membuat pilihan CUSTOM UPLOAD untuk URL logo dan mempertahankannya.
+  */
+  function isUrl(v){ return /^https?:\/\//i.test((v||'').trim()); }
+
+  function logoSelect(){
+    return document.getElementById('v6Logo');
+  }
+
+  function setExactLogo(url){
+    url=(url||'').trim();
+    if(!url)return;
+    const s=logoSelect();
+    if(!s)return;
+
+    let opt=[...s.options].find(o=>o.value===url);
+    if(!opt){
+      opt=document.createElement('option');
+      opt.value=url;
+      opt.textContent='📷 Logo Upload Sendiri';
+      opt.dataset.v692='custom';
+      s.appendChild(opt);
+    }
+    s.value=url;
+
+    const preview=document.getElementById('v68LogoPreview');
+    if(preview) preview.src=url;
+    const input=document.getElementById('v68LogoUrl');
+    if(input) input.value=url;
+  }
+
+  function addNote(){
+    const manager=document.getElementById('v68LogoManager');
+    if(!manager || document.getElementById('v692LogoLockNote'))return;
+    const note=document.createElement('div');
+    note.id='v692LogoLockNote';
+    note.innerHTML='✅ <b>V6.9.2:</b> logo yang kamu upload sendiri akan disimpan sebagai pilihan khusus dan dipakai persis oleh produk ini.';
+    manager.appendChild(note);
+  }
+
+  // Upload file -> setelah Supabase mengembalikan URL, paksa URL itu menjadi
+  // option valid di select produk agar tidak hilang saat SIMPAN PRODUK.
+  const oldUpload=window.v68UploadLogo;
+  if(typeof oldUpload==='function'){
+    window.v68UploadLogo=async function(){
+      await oldUpload.apply(this,arguments);
+      const url=document.getElementById('v68LogoUrl')?.value?.trim();
+      if(isUrl(url)){
+        setExactLogo(url);
+        const msg=document.getElementById('v68LogoMsg');
+        if(msg)msg.textContent='✅ Logo berhasil diupload & dikunci sebagai pilihan produk. Sekarang klik SIMPAN PRODUK.';
+      }
+    };
+  }
+
+  // URL manual juga harus menjadi option valid.
+  const oldUseUrl=window.v68UseUrl;
+  if(typeof oldUseUrl==='function'){
+    window.v68UseUrl=function(){
+      const url=document.getElementById('v68LogoUrl')?.value?.trim();
+      if(!isUrl(url)){
+        if(typeof oldUseUrl==='function') oldUseUrl.apply(this,arguments);
+        return;
+      }
+      setExactLogo(url);
+      const msg=document.getElementById('v68LogoMsg');
+      if(msg)msg.textContent='✅ URL logo dikunci sebagai pilihan produk. Klik SIMPAN PRODUK.';
+    };
+  }
+
+  // Saat membuka EDIT produk yang sudah punya logo upload, buat option custom
+  // SEBELUM user menyimpan lagi. Ini mencegah logo lama berubah/kosong.
+  const oldEdit=window.v6Edit;
+  if(typeof oldEdit==='function'){
+    window.v6Edit=function(id){
+      oldEdit.apply(this,arguments);
+      setTimeout(()=>{
+        const rows=window.v62Rows||[];
+        const row=rows.find(x=>Number(x.id)===Number(id));
+        if(row && isUrl(row.logo)) setExactLogo(row.logo);
+        addNote();
+      },80);
+    };
+  }
+
+  // Safety net tepat sebelum save: jika preview/URL manager berisi logo upload,
+  // pastikan select tetap menunjuk URL yang sama.
+  const oldSave=window.v6Save;
+  if(typeof oldSave==='function'){
+    window.v6Save=async function(){
+      const url=document.getElementById('v68LogoUrl')?.value?.trim();
+      if(isUrl(url)) setExactLogo(url);
+      const result=await oldSave.apply(this,arguments);
+
+      // Refresh public catalog setelah database selesai tersimpan.
+      setTimeout(()=>{
+        try{
+          if(typeof loadProducts==='function') loadProducts();
+          else if(typeof renderProducts==='function') renderProducts();
+        }catch(_){}
+      },350);
+      return result;
+    };
+  }
+
+  // Kalau image gagal, jangan pernah ganti ke logo aplikasi lain.
+  // Fallback hanya inisial produk.
+  try{
+    window.v68LogoSrc=function(p){
+      if(isUrl(p?.logo)) return p.logo.trim();
+      return (window.LOGO_DATA && LOGO_DATA[p?.logo]) ? LOGO_DATA[p.logo] : '';
+    };
+  }catch(_){}
+
+  function boot(){
+    addNote();
+    const admin=document.getElementById('v6Admin');
+    if(admin)new MutationObserver(addNote).observe(admin,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);
+  else boot();
+})();
+</script>
+
 </body>
 </html>
