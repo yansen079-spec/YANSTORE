@@ -2237,5 +2237,106 @@ img{max-width:100%}
 })();
 </script>
 
+
+<script id="v695AlphabeticalSortFix">
+(function(){
+  /*
+    V6.9.5 — FIX urutan A-Z
+    Versi 6.9.4 mencoba mengurutkan window.products, sedangkan data produk
+    Yanstore tersimpan pada variabel `products`. Karena itu urutan lama masih tampil.
+    Fix ini mengurutkan HASIL LIST tepat sebelum kartu dibuat.
+  */
+  window.renderProducts = function(){
+    const searchEl=document.getElementById('search');
+    const catEl=document.getElementById('category');
+    const grid=document.getElementById('productGrid');
+    if(!grid)return;
+
+    const q=(searchEl?.value||'').toLowerCase().trim();
+    const cat=catEl?.value||'all';
+
+    const list=products
+      .filter(p =>
+        (cat==='all'||p.category===cat) &&
+        (`${p.name||''} ${p.description||''}`.toLowerCase().includes(q))
+      )
+      .slice()
+      .sort((a,b)=>
+        String(a?.name||'').localeCompare(
+          String(b?.name||''),
+          'id',
+          {sensitivity:'base', numeric:true}
+        )
+      );
+
+    grid.innerHTML=list.map(p=>{
+      const vars=(typeof v64VariantsFor==='function') ? v64VariantsFor(p.id) : [];
+
+      // Pakai sistem logo final V6.9.3 — jangan fallback ke Netflix.
+      const rawLogo=String(p?.logo||'').trim();
+      const isUrl=/^https?:\/\//i.test(rawLogo);
+      const logoSrc=isUrl
+        ? rawLogo
+        : ((typeof LOGO_DATA==='object' && rawLogo && LOGO_DATA[rawLogo]) ? LOGO_DATA[rawLogo] : '');
+      const initials=esc((p?.name||'APP').slice(0,3).toUpperCase());
+      const logoHtml=logoSrc
+        ? `<img class="logo" loading="lazy" referrerpolicy="no-referrer"
+             src="${esc(logoSrc)}"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+           <div class="logo-fallback v693">${initials}</div>`
+        : `<div class="logo-fallback v693" style="display:flex">${initials}</div>`;
+
+      if(vars.length){
+        const status=(typeof v64StatusOfVariants==='function')
+          ? v64StatusOfVariants(vars)
+          : (p.stockStatus||'READY').toUpperCase();
+        const cls=status.toLowerCase();
+        const usable=vars.filter(v=>(v.stock_status||'READY').toUpperCase()!=='HABIS').length;
+
+        return `<article class="card">
+          ${logoHtml}
+          <h3>${esc(p.name)}</h3>
+          <div class="desc">${esc(vars.length+' pilihan paket tersedia')}</div>
+          <span class="stock ${cls}">${esc(status)}</span>
+          <div class="v64-pack-count">📦 ${vars.length} PAKET</div>
+          <div class="price">Mulai ${esc(p.price)}</div>
+          <div class="period">Pilih paket sesuai kebutuhan</div>
+          ${usable===0
+            ? '<span class="btn buy disabled">SEMUA PAKET HABIS</span>'
+            : `<button class="btn primary buy v64-variant-btn" type="button" onclick="v64OpenVariants(${Number(p.id)})">LIHAT ${vars.length} PAKET</button>`
+          }
+        </article>`;
+      }
+
+      const status=(p.stockStatus||'READY').toUpperCase();
+      return `<article class="card">
+        ${logoHtml}
+        <h3>${esc(p.name)}</h3>
+        <div class="desc">${esc(p.description||'')}</div>
+        <span class="stock ${status.toLowerCase()}">${esc(status)}</span>
+        <div class="price">${esc(p.price)}</div>
+        <div class="period">${esc(p.period||'')}</div>
+        ${status==='HABIS'
+          ? '<span class="btn buy disabled">STOK HABIS</span>'
+          : `<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(p.waText||`Halo Yanstore, saya mau order ${p.name}`)}">PESAN</a>`
+        }
+      </article>`;
+    }).join('') || '<div class="muted">Produk tidak ditemukan.</div>';
+  };
+
+  function forceAZ(){
+    try{ window.renderProducts(); }catch(_){}
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>setTimeout(forceAZ,120));
+  }else{
+    setTimeout(forceAZ,120);
+  }
+  setTimeout(forceAZ,700);
+  setTimeout(forceAZ,1600);
+})();
+</script>
+
 </body>
 </html>
