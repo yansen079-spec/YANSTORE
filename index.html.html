@@ -2339,564 +2339,184 @@ img{max-width:100%}
 </script>
 
 
-<style id="v696CaraOrderStyle">
-#cara-order{
-  scroll-margin-top:90px;
-  padding:34px 0 18px;
+<style id="v6911CaraOrderCleanStyle">
+#yanstore-cara-order{
+  scroll-margin-top:92px;
+  padding:34px 0 30px;
 }
-.v696-wrap{
-  width:min(1180px,calc(100% - 32px));
+.v6911-wrap{
+  width:min(1180px,calc(100% - 28px));
   margin:0 auto;
 }
-.v696-head{
-  display:flex;justify-content:space-between;align-items:end;gap:16px;
-  margin-bottom:16px;
-}
-.v696-head h2{margin:0;font-size:30px}
-.v696-head p{margin:6px 0 0;color:#aab4c8;font-size:13px;line-height:1.6}
-.v696-grid{
+.v6911-head{margin-bottom:16px}
+.v6911-head h2{margin:0;font-size:30px}
+.v6911-head p{margin:6px 0 0;color:#aeb8ca;font-size:13px;line-height:1.55}
+.v6911-grid{
   display:grid;
   grid-template-columns:repeat(5,minmax(0,1fr));
   gap:12px;
 }
-.v696-step{
-  position:relative;
+.v6911-step{
   min-height:190px;
   border:1px solid #343c58;
   border-radius:20px;
   padding:18px;
-  background:linear-gradient(180deg,rgba(17,22,36,.96),rgba(8,12,22,.96));
-  overflow:hidden;
+  background:linear-gradient(180deg,rgba(19,24,40,.96),rgba(8,12,22,.98));
 }
-.v696-step:before{
-  content:"";
-  position:absolute;
-  width:120px;height:120px;
-  border-radius:50%;
-  right:-40px;top:-40px;
-  background:rgba(132,76,255,.13);
-  filter:blur(3px);
-}
-.v696-num{
-  width:38px;height:38px;border-radius:12px;
+.v6911-num{
+  width:38px;height:38px;border-radius:11px;
   display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,#6a4cf0,#a75cff);
-  font-size:15px;font-weight:950;
   margin-bottom:14px;
+  background:linear-gradient(135deg,#704cff,#a15cff);
+  color:#fff;font-weight:950;
 }
-.v696-step h3{margin:0 0 8px;font-size:17px}
-.v696-step p{margin:0;color:#aab4c8;font-size:12px;line-height:1.6}
-.v696-icon{font-size:22px;margin-bottom:9px}
-.v696-cta{
-  margin-top:16px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:16px 18px;
-  border:1px solid #3f3568;
-  border-radius:18px;
-  background:linear-gradient(135deg,rgba(80,52,160,.28),rgba(15,20,34,.92));
+.v6911-icon{font-size:22px;margin-bottom:10px}
+.v6911-step h3{margin:0 0 8px;font-size:17px}
+.v6911-step p{margin:0;color:#aeb8ca;font-size:12px;line-height:1.6}
+.v6911-cta{
+  margin-top:15px;padding:15px 18px;
+  border:1px solid #403665;border-radius:17px;
+  background:linear-gradient(135deg,rgba(78,46,151,.30),rgba(13,17,29,.96));
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
 }
-.v696-cta div:first-child{font-weight:900}
-.v696-cta small{display:block;color:#aab4c8;margin-top:4px}
-.v696-wa{
-  text-decoration:none;color:#fff;font-weight:900;
-  background:#20c96b;border-radius:12px;padding:11px 15px;
-  white-space:nowrap;
-}
-@media(max-width:1000px){
-  .v696-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media(max-width:700px){
-  #cara-order{padding-top:24px}
-  .v696-head{align-items:flex-start}
-  .v696-head h2{font-size:24px}
-  .v696-grid{grid-template-columns:1fr}
-  .v696-step{min-height:0}
-  .v696-cta{flex-direction:column;align-items:stretch}
-  .v696-wa{text-align:center}
-}
-</style>
-
-<script id="v696CaraOrderScript">
-(function(){
-  function v696EnsureSection(){
-    if(document.getElementById('cara-order')) return;
-
-    const anchorTarget =
-      document.getElementById('v69PromoSection') ||
-      document.getElementById('productGrid')?.closest('section') ||
-      document.querySelector('main') ||
-      document.body;
-
-    const section=document.createElement('section');
-    section.id='cara-order';
-    section.innerHTML=`
-      <div class="v696-wrap">
-        <div class="v696-head">
-          <div>
-            <h2>🛒 CARA ORDER</h2>
-            <p>Order di Yanstore gampang dan cepat. Ikuti langkah di bawah ini sampai pesananmu diproses.</p>
-          </div>
-        </div>
-
-        <div class="v696-grid">
-          <article class="v696-step">
-            <div class="v696-num">1</div>
-            <div class="v696-icon">🔍</div>
-            <h3>Pilih Produk</h3>
-            <p>Cari aplikasi yang kamu inginkan lewat katalog atau kolom pencarian.</p>
-          </article>
-
-          <article class="v696-step">
-            <div class="v696-num">2</div>
-            <div class="v696-icon">📦</div>
-            <h3>Pilih Paket</h3>
-            <p>Kalau produk memiliki beberapa paket, pilih paket yang paling sesuai kebutuhanmu.</p>
-          </article>
-
-          <article class="v696-step">
-            <div class="v696-num">3</div>
-            <div class="v696-icon">💬</div>
-            <h3>Klik Pesan</h3>
-            <p>Tekan tombol PESAN. Kamu akan langsung diarahkan ke WhatsApp Yanstore.</p>
-          </article>
-
-          <article class="v696-step">
-            <div class="v696-num">4</div>
-            <div class="v696-icon">💳</div>
-            <h3>Lakukan Pembayaran</h3>
-            <p>Ikuti instruksi pembayaran dari admin sesuai metode yang tersedia.</p>
-          </article>
-
-          <article class="v696-step">
-            <div class="v696-num">5</div>
-            <div class="v696-icon">✅</div>
-            <h3>Pesanan Diproses</h3>
-            <p>Setelah pembayaran dikonfirmasi, pesanan akan segera diproses dan dikirim.</p>
-          </article>
-        </div>
-
-        <div class="v696-cta">
-          <div>
-            Masih bingung?
-            <small>Langsung chat admin Yanstore, nanti dibantu pilih produk dan paketnya.</small>
-          </div>
-          <a class="v696-wa" target="_blank" rel="noopener"
-             href="https://wa.me/${PHONE}?text=${encodeURIComponent('Halo Yanstore, saya mau tanya cara order.')}">
-             Chat WhatsApp
-          </a>
-        </div>
-      </div>`;
-
-    if(anchorTarget.parentNode){
-      anchorTarget.parentNode.insertBefore(section, anchorTarget);
-    }else{
-      document.body.appendChild(section);
-    }
-  }
-
-  function v696BindNav(){
-    const links=[...document.querySelectorAll('a,button')];
-    links.forEach(el=>{
-      const text=(el.textContent||'').trim().toLowerCase();
-      if(text==='cara order' && !el.dataset.v696){
-        el.dataset.v696='1';
-        if(el.tagName==='A') el.setAttribute('href','#cara-order');
-        el.addEventListener('click',function(e){
-          e.preventDefault();
-          v696EnsureSection();
-          document.getElementById('cara-order')?.scrollIntoView({behavior:'smooth',block:'start'});
-        });
-      }
-    });
-  }
-
-  function boot(){
-    v696EnsureSection();
-    v696BindNav();
-    new MutationObserver(v696BindNav).observe(document.body,{childList:true,subtree:true});
-  }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',boot);
-  }else{
-    boot();
-  }
-})();
-</script>
-
-
-<style id="v698EmergencyCaraOrderFixStyle">
-/* V6.9.8 — SAFE Cara Order fix */
-#cara-order{
-  scroll-margin-top:100px !important;
-  padding:34px 0 26px !important;
+.v6911-cta strong{display:block}
+.v6911-cta small{display:block;color:#aeb8ca;margin-top:4px}
+.v6911-wa{
+  text-decoration:none;color:#fff;background:#20c96b;
+  border-radius:12px;padding:11px 15px;font-weight:900;white-space:nowrap;
 }
 
-/* Cara Order terlihat interaktif, tanpa animasi berat */
-a[href="#cara-order"],
-[data-v696="1"]{
+/* Navbar Cara Order terasa bisa diklik */
+.v6911-order-link{
   position:relative;
-  transition:color .2s ease, transform .2s ease, text-shadow .2s ease;
+  cursor:pointer;
+  transition:transform .18s ease,color .18s ease,text-shadow .18s ease;
 }
-a[href="#cara-order"]:hover,
-[data-v696="1"]:hover{
+.v6911-order-link:hover{
   transform:translateY(-1px);
   color:#fff !important;
-  text-shadow:0 0 10px rgba(185,104,255,.85);
+  text-shadow:0 0 10px rgba(191,110,255,.85);
 }
-a[href="#cara-order"]::after,
-[data-v696="1"]::after{
+.v6911-order-link::after{
   content:"";
-  position:absolute;
-  left:50%;
-  bottom:-6px;
-  width:0;
-  height:2px;
-  border-radius:999px;
-  background:linear-gradient(90deg,#875cff,#ff55cf);
+  position:absolute;left:50%;bottom:-7px;
+  width:0;height:2px;border-radius:999px;
+  background:linear-gradient(90deg,#895cff,#ff56cb);
   transform:translateX(-50%);
   transition:width .2s ease;
 }
-a[href="#cara-order"]:hover::after,
-[data-v696="1"]:hover::after{
-  width:78%;
+.v6911-order-link:hover::after{width:78%}
+
+@media(max-width:1000px){
+  .v6911-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:680px){
+  #yanstore-cara-order{padding-top:24px}
+  .v6911-head h2{font-size:24px}
+  .v6911-grid{grid-template-columns:1fr}
+  .v6911-step{min-height:0}
+  .v6911-cta{flex-direction:column;align-items:stretch}
+  .v6911-wa{text-align:center}
 }
 </style>
 
-<script id="v698EmergencyCaraOrderFixScript">
+<script id="v6911CaraOrderCleanScript">
 (function(){
-  let v698Done=false;
-
-  function positionSectionOnce(){
-    if(v698Done) return;
-
-    const section=document.getElementById('cara-order');
-    if(!section) return;
-
-    const footer=document.querySelector('footer');
-
-    /*
-      Pindahkan HANYA SEKALI sebelum footer.
-      Tidak memakai MutationObserver agar tidak terjadi loop DOM/freeze.
-    */
-    if(footer && footer.parentNode && section.nextElementSibling !== footer){
-      footer.parentNode.insertBefore(section, footer);
+  function createCaraOrder(){
+    if(document.getElementById('yanstore-cara-order')) {
+      return document.getElementById('yanstore-cara-order');
     }
 
-    v698Done=true;
-  }
-
-  function bindCaraOrder(){
-    document.querySelectorAll('a,button').forEach(el=>{
-      const txt=(el.textContent||'').trim().toLowerCase();
-      if(txt!=='cara order' || el.dataset.v698) return;
-
-      el.dataset.v698='1';
-      if(el.tagName==='A') el.setAttribute('href','#cara-order');
-
-      el.addEventListener('click',function(e){
-        e.preventDefault();
-        positionSectionOnce();
-
-        const target=document.getElementById('cara-order');
-        if(!target) return;
-
-        const top=target.getBoundingClientRect().top + window.scrollY - 86;
-        window.scrollTo({top,behavior:'smooth'});
-      });
-    });
-  }
-
-  function boot(){
-    positionSectionOnce();
-    bindCaraOrder();
-
-    // Satu retry ringan jika navbar dibuat agak terlambat.
-    setTimeout(bindCaraOrder,400);
-    setTimeout(bindCaraOrder,1200);
-  }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',boot,{once:true});
-  }else{
-    boot();
-  }
-})();
-</script>
-
-
-<style id="v699CaraOrderFinalStyle">
-#cara-order{
-  scroll-margin-top:96px !important;
-  display:block !important;
-}
-.v699-highlight{
-  animation:v699Glow .8s ease-out;
-}
-@keyframes v699Glow{
-  0%{box-shadow:0 0 0 rgba(157,92,255,0)}
-  45%{box-shadow:0 0 34px rgba(157,92,255,.35)}
-  100%{box-shadow:0 0 0 rgba(157,92,255,0)}
-}
-</style>
-
-<script id="v699CaraOrderClickFinalFix">
-(function(){
-  function ensureCaraOrder(){
-    let section=document.getElementById('cara-order');
-
-    // Kalau section lama belum terbentuk, buat ulang versi aman.
-    if(!section){
-      section=document.createElement('section');
-      section.id='cara-order';
-      section.innerHTML=`
-        <div class="v696-wrap">
-          <div class="v696-head">
-            <div>
-              <h2>🛒 CARA ORDER</h2>
-              <p>Order di Yanstore gampang dan cepat. Ikuti 5 langkah berikut.</p>
-            </div>
-          </div>
-
-          <div class="v696-grid">
-            <article class="v696-step">
-              <div class="v696-num">1</div><div class="v696-icon">🔍</div>
-              <h3>Pilih Produk</h3>
-              <p>Cari aplikasi yang kamu inginkan lewat katalog atau kolom pencarian.</p>
-            </article>
-            <article class="v696-step">
-              <div class="v696-num">2</div><div class="v696-icon">📦</div>
-              <h3>Pilih Paket</h3>
-              <p>Pilih paket atau varian yang paling sesuai dengan kebutuhanmu.</p>
-            </article>
-            <article class="v696-step">
-              <div class="v696-num">3</div><div class="v696-icon">💬</div>
-              <h3>Klik Pesan</h3>
-              <p>Tekan tombol PESAN untuk langsung terhubung ke WhatsApp Yanstore.</p>
-            </article>
-            <article class="v696-step">
-              <div class="v696-num">4</div><div class="v696-icon">💳</div>
-              <h3>Lakukan Pembayaran</h3>
-              <p>Ikuti instruksi pembayaran dari admin dan kirim bukti pembayaran.</p>
-            </article>
-            <article class="v696-step">
-              <div class="v696-num">5</div><div class="v696-icon">✅</div>
-              <h3>Pesanan Diproses</h3>
-              <p>Setelah pembayaran dikonfirmasi, pesanan akan segera diproses.</p>
-            </article>
-          </div>
-
-          <div class="v696-cta">
-            <div>
-              Masih bingung?
-              <small>Langsung chat admin Yanstore, nanti dibantu sampai selesai.</small>
-            </div>
-            <a class="v696-wa" target="_blank" rel="noopener"
-               href="https://wa.me/${PHONE}?text=${encodeURIComponent('Halo Yanstore, saya mau tanya cara order.')}">
-               Chat WhatsApp
-            </a>
-          </div>
-        </div>`;
-
-      const footer=document.querySelector('footer');
-      if(footer && footer.parentNode) footer.parentNode.insertBefore(section,footer);
-      else document.body.appendChild(section);
-    }
-
-    // Selalu pastikan posisinya sebelum footer.
-    const footer=document.querySelector('footer');
-    if(footer && footer.parentNode && section.nextElementSibling!==footer){
-      footer.parentNode.insertBefore(section,footer);
-    }
-
-    return section;
-  }
-
-  function isCaraOrderControl(el){
-    if(!el) return false;
-    const clickable=el.closest('a,button');
-    if(!clickable) return false;
-    return (clickable.textContent||'').trim().toLowerCase()==='cara order';
-  }
-
-  // CAPTURE PHASE: mengambil alih klik lebih dulu dari handler versi lama.
-  document.addEventListener('click',function(e){
-    if(!isCaraOrderControl(e.target)) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-
-    const section=ensureCaraOrder();
-
-    // Update hash tanpa membiarkan browser memakai target handler lama.
-    try{ history.replaceState(null,'','#cara-order'); }catch(_){}
-
-    requestAnimationFrame(()=>{
-      requestAnimationFrame(()=>{
-        const top=section.getBoundingClientRect().top + window.scrollY - 82;
-        window.scrollTo({top,behavior:'smooth'});
-
-        section.classList.remove('v699-highlight');
-        void section.offsetWidth;
-        section.classList.add('v699-highlight');
-      });
-    });
-  },true);
-
-  function boot(){
-    ensureCaraOrder();
-
-    // Pastikan link navbar terlihat clickable.
-    document.querySelectorAll('a,button').forEach(el=>{
-      if((el.textContent||'').trim().toLowerCase()==='cara order'){
-        if(el.tagName==='A') el.setAttribute('href','#cara-order');
-      }
-    });
-  }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',boot,{once:true});
-  }else{
-    boot();
-  }
-})();
-</script>
-
-
-<style id="v6910CaraOrderIdFixStyle">
-#yanstore-cara-order{
-  scroll-margin-top:96px;
-  padding:34px 0 28px;
-  display:block;
-}
-a[href="#yanstore-cara-order"]{
-  position:relative;
-}
-</style>
-
-<script id="v6910CaraOrderIdConflictFix">
-(function(){
-  /*
-    ROOT CAUSE FIX:
-    Footer lama ternyata sudah memakai id="cara-order".
-    Akibatnya semua script sebelumnya mengira footer = section tutorial,
-    sehingga klik Cara Order selalu lompat ke bawah.
-  */
-
-  function buildRealCaraOrder(){
-    const oldFooter=document.querySelector('footer#cara-order');
-    if(oldFooter){
-      oldFooter.id='yanstore-footer';
-    }
-
-    let section=document.getElementById('yanstore-cara-order');
-    if(section) return section;
-
-    section=document.createElement('section');
+    const section=document.createElement('section');
     section.id='yanstore-cara-order';
     section.innerHTML=`
-      <div class="v696-wrap">
-        <div class="v696-head">
-          <div>
-            <h2>🛒 CARA ORDER DI YANSTORE</h2>
-            <p>Ikuti 5 langkah mudah berikut untuk melakukan pemesanan dengan cepat dan aman.</p>
-          </div>
+      <div class="v6911-wrap">
+        <div class="v6911-head">
+          <h2>🛒 CARA ORDER DI YANSTORE</h2>
+          <p>Ikuti 5 langkah mudah berikut untuk melakukan pemesanan dengan cepat dan aman.</p>
         </div>
 
-        <div class="v696-grid">
-          <article class="v696-step">
-            <div class="v696-num">1</div>
-            <div class="v696-icon">🔍</div>
+        <div class="v6911-grid">
+          <article class="v6911-step">
+            <div class="v6911-num">1</div>
+            <div class="v6911-icon">🔍</div>
             <h3>Pilih Produk</h3>
             <p>Cari dan pilih produk atau aplikasi yang kamu inginkan di katalog Yanstore.</p>
           </article>
 
-          <article class="v696-step">
-            <div class="v696-num">2</div>
-            <div class="v696-icon">📦</div>
+          <article class="v6911-step">
+            <div class="v6911-num">2</div>
+            <div class="v6911-icon">📦</div>
             <h3>Pilih Paket</h3>
             <p>Pilih paket atau varian yang sesuai dengan kebutuhan dan durasi yang kamu mau.</p>
           </article>
 
-          <article class="v696-step">
-            <div class="v696-num">3</div>
-            <div class="v696-icon">💬</div>
+          <article class="v6911-step">
+            <div class="v6911-num">3</div>
+            <div class="v6911-icon">💬</div>
             <h3>Klik Pesan</h3>
             <p>Tekan tombol PESAN untuk langsung terhubung dengan admin Yanstore melalui WhatsApp.</p>
           </article>
 
-          <article class="v696-step">
-            <div class="v696-num">4</div>
-            <div class="v696-icon">💳</div>
+          <article class="v6911-step">
+            <div class="v6911-num">4</div>
+            <div class="v6911-icon">💳</div>
             <h3>Lakukan Pembayaran</h3>
             <p>Ikuti instruksi pembayaran dari admin lalu kirim bukti pembayaran.</p>
           </article>
 
-          <article class="v696-step">
-            <div class="v696-num">5</div>
-            <div class="v696-icon">✅</div>
+          <article class="v6911-step">
+            <div class="v6911-num">5</div>
+            <div class="v6911-icon">✅</div>
             <h3>Pesanan Diproses</h3>
             <p>Setelah pembayaran dikonfirmasi, pesanan akan segera diproses dan dikirim.</p>
           </article>
         </div>
 
-        <div class="v696-cta">
+        <div class="v6911-cta">
           <div>
-            Masih bingung?
+            <strong>Masih bingung?</strong>
             <small>Langsung chat admin Yanstore, nanti dibantu sampai selesai.</small>
           </div>
-          <a class="v696-wa" target="_blank" rel="noopener"
+          <a class="v6911-wa" target="_blank" rel="noopener"
              href="https://wa.me/${PHONE}?text=${encodeURIComponent('Halo Yanstore, saya mau tanya cara order.')}">
              Chat WhatsApp
           </a>
         </div>
       </div>`;
 
+    // Satu-satunya posisi: tepat sebelum footer.
     const footer=document.querySelector('footer');
-    if(footer && footer.parentNode){
-      footer.parentNode.insertBefore(section,footer);
-    }else{
-      document.body.appendChild(section);
-    }
+    if(footer && footer.parentNode) footer.parentNode.insertBefore(section,footer);
+    else document.body.appendChild(section);
 
     return section;
   }
 
-  function bindFinalCaraOrder(){
+  function bindNav(){
     document.querySelectorAll('a,button').forEach(el=>{
-      const text=(el.textContent||'').trim().toLowerCase();
-      if(text==='cara order'){
-        if(el.tagName==='A') el.setAttribute('href','#yanstore-cara-order');
-      }
+      if((el.textContent||'').trim().toLowerCase()!=='cara order') return;
+      if(el.dataset.v6911) return;
+
+      el.dataset.v6911='1';
+      el.classList.add('v6911-order-link');
+      if(el.tagName==='A') el.setAttribute('href','#yanstore-cara-order');
+
+      el.addEventListener('click',function(e){
+        e.preventDefault();
+        const section=createCaraOrder();
+        const top=section.getBoundingClientRect().top + window.scrollY - 82;
+        window.scrollTo({top,behavior:'smooth'});
+        try{history.replaceState(null,'','#yanstore-cara-order')}catch(_){}
+      });
     });
   }
 
-  // Override klik dalam capture phase agar handler lama tidak mengambil alih.
-  document.addEventListener('click',function(e){
-    const el=e.target.closest('a,button');
-    if(!el) return;
-    if((el.textContent||'').trim().toLowerCase()!=='cara order') return;
-
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-
-    const section=buildRealCaraOrder();
-    try{ history.replaceState(null,'','#yanstore-cara-order'); }catch(_){}
-
-    requestAnimationFrame(()=>{
-      const y=section.getBoundingClientRect().top + window.scrollY - 82;
-      window.scrollTo({top:y,behavior:'smooth'});
-      section.classList.remove('v699-highlight');
-      void section.offsetWidth;
-      section.classList.add('v699-highlight');
-    });
-  },true);
-
   function boot(){
-    buildRealCaraOrder();
-    bindFinalCaraOrder();
+    createCaraOrder();
+    bindNav();
+    // hanya retry binding, tidak memindahkan section berulang-ulang
+    setTimeout(bindNav,400);
   }
 
   if(document.readyState==='loading'){
