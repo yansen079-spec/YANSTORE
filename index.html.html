@@ -2524,5 +2524,136 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v697CaraOrderFixStyle">
+/* V6.9.7 — posisi Cara Order + nav lebih terasa clickable */
+#cara-order{
+  scroll-margin-top:110px !important;
+  padding:36px 0 28px !important;
+  position:relative;
+  z-index:3;
+}
+
+/* Animasi halus pada menu Cara Order */
+a[href="#cara-order"],
+[data-v696="1"]{
+  position:relative;
+  transition:transform .2s ease,color .2s ease,text-shadow .2s ease;
+}
+a[href="#cara-order"]:hover,
+[data-v696="1"]:hover{
+  transform:translateY(-2px);
+  color:#fff !important;
+  text-shadow:0 0 12px rgba(193,108,255,.95);
+}
+a[href="#cara-order"]::after,
+[data-v696="1"]::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-7px;
+  width:0;
+  height:2px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#8b5cff,#ff4fd8);
+  transform:translateX(-50%);
+  transition:width .22s ease;
+}
+a[href="#cara-order"]:hover::after,
+[data-v696="1"]:hover::after{
+  width:80%;
+}
+.v697-cara-pulse{
+  animation:v697Pulse 2.4s ease-in-out infinite;
+}
+@keyframes v697Pulse{
+  0%,100%{text-shadow:none}
+  50%{text-shadow:0 0 12px rgba(193,108,255,.7)}
+}
+
+/* pastikan section tidak tertutup panel admin/footer */
+#cara-order .v696-wrap{
+  position:relative;
+  z-index:2;
+}
+</style>
+
+<script id="v697CaraOrderFixScript">
+(function(){
+  function moveCaraOrderSection(){
+    const section=document.getElementById('cara-order');
+    if(!section) return;
+
+    /*
+      Posisi yang diinginkan:
+      setelah Admin Online / area CTA, sebelum footer.
+      Karena struktur lama berbeda-beda, cari footer dahulu.
+    */
+    const footer=document.querySelector('footer');
+    const adminPanel=
+      document.getElementById('v6Admin') ||
+      document.getElementById('v6AdminPanel') ||
+      [...document.querySelectorAll('section,div')].find(el =>
+        (el.textContent||'').includes('Yanstore Admin Online')
+      );
+
+    if(footer && footer.parentNode){
+      footer.parentNode.insertBefore(section, footer);
+    }else if(adminPanel && adminPanel.parentNode){
+      adminPanel.parentNode.insertBefore(section, adminPanel.nextSibling);
+    }
+  }
+
+  function enhanceNav(){
+    document.querySelectorAll('a,button').forEach(el=>{
+      const text=(el.textContent||'').trim().toLowerCase();
+      if(text==='cara order'){
+        el.classList.add('v697-cara-pulse');
+        if(el.tagName==='A') el.setAttribute('href','#cara-order');
+
+        if(!el.dataset.v697){
+          el.dataset.v697='1';
+          el.addEventListener('click',function(e){
+            e.preventDefault();
+            moveCaraOrderSection();
+
+            const target=document.getElementById('cara-order');
+            if(!target) return;
+
+            const y=target.getBoundingClientRect().top + window.scrollY - 92;
+            window.scrollTo({top:y,behavior:'smooth'});
+
+            target.animate(
+              [
+                {filter:'brightness(1)'},
+                {filter:'brightness(1.16)'},
+                {filter:'brightness(1)'}
+              ],
+              {duration:700,easing:'ease-out'}
+            );
+          });
+        }
+      }
+    });
+  }
+
+  function boot(){
+    moveCaraOrderSection();
+    enhanceNav();
+
+    new MutationObserver(()=>{
+      moveCaraOrderSection();
+      enhanceNav();
+    }).observe(document.body,{childList:true,subtree:true});
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,80));
+  }else{
+    setTimeout(boot,80);
+  }
+})();
+</script>
+
 </body>
 </html>
