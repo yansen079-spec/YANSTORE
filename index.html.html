@@ -2525,132 +2525,101 @@ img{max-width:100%}
 </script>
 
 
-<style id="v697CaraOrderFixStyle">
-/* V6.9.7 — posisi Cara Order + nav lebih terasa clickable */
+<style id="v698EmergencyCaraOrderFixStyle">
+/* V6.9.8 — SAFE Cara Order fix */
 #cara-order{
-  scroll-margin-top:110px !important;
-  padding:36px 0 28px !important;
-  position:relative;
-  z-index:3;
+  scroll-margin-top:100px !important;
+  padding:34px 0 26px !important;
 }
 
-/* Animasi halus pada menu Cara Order */
+/* Cara Order terlihat interaktif, tanpa animasi berat */
 a[href="#cara-order"],
 [data-v696="1"]{
   position:relative;
-  transition:transform .2s ease,color .2s ease,text-shadow .2s ease;
+  transition:color .2s ease, transform .2s ease, text-shadow .2s ease;
 }
 a[href="#cara-order"]:hover,
 [data-v696="1"]:hover{
-  transform:translateY(-2px);
+  transform:translateY(-1px);
   color:#fff !important;
-  text-shadow:0 0 12px rgba(193,108,255,.95);
+  text-shadow:0 0 10px rgba(185,104,255,.85);
 }
 a[href="#cara-order"]::after,
 [data-v696="1"]::after{
   content:"";
   position:absolute;
   left:50%;
-  bottom:-7px;
+  bottom:-6px;
   width:0;
   height:2px;
   border-radius:999px;
-  background:linear-gradient(90deg,#8b5cff,#ff4fd8);
+  background:linear-gradient(90deg,#875cff,#ff55cf);
   transform:translateX(-50%);
-  transition:width .22s ease;
+  transition:width .2s ease;
 }
 a[href="#cara-order"]:hover::after,
 [data-v696="1"]:hover::after{
-  width:80%;
-}
-.v697-cara-pulse{
-  animation:v697Pulse 2.4s ease-in-out infinite;
-}
-@keyframes v697Pulse{
-  0%,100%{text-shadow:none}
-  50%{text-shadow:0 0 12px rgba(193,108,255,.7)}
-}
-
-/* pastikan section tidak tertutup panel admin/footer */
-#cara-order .v696-wrap{
-  position:relative;
-  z-index:2;
+  width:78%;
 }
 </style>
 
-<script id="v697CaraOrderFixScript">
+<script id="v698EmergencyCaraOrderFixScript">
 (function(){
-  function moveCaraOrderSection(){
+  let v698Done=false;
+
+  function positionSectionOnce(){
+    if(v698Done) return;
+
     const section=document.getElementById('cara-order');
     if(!section) return;
 
-    /*
-      Posisi yang diinginkan:
-      setelah Admin Online / area CTA, sebelum footer.
-      Karena struktur lama berbeda-beda, cari footer dahulu.
-    */
     const footer=document.querySelector('footer');
-    const adminPanel=
-      document.getElementById('v6Admin') ||
-      document.getElementById('v6AdminPanel') ||
-      [...document.querySelectorAll('section,div')].find(el =>
-        (el.textContent||'').includes('Yanstore Admin Online')
-      );
 
-    if(footer && footer.parentNode){
+    /*
+      Pindahkan HANYA SEKALI sebelum footer.
+      Tidak memakai MutationObserver agar tidak terjadi loop DOM/freeze.
+    */
+    if(footer && footer.parentNode && section.nextElementSibling !== footer){
       footer.parentNode.insertBefore(section, footer);
-    }else if(adminPanel && adminPanel.parentNode){
-      adminPanel.parentNode.insertBefore(section, adminPanel.nextSibling);
     }
+
+    v698Done=true;
   }
 
-  function enhanceNav(){
+  function bindCaraOrder(){
     document.querySelectorAll('a,button').forEach(el=>{
-      const text=(el.textContent||'').trim().toLowerCase();
-      if(text==='cara order'){
-        el.classList.add('v697-cara-pulse');
-        if(el.tagName==='A') el.setAttribute('href','#cara-order');
+      const txt=(el.textContent||'').trim().toLowerCase();
+      if(txt!=='cara order' || el.dataset.v698) return;
 
-        if(!el.dataset.v697){
-          el.dataset.v697='1';
-          el.addEventListener('click',function(e){
-            e.preventDefault();
-            moveCaraOrderSection();
+      el.dataset.v698='1';
+      if(el.tagName==='A') el.setAttribute('href','#cara-order');
 
-            const target=document.getElementById('cara-order');
-            if(!target) return;
+      el.addEventListener('click',function(e){
+        e.preventDefault();
+        positionSectionOnce();
 
-            const y=target.getBoundingClientRect().top + window.scrollY - 92;
-            window.scrollTo({top:y,behavior:'smooth'});
+        const target=document.getElementById('cara-order');
+        if(!target) return;
 
-            target.animate(
-              [
-                {filter:'brightness(1)'},
-                {filter:'brightness(1.16)'},
-                {filter:'brightness(1)'}
-              ],
-              {duration:700,easing:'ease-out'}
-            );
-          });
-        }
-      }
+        const top=target.getBoundingClientRect().top + window.scrollY - 86;
+        window.scrollTo({top,behavior:'smooth'});
+      });
     });
   }
 
   function boot(){
-    moveCaraOrderSection();
-    enhanceNav();
+    positionSectionOnce();
+    bindCaraOrder();
 
-    new MutationObserver(()=>{
-      moveCaraOrderSection();
-      enhanceNav();
-    }).observe(document.body,{childList:true,subtree:true});
+    // Satu retry ringan jika navbar dibuat agak terlambat.
+    setTimeout(bindCaraOrder,400);
+    setTimeout(bindCaraOrder,1200);
   }
 
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,80));
+    document.addEventListener('DOMContentLoaded',boot,{once:true});
   }else{
-    setTimeout(boot,80);
+    boot();
   }
 })();
 </script>
