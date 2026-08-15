@@ -2624,5 +2624,144 @@ a[href="#cara-order"]:hover::after,
 })();
 </script>
 
+
+<style id="v699CaraOrderFinalStyle">
+#cara-order{
+  scroll-margin-top:96px !important;
+  display:block !important;
+}
+.v699-highlight{
+  animation:v699Glow .8s ease-out;
+}
+@keyframes v699Glow{
+  0%{box-shadow:0 0 0 rgba(157,92,255,0)}
+  45%{box-shadow:0 0 34px rgba(157,92,255,.35)}
+  100%{box-shadow:0 0 0 rgba(157,92,255,0)}
+}
+</style>
+
+<script id="v699CaraOrderClickFinalFix">
+(function(){
+  function ensureCaraOrder(){
+    let section=document.getElementById('cara-order');
+
+    // Kalau section lama belum terbentuk, buat ulang versi aman.
+    if(!section){
+      section=document.createElement('section');
+      section.id='cara-order';
+      section.innerHTML=`
+        <div class="v696-wrap">
+          <div class="v696-head">
+            <div>
+              <h2>🛒 CARA ORDER</h2>
+              <p>Order di Yanstore gampang dan cepat. Ikuti 5 langkah berikut.</p>
+            </div>
+          </div>
+
+          <div class="v696-grid">
+            <article class="v696-step">
+              <div class="v696-num">1</div><div class="v696-icon">🔍</div>
+              <h3>Pilih Produk</h3>
+              <p>Cari aplikasi yang kamu inginkan lewat katalog atau kolom pencarian.</p>
+            </article>
+            <article class="v696-step">
+              <div class="v696-num">2</div><div class="v696-icon">📦</div>
+              <h3>Pilih Paket</h3>
+              <p>Pilih paket atau varian yang paling sesuai dengan kebutuhanmu.</p>
+            </article>
+            <article class="v696-step">
+              <div class="v696-num">3</div><div class="v696-icon">💬</div>
+              <h3>Klik Pesan</h3>
+              <p>Tekan tombol PESAN untuk langsung terhubung ke WhatsApp Yanstore.</p>
+            </article>
+            <article class="v696-step">
+              <div class="v696-num">4</div><div class="v696-icon">💳</div>
+              <h3>Lakukan Pembayaran</h3>
+              <p>Ikuti instruksi pembayaran dari admin dan kirim bukti pembayaran.</p>
+            </article>
+            <article class="v696-step">
+              <div class="v696-num">5</div><div class="v696-icon">✅</div>
+              <h3>Pesanan Diproses</h3>
+              <p>Setelah pembayaran dikonfirmasi, pesanan akan segera diproses.</p>
+            </article>
+          </div>
+
+          <div class="v696-cta">
+            <div>
+              Masih bingung?
+              <small>Langsung chat admin Yanstore, nanti dibantu sampai selesai.</small>
+            </div>
+            <a class="v696-wa" target="_blank" rel="noopener"
+               href="https://wa.me/${PHONE}?text=${encodeURIComponent('Halo Yanstore, saya mau tanya cara order.')}">
+               Chat WhatsApp
+            </a>
+          </div>
+        </div>`;
+
+      const footer=document.querySelector('footer');
+      if(footer && footer.parentNode) footer.parentNode.insertBefore(section,footer);
+      else document.body.appendChild(section);
+    }
+
+    // Selalu pastikan posisinya sebelum footer.
+    const footer=document.querySelector('footer');
+    if(footer && footer.parentNode && section.nextElementSibling!==footer){
+      footer.parentNode.insertBefore(section,footer);
+    }
+
+    return section;
+  }
+
+  function isCaraOrderControl(el){
+    if(!el) return false;
+    const clickable=el.closest('a,button');
+    if(!clickable) return false;
+    return (clickable.textContent||'').trim().toLowerCase()==='cara order';
+  }
+
+  // CAPTURE PHASE: mengambil alih klik lebih dulu dari handler versi lama.
+  document.addEventListener('click',function(e){
+    if(!isCaraOrderControl(e.target)) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    const section=ensureCaraOrder();
+
+    // Update hash tanpa membiarkan browser memakai target handler lama.
+    try{ history.replaceState(null,'','#cara-order'); }catch(_){}
+
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        const top=section.getBoundingClientRect().top + window.scrollY - 82;
+        window.scrollTo({top,behavior:'smooth'});
+
+        section.classList.remove('v699-highlight');
+        void section.offsetWidth;
+        section.classList.add('v699-highlight');
+      });
+    });
+  },true);
+
+  function boot(){
+    ensureCaraOrder();
+
+    // Pastikan link navbar terlihat clickable.
+    document.querySelectorAll('a,button').forEach(el=>{
+      if((el.textContent||'').trim().toLowerCase()==='cara order'){
+        if(el.tagName==='A') el.setAttribute('href','#cara-order');
+      }
+    });
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot,{once:true});
+  }else{
+    boot();
+  }
+})();
+</script>
+
 </body>
 </html>
