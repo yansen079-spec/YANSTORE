@@ -2928,5 +2928,459 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v6914AnnouncementStyle">
+/* ===== PUBLIC ANNOUNCEMENT TICKER ===== */
+#v6914AnnouncementBar{
+  display:none;
+  position:relative;
+  z-index:40;
+  overflow:hidden;
+  border-bottom:1px solid rgba(144,92,255,.35);
+  border-top:1px solid rgba(144,92,255,.20);
+  background:
+    linear-gradient(90deg,rgba(58,27,114,.96),rgba(19,17,41,.97) 45%,rgba(68,24,96,.96));
+  box-shadow:0 8px 28px rgba(0,0,0,.18);
+}
+#v6914AnnouncementBar.show{display:block}
+.v6914-ticker{
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  white-space:nowrap;
+}
+.v6914-track{
+  display:inline-flex;
+  align-items:center;
+  gap:42px;
+  width:max-content;
+  padding-left:100%;
+  animation:v6914Ticker var(--v6914-speed,18s) linear infinite;
+  will-change:transform;
+}
+#v6914AnnouncementBar:hover .v6914-track{
+  animation-play-state:paused;
+}
+.v6914-item{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  color:#fff;
+  font-weight:850;
+  font-size:13px;
+  letter-spacing:.1px;
+}
+.v6914-item::after{
+  content:"✦";
+  margin-left:32px;
+  color:#c99cff;
+  opacity:.7;
+}
+.v6914-icon{
+  display:inline-flex;
+  width:24px;height:24px;
+  align-items:center;justify-content:center;
+  border-radius:8px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.10);
+}
+.v6914-live{
+  position:absolute;
+  left:10px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:2;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:950;
+  color:#fff;
+  background:rgba(12,16,28,.88);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(6px);
+}
+.v6914-live-dot{
+  display:inline-block;
+  width:6px;height:6px;
+  margin-right:5px;
+  border-radius:50%;
+  background:#2bea84;
+  box-shadow:0 0 9px #2bea84;
+  animation:v6914Dot 1.4s ease-in-out infinite;
+}
+@keyframes v6914Dot{
+  0%,100%{opacity:.45;transform:scale(.85)}
+  50%{opacity:1;transform:scale(1.15)}
+}
+@keyframes v6914Ticker{
+  from{transform:translateX(0)}
+  to{transform:translateX(-100%)}
+}
+@media(max-width:680px){
+  .v6914-item{font-size:12px}
+  .v6914-live{display:none}
+  .v6914-ticker{min-height:38px}
+}
+
+/* ===== ADMIN MANAGER ===== */
+#v6914AdminBox{
+  margin-top:18px;
+  padding:16px;
+  border:1px solid #343c58;
+  border-radius:17px;
+  background:linear-gradient(180deg,rgba(17,22,36,.96),rgba(8,12,22,.98));
+}
+#v6914AdminBox h3{margin:0 0 5px}
+#v6914AdminBox .note{
+  color:#9fa9bf;
+  font-size:12px;
+  line-height:1.5;
+  margin-bottom:12px;
+}
+.v6914-grid{
+  display:grid;
+  grid-template-columns:110px 1fr 140px;
+  gap:8px;
+}
+.v6914-grid input,
+.v6914-grid select{
+  width:100%;
+  box-sizing:border-box;
+  border:1px solid #343c58;
+  border-radius:10px;
+  background:#080c15;
+  color:#fff;
+  padding:10px;
+  font-size:14px;
+}
+.v6914-full{grid-column:1/-1}
+.v6914-check{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#dce2ef;
+  font-size:13px;
+}
+.v6914-check input{width:auto}
+.v6914-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.v6914-actions button,
+.v6914-row button{
+  border:1px solid #3b4564;
+  background:#151b2a;
+  color:#fff;
+  border-radius:9px;
+  padding:8px 11px;
+  font-weight:850;
+  cursor:pointer;
+}
+.v6914-actions .primary{
+  background:#6d4df0;
+  border-color:#7d61ff;
+}
+#v6914Msg{
+  min-height:18px;
+  margin-top:8px;
+  color:#aeb7cc;
+  font-size:12px;
+}
+#v6914List{
+  display:grid;
+  gap:8px;
+  margin-top:12px;
+}
+.v6914-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 11px;
+  border:1px solid #2e3650;
+  border-radius:12px;
+  background:#0c111d;
+}
+.v6914-row strong{display:block}
+.v6914-row small{display:block;color:#929db5;margin-top:3px}
+.v6914-row .buttons{
+  display:flex;gap:6px;flex-wrap:wrap;
+}
+.v6914-row .danger{color:#ff9aaa;border-color:#663443}
+@media(max-width:680px){
+  .v6914-grid{grid-template-columns:1fr}
+  .v6914-full{grid-column:auto}
+  .v6914-row{align-items:flex-start;flex-direction:column}
+  .v6914-row .buttons{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .v6914-row button{width:100%}
+}
+</style>
+
+<script id="v6914AnnouncementScript">
+(function(){
+  let v6914Rows=[];
+  let v6914AdminRows=[];
+
+  function esc14(v){
+    return typeof esc==='function'
+      ? esc(String(v??''))
+      : String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+
+  function ensurePublicBar(){
+    if(document.getElementById('v6914AnnouncementBar')) return;
+
+    const bar=document.createElement('div');
+    bar.id='v6914AnnouncementBar';
+    bar.innerHTML=`
+      <div class="v6914-live"><span class="v6914-live-dot"></span>PENGUMUMAN</div>
+      <div class="v6914-ticker">
+        <div id="v6914Track" class="v6914-track"></div>
+      </div>`;
+
+    const header=document.querySelector('header');
+    if(header && header.parentNode){
+      header.parentNode.insertBefore(bar,header.nextSibling);
+    }else{
+      document.body.insertBefore(bar,document.body.firstChild);
+    }
+  }
+
+  function renderPublic(){
+    ensurePublicBar();
+    const bar=document.getElementById('v6914AnnouncementBar');
+    const track=document.getElementById('v6914Track');
+    if(!bar||!track)return;
+
+    if(!v6914Rows.length){
+      bar.classList.remove('show');
+      track.innerHTML='';
+      return;
+    }
+
+    const speed=Math.max(5,Math.min(60,Number(v6914Rows[0]?.speed_seconds||18)));
+    track.style.setProperty('--v6914-speed',speed+'s');
+
+    // Duplicate contents for a smoother continuous feel.
+    const one=v6914Rows.map(r=>`
+      <span class="v6914-item">
+        <span class="v6914-icon">${esc14(r.icon||'📢')}</span>
+        <span>${esc14(r.message)}</span>
+      </span>`).join('');
+
+    track.innerHTML=one+one;
+    bar.classList.add('show');
+  }
+
+  async function loadPublic(){
+    try{
+      const r=await fetch(
+        V6_URL+'/rest/v1/store_announcements?select=*&active=eq.true&order=sort_order.asc,created_at.asc',
+        {headers:{apikey:V6_KEY,Authorization:'Bearer '+V6_KEY}}
+      );
+      const d=await r.json();
+      if(!r.ok) throw new Error(d.message||('HTTP '+r.status));
+      v6914Rows=Array.isArray(d)?d:[];
+      renderPublic();
+    }catch(err){
+      console.warn('Announcement load:',err);
+      v6914Rows=[];
+      renderPublic();
+    }
+  }
+
+  function ensureAdminBox(){
+    if(document.getElementById('v6914AdminBox')) return;
+    const target=document.getElementById('v6AdminPanel') || document.getElementById('v6Admin');
+    if(!target)return;
+
+    const box=document.createElement('div');
+    box.id='v6914AdminBox';
+    box.innerHTML=`
+      <h3>📢 Pengumuman Toko</h3>
+      <div class="note">Teks aktif akan berjalan di bawah navbar. Bisa di-pause customer dengan mengarahkan mouse ke pengumuman.</div>
+
+      <input type="hidden" id="v6914Id">
+
+      <div class="v6914-grid">
+        <input id="v6914Icon" value="📢" maxlength="6" placeholder="Icon">
+        <input id="v6914Message" placeholder="Contoh: 🔥 Flash Sale CapCut hari ini!">
+        <input id="v6914Speed" type="number" min="5" max="60" value="18" placeholder="Kecepatan (detik)">
+        <input id="v6914Order" type="number" value="0" placeholder="Urutan">
+        <label class="v6914-check"><input id="v6914Active" type="checkbox" checked> Aktif</label>
+      </div>
+
+      <div class="v6914-actions">
+        <button class="primary" type="button" onclick="v6914Save()">SIMPAN PENGUMUMAN</button>
+        <button type="button" onclick="v6914Reset()">FORM BARU</button>
+        <button type="button" onclick="v6914LoadAdmin()">REFRESH</button>
+      </div>
+      <div id="v6914Msg"></div>
+      <div id="v6914List"></div>`;
+    target.appendChild(box);
+  }
+
+  function msg(t){
+    const el=document.getElementById('v6914Msg');
+    if(el)el.textContent=t||'';
+  }
+
+  window.v6914Reset=function(){
+    document.getElementById('v6914Id').value='';
+    document.getElementById('v6914Icon').value='📢';
+    document.getElementById('v6914Message').value='';
+    document.getElementById('v6914Speed').value='18';
+    document.getElementById('v6914Order').value='0';
+    document.getElementById('v6914Active').checked=true;
+    msg('Form baru siap.');
+  };
+
+  window.v6914LoadAdmin=async function(){
+    ensureAdminBox();
+    if(!v6Session?.access_token){
+      msg('Login Admin terlebih dahulu.');
+      return;
+    }
+
+    msg('Memuat pengumuman...');
+    try{
+      const r=await v62Fetch(
+        V6_URL+'/rest/v1/store_announcements?select=*&order=sort_order.asc,created_at.asc',
+        {headers:{apikey:V6_KEY}}
+      );
+      const d=await r.json();
+      if(!r.ok)throw new Error(d.message||('HTTP '+r.status));
+      v6914AdminRows=Array.isArray(d)?d:[];
+
+      const list=document.getElementById('v6914List');
+      list.innerHTML=v6914AdminRows.length
+        ? v6914AdminRows.map(r=>`
+          <div class="v6914-row">
+            <div>
+              <strong>${esc14(r.icon||'📢')} ${esc14(r.message)}</strong>
+              <small>${r.active?'AKTIF':'NONAKTIF'} • ${Number(r.speed_seconds||18)} detik • urutan ${Number(r.sort_order||0)}</small>
+            </div>
+            <div class="buttons">
+              <button type="button" onclick="v6914Edit(${Number(r.id)})">EDIT</button>
+              <button class="danger" type="button" onclick="v6914Delete(${Number(r.id)})">HAPUS</button>
+            </div>
+          </div>`).join('')
+        : '<div class="note">Belum ada pengumuman. Buat pengumuman pertama dari form di atas.</div>';
+
+      msg(`✅ ${v6914AdminRows.length} pengumuman dimuat.`);
+    }catch(err){
+      msg('Gagal memuat: '+err.message);
+    }
+  };
+
+  window.v6914Edit=function(id){
+    const r=v6914AdminRows.find(x=>Number(x.id)===Number(id));
+    if(!r)return;
+    document.getElementById('v6914Id').value=r.id;
+    document.getElementById('v6914Icon').value=r.icon||'📢';
+    document.getElementById('v6914Message').value=r.message||'';
+    document.getElementById('v6914Speed').value=r.speed_seconds||18;
+    document.getElementById('v6914Order').value=r.sort_order||0;
+    document.getElementById('v6914Active').checked=!!r.active;
+    msg('Mode edit pengumuman.');
+  };
+
+  window.v6914Save=async function(){
+    if(!v6Session?.access_token){
+      msg('Login Admin terlebih dahulu.');
+      return;
+    }
+
+    const id=document.getElementById('v6914Id').value;
+    const message=document.getElementById('v6914Message').value.trim();
+    if(!message){
+      msg('Isi pengumuman wajib diisi.');
+      return;
+    }
+
+    const payload={
+      message,
+      icon:document.getElementById('v6914Icon').value.trim()||'📢',
+      speed_seconds:Math.max(5,Math.min(60,Number(document.getElementById('v6914Speed').value||18))),
+      sort_order:Number(document.getElementById('v6914Order').value||0),
+      active:document.getElementById('v6914Active').checked,
+      updated_at:new Date().toISOString()
+    };
+
+    msg('Menyimpan...');
+    try{
+      const url=V6_URL+'/rest/v1/store_announcements'+(id?`?id=eq.${encodeURIComponent(id)}`:'');
+      const r=await v62Fetch(url,{
+        method:id?'PATCH':'POST',
+        headers:{
+          apikey:V6_KEY,
+          'Content-Type':'application/json',
+          Prefer:'return=representation'
+        },
+        body:JSON.stringify(payload)
+      });
+      const d=await r.json().catch(()=>[]);
+      if(!r.ok)throw new Error(d.message||('HTTP '+r.status));
+
+      msg('✅ Pengumuman berhasil disimpan.');
+      v6914Reset();
+      await v6914LoadAdmin();
+      await loadPublic();
+    }catch(err){
+      msg('Gagal menyimpan: '+err.message);
+    }
+  };
+
+  window.v6914Delete=async function(id){
+    if(!confirm('Hapus pengumuman ini?'))return;
+    try{
+      const r=await v62Fetch(
+        V6_URL+'/rest/v1/store_announcements?id=eq.'+encodeURIComponent(id),
+        {method:'DELETE',headers:{apikey:V6_KEY}}
+      );
+      if(!r.ok){
+        const d=await r.json().catch(()=>({}));
+        throw new Error(d.message||('HTTP '+r.status));
+      }
+
+      msg('✅ Pengumuman dihapus.');
+      await v6914LoadAdmin();
+      await loadPublic();
+    }catch(err){
+      msg('Gagal menghapus: '+err.message);
+    }
+  };
+
+  function boot(){
+    ensurePublicBar();
+    loadPublic();
+    ensureAdminBox();
+
+    // Admin popup may move its content after page load; lightweight retries only.
+    setTimeout(ensureAdminBox,400);
+    setTimeout(ensureAdminBox,1200);
+
+    const oldOpen=window.v6912OpenAdmin;
+    if(typeof oldOpen==='function'){
+      window.v6912OpenAdmin=function(){
+        oldOpen.apply(this,arguments);
+        setTimeout(()=>{
+          ensureAdminBox();
+          if(v6Session?.access_token)v6914LoadAdmin();
+        },150);
+      };
+    }
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot,{once:true});
+  }else{
+    boot();
+  }
+})();
+</script>
+
 </body>
 </html>
