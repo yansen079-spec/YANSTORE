@@ -3382,5 +3382,460 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v6915TestimonialStyle">
+#yanstore-testimonials{
+  padding:34px 0 30px;
+}
+.v6915-wrap{
+  width:min(1180px,calc(100% - 28px));
+  margin:0 auto;
+}
+.v6915-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:16px;
+}
+.v6915-head h2{margin:0;font-size:30px}
+.v6915-head p{margin:6px 0 0;color:#aeb8ca;font-size:13px;line-height:1.55}
+
+.v6915-viewport{
+  overflow:hidden;
+  border-radius:20px;
+}
+.v6915-track{
+  display:flex;
+  gap:14px;
+  width:max-content;
+  animation:v6915Slide 28s linear infinite;
+  will-change:transform;
+}
+.v6915-viewport:hover .v6915-track{animation-play-state:paused}
+@keyframes v6915Slide{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+.v6915-card{
+  width:320px;
+  flex:0 0 320px;
+  border:1px solid #343c58;
+  border-radius:18px;
+  padding:17px;
+  background:linear-gradient(180deg,rgba(18,23,38,.96),rgba(8,12,22,.98));
+  box-shadow:0 14px 30px rgba(0,0,0,.16);
+}
+.v6915-stars{
+  letter-spacing:2px;
+  font-size:15px;
+  color:#ffd85c;
+  margin-bottom:11px;
+}
+.v6915-msg{
+  color:#d8deea;
+  font-size:13px;
+  line-height:1.65;
+  min-height:64px;
+}
+.v6915-person{
+  margin-top:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.v6915-avatar{
+  width:38px;height:38px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:950;
+  background:linear-gradient(135deg,#704cff,#a65cff);
+  color:#fff;
+}
+.v6915-person strong{display:block}
+.v6915-person small{display:block;color:#8f9ab1;margin-top:2px}
+.v6915-empty{
+  border:1px dashed #343c58;
+  border-radius:16px;
+  padding:20px;
+  color:#9fa9bf;
+  text-align:center;
+}
+@media(max-width:680px){
+  #yanstore-testimonials{padding-top:24px}
+  .v6915-head h2{font-size:24px}
+  .v6915-card{width:270px;flex-basis:270px}
+}
+
+/* Admin */
+#v6915AdminBox{
+  margin-top:18px;
+  padding:16px;
+  border:1px solid #343c58;
+  border-radius:17px;
+  background:linear-gradient(180deg,rgba(17,22,36,.96),rgba(8,12,22,.98));
+}
+#v6915AdminBox h3{margin:0 0 5px}
+#v6915AdminBox .note{color:#9fa9bf;font-size:12px;line-height:1.5;margin-bottom:12px}
+.v6915-admin-grid{
+  display:grid;
+  grid-template-columns:1fr 140px;
+  gap:8px;
+}
+.v6915-admin-grid input,
+.v6915-admin-grid select,
+.v6915-admin-grid textarea{
+  width:100%;
+  box-sizing:border-box;
+  border:1px solid #343c58;
+  border-radius:10px;
+  background:#080c15;
+  color:#fff;
+  padding:10px;
+  font-size:14px;
+}
+.v6915-admin-grid textarea{
+  min-height:84px;
+  resize:vertical;
+  grid-column:1/-1;
+}
+.v6915-check{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#dce2ef;
+  font-size:13px;
+}
+.v6915-check input{width:auto}
+.v6915-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.v6915-actions button,
+.v6915-row button{
+  border:1px solid #3b4564;
+  background:#151b2a;
+  color:#fff;
+  border-radius:9px;
+  padding:8px 11px;
+  font-weight:850;
+  cursor:pointer;
+}
+.v6915-actions .primary{background:#6d4df0;border-color:#7d61ff}
+#v6915Msg{min-height:18px;margin-top:8px;color:#aeb7cc;font-size:12px}
+#v6915List{display:grid;gap:8px;margin-top:12px}
+.v6915-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 11px;
+  border:1px solid #2e3650;
+  border-radius:12px;
+  background:#0c111d;
+}
+.v6915-row strong{display:block}
+.v6915-row small{display:block;color:#929db5;margin-top:3px}
+.v6915-row .buttons{display:flex;gap:6px;flex-wrap:wrap}
+.v6915-row .danger{color:#ff9aaa;border-color:#663443}
+@media(max-width:680px){
+  .v6915-admin-grid{grid-template-columns:1fr}
+  .v6915-admin-grid textarea{grid-column:auto}
+  .v6915-row{align-items:flex-start;flex-direction:column}
+  .v6915-row .buttons{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .v6915-row button{width:100%}
+}
+</style>
+
+<script id="v6915TestimonialScript">
+(function(){
+  let v6915Rows=[];
+  let v6915AdminRows=[];
+
+  function esc15(v){
+    return typeof esc==='function'
+      ? esc(String(v??''))
+      : String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+
+  function stars(n){
+    n=Math.max(1,Math.min(5,Number(n||5)));
+    return '★'.repeat(n)+'☆'.repeat(5-n);
+  }
+
+  function initials(name){
+    return String(name||'C').trim().slice(0,1).toUpperCase() || 'C';
+  }
+
+  function ensurePublicSection(){
+    if(document.getElementById('yanstore-testimonials')) return;
+
+    const section=document.createElement('section');
+    section.id='yanstore-testimonials';
+    section.innerHTML=`
+      <div class="v6915-wrap">
+        <div class="v6915-head">
+          <div>
+            <h2>⭐ TESTIMONI CUSTOMER</h2>
+            <p>Beberapa pengalaman customer setelah order di Yanstore.</p>
+          </div>
+        </div>
+        <div id="v6915Public" class="v6915-viewport"></div>
+      </div>`;
+
+    const faq=document.getElementById('yanstore-faq');
+    const adminTrigger=document.getElementById('v6912AdminTriggerWrap');
+    const footer=document.querySelector('footer');
+
+    if(faq && faq.parentNode){
+      faq.parentNode.insertBefore(section,faq);
+    }else if(adminTrigger && adminTrigger.parentNode){
+      adminTrigger.parentNode.insertBefore(section,adminTrigger);
+    }else if(footer && footer.parentNode){
+      footer.parentNode.insertBefore(section,footer);
+    }else{
+      document.body.appendChild(section);
+    }
+  }
+
+  function renderPublic(){
+    ensurePublicSection();
+    const host=document.getElementById('v6915Public');
+    if(!host)return;
+
+    if(!v6915Rows.length){
+      host.innerHTML=`<div class="v6915-empty">Belum ada testimoni yang ditampilkan.</div>`;
+      return;
+    }
+
+    const cards=v6915Rows.map(r=>`
+      <article class="v6915-card">
+        <div class="v6915-stars">${stars(r.rating)}</div>
+        <div class="v6915-msg">“${esc15(r.message)}”</div>
+        <div class="v6915-person">
+          <div class="v6915-avatar">${esc15(initials(r.customer_name))}</div>
+          <div>
+            <strong>${esc15(r.customer_name)}</strong>
+            <small>Customer Yanstore</small>
+          </div>
+        </div>
+      </article>`).join('');
+
+    if(v6915Rows.length===1){
+      host.innerHTML=`<div style="display:flex;justify-content:center">${cards}</div>`;
+    }else{
+      host.innerHTML=`<div class="v6915-track">${cards}${cards}</div>`;
+    }
+  }
+
+  async function loadPublic(){
+    try{
+      const r=await fetch(
+        V6_URL+'/rest/v1/testimonials?select=*&active=eq.true&order=sort_order.asc,created_at.desc',
+        {headers:{apikey:V6_KEY,Authorization:'Bearer '+V6_KEY}}
+      );
+      const d=await r.json();
+      if(!r.ok)throw new Error(d.message||('HTTP '+r.status));
+      v6915Rows=Array.isArray(d)?d:[];
+      renderPublic();
+    }catch(err){
+      console.warn('Testimonial load:',err);
+      v6915Rows=[];
+      renderPublic();
+    }
+  }
+
+  function ensureAdminBox(){
+    if(document.getElementById('v6915AdminBox')) return;
+    const target=document.getElementById('v6AdminPanel') || document.getElementById('v6Admin');
+    if(!target)return;
+
+    const box=document.createElement('div');
+    box.id='v6915AdminBox';
+    box.innerHTML=`
+      <h3>⭐ Testimoni Customer</h3>
+      <div class="note">Tambah testimoni secara manual. Nama customer boleh disamarkan, misalnya “R***a” atau “Customer A”.</div>
+      <input type="hidden" id="v6915Id">
+
+      <div class="v6915-admin-grid">
+        <input id="v6915Name" placeholder="Nama customer / nama samaran">
+        <select id="v6915Rating">
+          <option value="5">5 Bintang</option>
+          <option value="4">4 Bintang</option>
+          <option value="3">3 Bintang</option>
+          <option value="2">2 Bintang</option>
+          <option value="1">1 Bintang</option>
+        </select>
+        <textarea id="v6915Message" placeholder="Isi testimoni"></textarea>
+        <input id="v6915Order" type="number" value="0" placeholder="Urutan">
+        <label class="v6915-check"><input id="v6915Active" type="checkbox" checked> Tampilkan di website</label>
+      </div>
+
+      <div class="v6915-actions">
+        <button class="primary" type="button" onclick="v6915Save()">SIMPAN TESTIMONI</button>
+        <button type="button" onclick="v6915Reset()">FORM BARU</button>
+        <button type="button" onclick="v6915LoadAdmin()">REFRESH</button>
+      </div>
+      <div id="v6915Msg"></div>
+      <div id="v6915List"></div>`;
+    target.appendChild(box);
+  }
+
+  function msg(t){
+    const el=document.getElementById('v6915Msg');
+    if(el)el.textContent=t||'';
+  }
+
+  window.v6915Reset=function(){
+    document.getElementById('v6915Id').value='';
+    document.getElementById('v6915Name').value='';
+    document.getElementById('v6915Rating').value='5';
+    document.getElementById('v6915Message').value='';
+    document.getElementById('v6915Order').value='0';
+    document.getElementById('v6915Active').checked=true;
+    msg('Form baru siap.');
+  };
+
+  window.v6915LoadAdmin=async function(){
+    ensureAdminBox();
+    if(!v6Session?.access_token){
+      msg('Login Admin terlebih dahulu.');
+      return;
+    }
+
+    msg('Memuat testimoni...');
+    try{
+      const r=await v62Fetch(
+        V6_URL+'/rest/v1/testimonials?select=*&order=sort_order.asc,created_at.desc',
+        {headers:{apikey:V6_KEY}}
+      );
+      const d=await r.json();
+      if(!r.ok)throw new Error(d.message||('HTTP '+r.status));
+      v6915AdminRows=Array.isArray(d)?d:[];
+
+      const list=document.getElementById('v6915List');
+      list.innerHTML=v6915AdminRows.length
+        ? v6915AdminRows.map(r=>`
+          <div class="v6915-row">
+            <div>
+              <strong>${esc15(r.customer_name)} • ${stars(r.rating)}</strong>
+              <small>${esc15(r.message)} • ${r.active?'AKTIF':'NONAKTIF'}</small>
+            </div>
+            <div class="buttons">
+              <button type="button" onclick="v6915Edit(${Number(r.id)})">EDIT</button>
+              <button class="danger" type="button" onclick="v6915Delete(${Number(r.id)})">HAPUS</button>
+            </div>
+          </div>`).join('')
+        : '<div class="note">Belum ada testimoni.</div>';
+
+      msg(`✅ ${v6915AdminRows.length} testimoni dimuat.`);
+    }catch(err){
+      msg('Gagal memuat: '+err.message);
+    }
+  };
+
+  window.v6915Edit=function(id){
+    const r=v6915AdminRows.find(x=>Number(x.id)===Number(id));
+    if(!r)return;
+    document.getElementById('v6915Id').value=r.id;
+    document.getElementById('v6915Name').value=r.customer_name||'';
+    document.getElementById('v6915Rating').value=String(r.rating||5);
+    document.getElementById('v6915Message').value=r.message||'';
+    document.getElementById('v6915Order').value=r.sort_order||0;
+    document.getElementById('v6915Active').checked=!!r.active;
+    msg('Mode edit testimoni.');
+  };
+
+  window.v6915Save=async function(){
+    if(!v6Session?.access_token){
+      msg('Login Admin terlebih dahulu.');
+      return;
+    }
+
+    const id=document.getElementById('v6915Id').value;
+    const name=document.getElementById('v6915Name').value.trim();
+    const message=document.getElementById('v6915Message').value.trim();
+
+    if(!name){msg('Nama customer wajib diisi.');return}
+    if(!message){msg('Isi testimoni wajib diisi.');return}
+
+    const payload={
+      customer_name:name,
+      rating:Number(document.getElementById('v6915Rating').value||5),
+      message,
+      sort_order:Number(document.getElementById('v6915Order').value||0),
+      active:document.getElementById('v6915Active').checked,
+      updated_at:new Date().toISOString()
+    };
+
+    msg('Menyimpan...');
+    try{
+      const url=V6_URL+'/rest/v1/testimonials'+(id?`?id=eq.${encodeURIComponent(id)}`:'');
+      const r=await v62Fetch(url,{
+        method:id?'PATCH':'POST',
+        headers:{
+          apikey:V6_KEY,
+          'Content-Type':'application/json',
+          Prefer:'return=representation'
+        },
+        body:JSON.stringify(payload)
+      });
+      const d=await r.json().catch(()=>[]);
+      if(!r.ok)throw new Error(d.message||('HTTP '+r.status));
+
+      msg('✅ Testimoni berhasil disimpan.');
+      v6915Reset();
+      await v6915LoadAdmin();
+      await loadPublic();
+    }catch(err){
+      msg('Gagal menyimpan: '+err.message);
+    }
+  };
+
+  window.v6915Delete=async function(id){
+    if(!confirm('Hapus testimoni ini?'))return;
+    try{
+      const r=await v62Fetch(
+        V6_URL+'/rest/v1/testimonials?id=eq.'+encodeURIComponent(id),
+        {method:'DELETE',headers:{apikey:V6_KEY}}
+      );
+      if(!r.ok){
+        const d=await r.json().catch(()=>({}));
+        throw new Error(d.message||('HTTP '+r.status));
+      }
+      msg('✅ Testimoni dihapus.');
+      await v6915LoadAdmin();
+      await loadPublic();
+    }catch(err){
+      msg('Gagal menghapus: '+err.message);
+    }
+  };
+
+  function boot(){
+    ensurePublicSection();
+    loadPublic();
+    ensureAdminBox();
+    setTimeout(ensureAdminBox,400);
+    setTimeout(ensureAdminBox,1200);
+
+    const oldOpen=window.v6912OpenAdmin;
+    if(typeof oldOpen==='function'){
+      window.v6912OpenAdmin=function(){
+        oldOpen.apply(this,arguments);
+        setTimeout(()=>{
+          ensureAdminBox();
+          if(v6Session?.access_token)v6915LoadAdmin();
+        },150);
+      };
+    }
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot,{once:true});
+  }else{
+    boot();
+  }
+})();
+</script>
+
 </body>
 </html>
