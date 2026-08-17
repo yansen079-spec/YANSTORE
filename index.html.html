@@ -3862,7 +3862,12 @@ let rows=[],adminRows=[];
 const meta={TERLARIS:'🔥 TERLARIS',REKOMENDASI:'⭐ REKOMENDASI','BEST PRICE':'💰 BEST PRICE',PROMO:'⚡ PROMO',BARU:'✨ BARU'};
 const e=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const label=r=>r.badge_type==='CUSTOM'?(r.custom_label||'PILIHAN'):(meta[r.badge_type]||r.badge_type);
-const plist=()=>Array.isArray(window.products)?window.products:[];
+const plist=()=>{
+  try{
+    if(typeof products!=='undefined' && Array.isArray(products)) return products;
+  }catch(_){}
+  return Array.isArray(window.products)?window.products:[];
+};
 function apply(){
  document.querySelectorAll('.v6916-badge').forEach(x=>x.remove());
  const cards=[...document.querySelectorAll('.product-card,.v6-card,.v62-card,.v63-card,#products article,#products .card,#productGrid article,#productGrid .card')];
