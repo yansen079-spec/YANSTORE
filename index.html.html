@@ -3837,5 +3837,61 @@ img{max-width:100%}
 })();
 </script>
 
+
+<style id="v6916style">
+.v6916-badge{position:absolute;top:10px;right:10px;z-index:20;padding:6px 9px;border-radius:999px;font-size:10px;font-weight:950;color:#fff;border:1px solid rgba(255,255,255,.2);box-shadow:0 7px 18px #0006;white-space:nowrap}
+.v6916-badge[data-type="TERLARIS"]{background:linear-gradient(135deg,#d82f47,#ff6937)}
+.v6916-badge[data-type="REKOMENDASI"]{background:linear-gradient(135deg,#6643e9,#a855f7)}
+.v6916-badge[data-type="BEST PRICE"]{background:linear-gradient(135deg,#07865f,#20c76b)}
+.v6916-badge[data-type="PROMO"]{background:linear-gradient(135deg,#d69200,#ffc13b);color:#191000}
+.v6916-badge[data-type="BARU"]{background:linear-gradient(135deg,#177bd3,#38bdf8)}
+.v6916-badge[data-type="CUSTOM"]{background:linear-gradient(135deg,#434b62,#707b9c)}
+#v6916Admin{margin-top:18px;padding:16px;border:1px solid #343c58;border-radius:17px;background:#0c111d}
+#v6916Admin h3{margin:0 0 5px}.v6916-note{color:#9fa9bf;font-size:12px;line-height:1.5;margin-bottom:12px}
+.v6916-grid{display:grid;grid-template-columns:1fr 180px;gap:8px}.v6916-grid select,.v6916-grid input{width:100%;border:1px solid #343c58;border-radius:10px;background:#080c15;color:#fff;padding:10px}
+.v6916-check{display:flex;align-items:center;gap:7px;font-size:13px}.v6916-check input{width:auto}
+.v6916-actions,.v6916-buttons{display:flex;gap:7px;flex-wrap:wrap}.v6916-actions{margin-top:10px}
+.v6916-actions button,.v6916-row button{border:1px solid #3b4564;background:#151b2a;color:#fff;border-radius:9px;padding:8px 11px;font-weight:850;cursor:pointer}.v6916-actions .primary{background:#6d4df0}
+#v6916Msg{font-size:12px;color:#aeb7cc;min-height:18px;margin-top:8px}#v6916List{display:grid;gap:8px;margin-top:10px}
+.v6916-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border:1px solid #2e3650;border-radius:12px}.v6916-row small{display:block;color:#929db5;margin-top:3px}.v6916-row .danger{color:#ff9aaa}
+@media(max-width:680px){.v6916-grid{grid-template-columns:1fr}.v6916-row{align-items:flex-start;flex-direction:column}}
+</style>
+<script id="v6916script">
+(function(){
+let rows=[],adminRows=[];
+const meta={TERLARIS:'🔥 TERLARIS',REKOMENDASI:'⭐ REKOMENDASI','BEST PRICE':'💰 BEST PRICE',PROMO:'⚡ PROMO',BARU:'✨ BARU'};
+const e=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const label=r=>r.badge_type==='CUSTOM'?(r.custom_label||'PILIHAN'):(meta[r.badge_type]||r.badge_type);
+const plist=()=>Array.isArray(window.products)?window.products:[];
+function apply(){
+ document.querySelectorAll('.v6916-badge').forEach(x=>x.remove());
+ const cards=[...document.querySelectorAll('.product-card,.v6-card,.v62-card,.v63-card,#products article,#products .card,#productGrid article,#productGrid .card')];
+ cards.forEach(c=>{
+   const txt=(c.innerText||'').toLowerCase();
+   const p=plist().find(x=>x.name&&txt.includes(String(x.name).toLowerCase()));
+   if(!p)return; const r=rows.find(x=>Number(x.product_id)===Number(p.id)); if(!r)return;
+   c.style.position='relative'; const b=document.createElement('span');b.className='v6916-badge';b.dataset.type=r.badge_type;b.textContent=label(r);c.appendChild(b);
+ });
+}
+async function load(){
+ try{const r=await fetch(V6_URL+'/rest/v1/product_badges?select=*&active=eq.true',{headers:{apikey:V6_KEY,Authorization:'Bearer '+V6_KEY}});const d=await r.json();if(!r.ok)throw Error(d.message||r.status);rows=Array.isArray(d)?d:[];setTimeout(apply,30)}catch(x){console.warn(x)}
+}
+function admin(){
+ if(document.getElementById('v6916Admin'))return;
+ const t=document.getElementById('v6AdminPanel')||document.getElementById('v6Admin');if(!t)return;
+ const x=document.createElement('div');x.id='v6916Admin';x.innerHTML=`<h3>🏆 Badge Produk</h3><div class="v6916-note">Atur label produk unggulan. Fitur ini tidak mengubah produk, harga, paket, stok, atau logo.</div><input type="hidden" id="v6916Id"><div class="v6916-grid"><select id="v6916Product"><option value="">Pilih produk...</option></select><select id="v6916Type"><option>TERLARIS</option><option>REKOMENDASI</option><option>BEST PRICE</option><option>PROMO</option><option>BARU</option><option>CUSTOM</option></select><input id="v6916Custom" placeholder="Tulisan jika pilih CUSTOM"><label class="v6916-check"><input type="checkbox" id="v6916Active" checked> Tampilkan badge</label></div><div class="v6916-actions"><button class="primary" onclick="v6916Save()">SIMPAN BADGE</button><button onclick="v6916Reset()">FORM BARU</button><button onclick="v6916LoadAdmin()">REFRESH</button></div><div id="v6916Msg"></div><div id="v6916List"></div>`;t.appendChild(x);fill();
+}
+function fill(){const s=document.getElementById('v6916Product');if(!s)return;const cur=s.value;s.innerHTML='<option value="">Pilih produk...</option>'+[...plist()].sort((a,b)=>String(a.name).localeCompare(String(b.name),'id')).map(p=>`<option value="${p.id}">${e(p.name)}</option>`).join('');if(cur)s.value=cur}
+function msg(s){const x=document.getElementById('v6916Msg');if(x)x.textContent=s||''}
+window.v6916Reset=()=>{v6916Id.value='';v6916Product.value='';v6916Type.value='TERLARIS';v6916Custom.value='';v6916Active.checked=true;msg('Form baru siap.')};
+window.v6916LoadAdmin=async()=>{admin();fill();if(!v6Session?.access_token){msg('Login Admin terlebih dahulu.');return}try{const r=await v62Fetch(V6_URL+'/rest/v1/product_badges?select=*&order=updated_at.desc',{headers:{apikey:V6_KEY}});const d=await r.json();if(!r.ok)throw Error(d.message||r.status);adminRows=d;v6916List.innerHTML=d.length?d.map(x=>{const p=plist().find(y=>Number(y.id)===Number(x.product_id));return `<div class="v6916-row"><div><strong>${e(p?.name||'Produk')} • ${e(label(x))}</strong><small>${x.active?'AKTIF':'NONAKTIF'}</small></div><div class="v6916-buttons"><button onclick="v6916Edit(${x.id})">EDIT</button><button class="danger" onclick="v6916Delete(${x.id})">HAPUS</button></div></div>`}).join(''):'<div class="v6916-note">Belum ada badge.</div>';msg('✅ Badge dimuat.')}catch(x){msg('Gagal: '+x.message)}};
+window.v6916Edit=id=>{const x=adminRows.find(y=>Number(y.id)===Number(id));if(!x)return;v6916Id.value=x.id;v6916Product.value=x.product_id;v6916Type.value=x.badge_type;v6916Custom.value=x.custom_label||'';v6916Active.checked=!!x.active;msg('Mode edit.')};
+window.v6916Save=async()=>{if(!v6Session?.access_token){msg('Login Admin terlebih dahulu.');return}const id=v6916Id.value,pid=Number(v6916Product.value),typ=v6916Type.value,custom=v6916Custom.value.trim();if(!pid){msg('Pilih produk.');return}if(typ==='CUSTOM'&&!custom){msg('Isi tulisan CUSTOM.');return}const body={product_id:pid,badge_type:typ,custom_label:typ==='CUSTOM'?custom:'',active:v6916Active.checked,updated_at:new Date().toISOString()};try{const r=await v62Fetch(V6_URL+'/rest/v1/product_badges'+(id?'?id=eq.'+id:''),{method:id?'PATCH':'POST',headers:{apikey:V6_KEY,'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify(body)});const d=await r.json().catch(()=>[]);if(!r.ok)throw Error(d.message||r.status);v6916Reset();await v6916LoadAdmin();await load();msg('✅ Badge berhasil disimpan.')}catch(x){msg('Gagal: '+x.message)}};
+window.v6916Delete=async id=>{if(!confirm('Hapus badge ini?'))return;try{const r=await v62Fetch(V6_URL+'/rest/v1/product_badges?id=eq.'+id,{method:'DELETE',headers:{apikey:V6_KEY}});if(!r.ok)throw Error(r.status);await v6916LoadAdmin();await load()}catch(x){msg('Gagal: '+x.message)}};
+function boot(){admin();load();setTimeout(()=>{admin();fill();apply()},600);setTimeout(()=>{fill();apply()},1600);document.addEventListener('click',()=>setTimeout(apply,200));document.addEventListener('input',()=>setTimeout(apply,200));}
+document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
+})();
+</script>
+
 </body>
 </html>
