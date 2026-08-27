@@ -4328,5 +4328,156 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 })();
 </script>
 
+
+<!-- Yanstore V6.9.22.2 - Deep Link Desktop FIX -->
+<style id="v69222DeepLinkDesktopFixStyle">
+.v69222-share-toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
+  z-index:999999;padding:10px 14px;border-radius:999px;
+  background:rgba(17,20,32,.96);border:1px solid rgba(168,85,247,.45);
+  color:#fff;font-size:12px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.35);
+  opacity:0;pointer-events:none;transition:.2s ease
+}
+.v69222-share-toast.show{opacity:1}
+</style>
+<script id="v69222DeepLinkDesktopFix">
+(function(){
+  function cleanProductName(raw){
+    let s=String(raw||'').trim();
+    // Recovery untuk link lama yang sempat berbentuk:
+    // ?produk=APPLE MUSIC https://yanstore.../?produk=APPLE MUSIC
+    const httpIndex=s.search(/\shttps?:\/\//i);
+    if(httpIndex>0) s=s.slice(0,httpIndex).trim();
+    return s;
+  }
+
+  function productUrl(name){
+    const u=new URL(location.origin + location.pathname);
+    u.searchParams.set('produk', cleanProductName(name));
+    return u.toString();
+  }
+
+  function toast(text){
+    let el=document.getElementById('v69222ShareToast');
+    if(!el){
+      el=document.createElement('div');
+      el.id='v69222ShareToast';
+      el.className='v69222-share-toast';
+      document.body.appendChild(el);
+    }
+    el.textContent=text;
+    el.classList.add('show');
+    clearTimeout(window.__v69222ToastTimer);
+    window.__v69222ToastTimer=setTimeout(()=>el.classList.remove('show'),1800);
+  }
+
+  // Override fungsi share versi sebelumnya jika ada.
+  window.v6922ShareProduct = async function(product){
+    try{
+      const p = typeof product==='object' && product ? product : {};
+      const name = cleanProductName(p.name || p.productName || product || '');
+      if(!name) return;
+
+      const url = productUrl(name);
+      const price = String(p.price||'').trim();
+      const period = String(p.period||'').trim();
+      const stock = String(p.stockStatus||'').trim();
+
+      const details=[price,period,stock].filter(Boolean).join(' • ');
+      const text=`${name}${details ? '\n'+details : ''}\n${url}`;
+
+      // HP / browser yang mendukung native share.
+      if(navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+        await navigator.share({
+          title:`${name} - YANSTORE`,
+          text:`Cek ${name} di YANSTORE`,
+          url
+        });
+        return;
+      }
+
+      // Desktop: copy URL produk yang BERSIH ke clipboard.
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(url);
+        toast('✅ Link produk berhasil disalin');
+        return;
+      }
+
+      // Fallback desktop terakhir: buka WhatsApp dengan URL bersih.
+      window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank','noopener');
+    }catch(err){
+      // Cancel native share bukan error yang perlu ditampilkan.
+      if(err && err.name==='AbortError') return;
+      console.warn('Share product failed:',err);
+    }
+  };
+
+  // Perbaiki query produk segera saat load, termasuk link malformed versi lama.
+  function normalizeIncomingDeepLink(){
+    const u=new URL(location.href);
+    if(!u.searchParams.has('produk')) return;
+    const raw=u.searchParams.get('produk')||'';
+    const clean=cleanProductName(raw);
+    if(clean && clean!==raw){
+      u.searchParams.set('produk',clean);
+      history.replaceState({},document.title,u.toString());
+    }
+  }
+  normalizeIncomingDeepLink();
+
+  // Override handler lama dengan event delegation yang mengambil produk langsung dari card.
+  document.addEventListener('click', function(ev){
+    const btn=ev.target.closest('.v6922-share-btn,[data-share-product],button');
+    if(!btn) return;
+
+    const label=(btn.textContent||'').trim().toLowerCase();
+    if(!btn.classList.contains('v6922-share-btn') &&
+       !btn.hasAttribute('data-share-product') &&
+       !label.includes('bagikan produk')) return;
+
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+
+    const card=btn.closest('.product-card,.card,.product,.v64-product-card,[data-product-id]') || btn.parentElement;
+    let name='';
+    let price='';
+    let period='';
+    let stock='';
+
+    if(card){
+      const title=card.querySelector('h2,h3,.product-name,.name,strong');
+      if(title) name=(title.textContent||'').trim();
+      const priceEl=card.querySelector('.price,.product-price');
+      if(priceEl) price=(priceEl.textContent||'').trim();
+      const txt=(card.textContent||'');
+      const stockMatch=txt.match(/\b(READY|RESTOCK|HABIS)\b/i);
+      if(stockMatch) stock=stockMatch[1].toUpperCase();
+    }
+
+    // Fallback berdasarkan tombol / data lama.
+    name = cleanProductName(
+      btn.dataset.productName ||
+      btn.getAttribute('data-product-name') ||
+      name
+    );
+
+    // Cocokkan ke array products agar nama/harga lebih akurat.
+    try{
+      if(name && typeof products!=='undefined' && Array.isArray(products)){
+        const p=products.find(x=>String(x?.name||'').trim().toLowerCase()===name.toLowerCase());
+        if(p){
+          name=p.name||name;
+          price=p.price||price;
+          period=p.period||period;
+          stock=p.stockStatus||stock;
+        }
+      }
+    }catch(_){}
+
+    if(name) window.v6922ShareProduct({name,price,period,stockStatus:stock});
+  }, true);
+})();
+</script>
+
 </body>
 </html>
