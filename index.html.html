@@ -4115,5 +4115,66 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 })();
 </script>
 
+
+
+<!-- Yanstore V6.9.20 - Badge Produk Cepat (memakai product_badges yang sudah ada) -->
+<style id="v6920BadgeQuickStyle">
+#v6920QuickBadge{margin:12px 0 4px;padding:13px;border:1px solid rgba(168,85,247,.28);border-radius:14px;background:linear-gradient(180deg,rgba(168,85,247,.07),rgba(255,255,255,.02))}
+#v6920QuickBadge .v6920-title{font-size:13px;font-weight:950;margin-bottom:5px}
+#v6920QuickBadge .v6920-note{font-size:11px;color:#9fa9bf;line-height:1.45;margin-bottom:9px}
+#v6920QuickBadge .v6920-buttons{display:flex;gap:7px;flex-wrap:wrap}
+#v6920QuickBadge button{border:1px solid #3b4564;background:#151b2a;color:#fff;border-radius:10px;padding:9px 11px;font-weight:900;cursor:pointer}
+#v6920QuickBadge .hot{background:linear-gradient(135deg,#d82f47,#ff6937);border-color:#ff7a55}
+#v6920QuickBadge .rec{background:linear-gradient(135deg,#6643e9,#a855f7);border-color:#b87aff}
+#v6920QuickBadge .off{color:#ffb3bd}
+</style>
+<script id="v6920BadgeQuickScript">
+(function(){
+  function qmsg(t){const el=document.getElementById('v6916Msg');if(el)el.textContent=t||'';}
+  function selectedProduct(){const el=document.getElementById('v6916Product');return Number(el?.value||0);}
+  async function currentBadge(pid){
+    const r=await v62Fetch(V6_URL+'/rest/v1/product_badges?select=*&product_id=eq.'+encodeURIComponent(pid)+'&limit=1',{headers:{apikey:V6_KEY}});
+    const d=await r.json().catch(()=>[]);if(!r.ok)throw new Error(d.message||('HTTP '+r.status));return Array.isArray(d)&&d.length?d[0]:null;
+  }
+  window.v6920QuickBadge=async function(type){
+    if(!v6Session?.access_token){qmsg('Login Admin terlebih dahulu.');return;}
+    const pid=selectedProduct();if(!pid){qmsg('Pilih produk terlebih dahulu.');return;}
+    qmsg('Menyimpan badge '+type+'...');
+    try{
+      const old=await currentBadge(pid);
+      const body={product_id:pid,badge_type:type,custom_label:'',active:true,updated_at:new Date().toISOString()};
+      const url=V6_URL+'/rest/v1/product_badges'+(old?'?id=eq.'+encodeURIComponent(old.id):'');
+      const r=await v62Fetch(url,{method:old?'PATCH':'POST',headers:{apikey:V6_KEY,'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify(body)});
+      const d=await r.json().catch(()=>[]);if(!r.ok)throw new Error(d.message||('HTTP '+r.status));
+      if(document.getElementById('v6916Type'))v6916Type.value=type;
+      if(typeof v6916LoadAdmin==='function')await v6916LoadAdmin();
+      qmsg('✅ '+(type==='TERLARIS'?'🔥 TERLARIS':'⭐ REKOMENDASI')+' berhasil dipasang.');
+      setTimeout(()=>{try{location.reload();}catch(_){ }},350);
+    }catch(e){qmsg('Gagal menyimpan badge: '+e.message);}
+  };
+  window.v6920RemoveBadge=async function(){
+    if(!v6Session?.access_token){qmsg('Login Admin terlebih dahulu.');return;}
+    const pid=selectedProduct();if(!pid){qmsg('Pilih produk terlebih dahulu.');return;}
+    try{
+      const old=await currentBadge(pid);if(!old){qmsg('Produk ini belum memiliki badge.');return;}
+      if(!confirm('Hapus badge dari produk ini?'))return;
+      const r=await v62Fetch(V6_URL+'/rest/v1/product_badges?id=eq.'+encodeURIComponent(old.id),{method:'DELETE',headers:{apikey:V6_KEY}});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      if(typeof v6916LoadAdmin==='function')await v6916LoadAdmin();
+      qmsg('✅ Badge produk dihapus.');setTimeout(()=>{try{location.reload();}catch(_){ }},350);
+    }catch(e){qmsg('Gagal menghapus badge: '+e.message);}
+  };
+  function mount(){
+    const admin=document.getElementById('v6916Admin');if(!admin||document.getElementById('v6920QuickBadge'))return;
+    const grid=admin.querySelector('.v6916-grid');if(!grid)return;
+    const box=document.createElement('div');box.id='v6920QuickBadge';
+    box.innerHTML='<div class="v6920-title">⚡ Badge Cepat</div><div class="v6920-note">Pilih produk di bawah, lalu klik salah satu badge. Kalau produk sudah punya badge, badge lama otomatis diganti.</div><div class="v6920-buttons"><button type="button" class="hot" onclick="v6920QuickBadge(\'TERLARIS\')">🔥 JADIKAN TERLARIS</button><button type="button" class="rec" onclick="v6920QuickBadge(\'REKOMENDASI\')">⭐ JADIKAN REKOMENDASI</button><button type="button" class="off" onclick="v6920RemoveBadge()">HAPUS BADGE</button></div>';
+    grid.parentNode.insertBefore(box,grid);
+  }
+  function boot(){mount();setTimeout(mount,500);setTimeout(mount,1300);}
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
+})();
+</script>
+
 </body>
 </html>
