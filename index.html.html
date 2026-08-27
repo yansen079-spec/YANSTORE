@@ -4237,31 +4237,40 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 
 
 
-<!-- Yanstore V6.9.22 - Bagikan Produk -->
+<!-- Yanstore V6.9.22.1 - Bagikan Produk + Deep Link Produk -->
 <style id="v6922ShareStyle">
 .v6922-share-btn{width:100%;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(168,85,247,.32);border-radius:12px;background:rgba(168,85,247,.07);color:#ddd6fe;padding:10px 12px;font-weight:850;cursor:pointer;transition:.18s ease}
 .v6922-share-btn:hover{transform:translateY(-1px);border-color:rgba(168,85,247,.6);background:rgba(168,85,247,.13)}
 .v6922-share-btn:active{transform:translateY(0)}
+.v69221-deeplink-focus{outline:2px solid rgba(168,85,247,.9)!important;box-shadow:0 0 0 5px rgba(168,85,247,.16),0 18px 55px rgba(168,85,247,.24)!important;transform:translateY(-2px);transition:.25s ease}
 </style>
 <script id="v6922ShareScript">
 (function(){
-  function cleanUrl(){
-    try{const u=new URL(location.href);u.hash='';return u.toString();}catch(_){return location.href.split('#')[0];}
+  function productUrl(name){
+    try{
+      const u=new URL(location.href);
+      u.hash='';
+      u.searchParams.set('produk',name);
+      return u.toString();
+    }catch(_){
+      return location.href.split('#')[0].split('?')[0]+'?produk='+encodeURIComponent(name);
+    }
   }
   async function shareProduct(card){
     const name=(card?.querySelector('h3')?.textContent||'Produk YANSTORE').trim();
     const price=(card?.querySelector('.price')?.textContent||'').trim();
     const period=(card?.querySelector('.period')?.textContent||'').trim();
     const stock=(card?.querySelector('.stock')?.textContent||'').trim();
+    const url=productUrl(name);
     const lines=[`✨ ${name} di YANSTORE`];
     if(price) lines.push(`💰 ${price}${period?' • '+period:''}`);
     if(stock) lines.push(`📦 Status: ${stock}`);
-    lines.push('Cek detail dan paketnya di YANSTORE:');
-    lines.push(cleanUrl());
+    lines.push('Klik link ini untuk langsung melihat produknya:');
+    lines.push(url);
     const text=lines.join('\n');
     try{
       if(navigator.share){
-        await navigator.share({title:`${name} - YANSTORE`,text,url:cleanUrl()});
+        await navigator.share({title:`${name} - YANSTORE`,text,url});
         return;
       }
     }catch(e){
@@ -4282,15 +4291,38 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
       card.appendChild(btn);
     });
   }
+  function targetName(){
+    try{return (new URL(location.href)).searchParams.get('produk')||'';}catch(_){return '';}
+  }
+  function focusSharedProduct(){
+    const wanted=targetName().trim();
+    if(!wanted)return true;
+    const search=document.getElementById('search');
+    const category=document.getElementById('category');
+    if(category && category.value!=='all'){
+      category.value='all';
+      category.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    if(search && search.value!==wanted){
+      search.value=wanted;
+      search.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+    const cards=[...document.querySelectorAll('#productGrid article.card')];
+    const card=cards.find(c=>(c.querySelector('h3')?.textContent||'').trim().toLowerCase()===wanted.toLowerCase());
+    if(!card)return false;
+    card.classList.add('v69221-deeplink-focus');
+    setTimeout(()=>card.classList.remove('v69221-deeplink-focus'),3200);
+    setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'center'}),120);
+    return true;
+  }
   function boot(){
     enhance();
     const grid=document.getElementById('productGrid');
     if(grid){
-      const obs=new MutationObserver(()=>requestAnimationFrame(enhance));
+      const obs=new MutationObserver(()=>requestAnimationFrame(()=>{enhance();focusSharedProduct();}));
       obs.observe(grid,{childList:true});
     }
-    setTimeout(enhance,700);
-    setTimeout(enhance,1800);
+    [300,700,1200,2000,3200].forEach(ms=>setTimeout(()=>{enhance();focusSharedProduct();},ms));
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
