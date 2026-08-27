@@ -99,6 +99,85 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 @keyframes ysStatusPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.82);opacity:.65}}
 @media(max-width:700px){.ys-store-status{font-size:12px;gap:8px;flex-wrap:wrap}}
 </style>
+
+
+<!-- Yanstore V6.9.19 - Catalog Visual Polish Only -->
+<style id="v6919CatalogPolish">
+/* Fokus V6.9.19: membuat katalog lebih lega dan memisahkan tiap area secara visual.
+   Tidak mengubah data, renderer, Supabase, WhatsApp, Admin, stok, varian, promo, badge, atau testimoni. */
+#produk{
+  position:relative;
+  margin:34px 0 42px;
+  padding:30px;
+  border:1px solid rgba(255,255,255,.105);
+  border-radius:28px;
+  background:linear-gradient(180deg,rgba(17,20,32,.76),rgba(8,10,17,.52));
+  box-shadow:0 22px 70px rgba(0,0,0,.20);
+}
+#produk::before{
+  content:"";position:absolute;left:28px;right:28px;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(168,85,247,.60),rgba(0,215,255,.38),transparent);
+}
+#produk .sectionTitle{
+  display:block;
+  margin:0 0 24px;
+  padding-bottom:18px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+#produk .sectionTitle h2{font-size:26px!important;letter-spacing:-.35px;margin:0 0 7px!important}
+#produk .sectionTitle .muted{max-width:720px;line-height:1.6;font-size:13px}
+#productGrid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:20px!important;
+}
+#productGrid .card{
+  min-height:330px!important;
+  padding:19px!important;
+  border-radius:21px!important;
+  border-color:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.20)!important;
+}
+#productGrid .card:hover{box-shadow:0 20px 46px rgba(0,0,0,.30)!important}
+#productGrid h3{font-size:18px!important;margin-top:15px!important}
+#productGrid .desc{line-height:1.6!important;margin-top:2px}
+#productGrid .stock{margin-top:11px}
+#productGrid .price{font-size:26px!important;margin-top:17px!important}
+#productGrid .period{margin-top:2px;margin-bottom:3px}
+#productGrid .btn.buy{margin-top:14px!important;border-radius:12px!important}
+
+/* Memberi jeda jelas setelah katalog, supaya kategori/fitur berikutnya tidak terasa menempel. */
+#kategori{
+  margin:0 0 38px;
+  padding:26px 0 8px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+#kategori .sectionTitle{margin-top:0;margin-bottom:18px}
+#bantuan{margin-top:8px!important;margin-bottom:48px!important}
+#yanstore-testimonials,#yanstore-cara-order{
+  position:relative;
+  margin-top:18px;
+}
+#yanstore-testimonials::before,#yanstore-cara-order::before{
+  content:"";display:block;width:min(1180px,calc(100% - 28px));height:1px;margin:0 auto 30px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent);
+}
+
+@media(max-width:1050px){
+  #productGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:17px!important}
+}
+@media(max-width:760px){
+  #produk{margin:24px 0 32px;padding:20px 16px;border-radius:22px}
+  #produk::before{left:18px;right:18px}
+  #produk .sectionTitle{margin-bottom:18px;padding-bottom:15px}
+  #produk .sectionTitle h2{font-size:23px!important}
+  #productGrid{grid-template-columns:1fr!important;gap:16px!important}
+  #productGrid .card{min-height:0!important;padding:18px!important;border-radius:19px!important}
+  #productGrid .price{font-size:25px!important}
+  #kategori{padding-top:22px;margin-bottom:30px}
+  #yanstore-testimonials::before,#yanstore-cara-order::before{margin-bottom:24px}
+}
+</style>
+
 </head>
 <body>
 <nav class="nav">
@@ -134,7 +213,7 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <main class="wrap">
 <div class="banner"><div><h2>LAYANAN <span>STREAMING ONLINE</span></h2><div class="muted">Daftar sekarang &amp; nikmati konten terbaik!</div></div><div style="font-size:44px">🚀</div></div>
 <section id="produk">
-<div class="sectionTitle"><h2>🛍️ SEMUA PRODUK</h2><div class="muted">Harga, paket, dan status stok terhubung langsung ke database Yanstore.</div></div>
+<div class="sectionTitle"><div><h2>🛍️ KATALOG PRODUK</h2><div class="muted">Pilih aplikasi premium yang kamu butuhkan. Harga, paket, dan stok selalu mengikuti data Yanstore.</div></div></div>
 <div class="grid" id="productGrid"></div>
 </section>
 <section id="kategori">
