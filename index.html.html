@@ -4324,5 +4324,45 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 })();
 </script>
 
+
+
+<!-- Yanstore V6.9.21.4 - Statistik Diagnostic -->
+<style id="v69214DiagStyle">
+#v69214Diag{margin-top:10px;padding:12px;border:1px dashed #4a5679;border-radius:12px;background:#0b101a}
+#v69214Diag button{border:1px solid #7657ef;background:#211a3d;color:#e9e1ff;border-radius:10px;padding:9px 12px;font-weight:900;cursor:pointer}
+#v69214DiagMsg{margin-top:8px;font-size:12px;line-height:1.55;color:#aeb7cc;white-space:pre-wrap;word-break:break-word}
+</style>
+<script id="v69214DiagScript">
+(function(){
+ const URL=()=>typeof V6_URL!=='undefined'?V6_URL:(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:'');
+ const KEY=()=>typeof V6_KEY!=='undefined'?V6_KEY:(typeof SUPABASE_KEY!=='undefined'?SUPABASE_KEY:'');
+ function mount(){
+   const stats=document.getElementById('v6921Stats'); if(!stats||document.getElementById('v69214Diag'))return;
+   const d=document.createElement('div');d.id='v69214Diag';
+   d.innerHTML='<button type="button" onclick="v69214Test()">🧪 TES CATAT 1 KLIK</button><div id="v69214DiagMsg">Tes ini hanya menambah 1 klik uji ke statistik. Tidak mengubah produk.</div>';
+   stats.appendChild(d);
+ }
+ window.v69214Test=async function(){
+   const m=document.getElementById('v69214DiagMsg');
+   try{
+     const list=Array.isArray(products)?products:[];
+     const p=list.find(x=>Number.isFinite(Number(x.id))&&Number(x.id)>0) || null;
+     if(!p)throw new Error('Tidak menemukan ID produk numerik dari katalog. Contoh ID pertama: '+String(list[0]?.id??'kosong'));
+     m.textContent='Mengirim tes untuk '+p.name+' (ID '+p.id+')...';
+     const body={p_product_id:Number(p.id),p_product_name:String(p.name||'TES'),p_variant_id:null,p_variant_name:null};
+     const r=await fetch(URL()+'/rest/v1/rpc/record_product_click',{method:'POST',headers:{apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json'},body:JSON.stringify(body)});
+     const raw=await r.text();
+     if(!r.ok)throw new Error('HTTP '+r.status+' — '+(raw||r.statusText));
+     m.textContent='✅ RPC BERHASIL. 1 klik uji sudah dikirim untuk '+p.name+'. Sekarang klik REFRESH STATISTIK.';
+     if(typeof v6921LoadStats==='function')setTimeout(v6921LoadStats,300);
+   }catch(e){
+     m.textContent='❌ TES GAGAL:\n'+e.message;
+   }
+ };
+ function boot(){mount();setTimeout(mount,600);setTimeout(mount,1500)}
+ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
+})();
+</script>
+
 </body>
 </html>
