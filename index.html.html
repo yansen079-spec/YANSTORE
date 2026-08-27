@@ -4190,73 +4190,49 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 </style>
 
 
-<!-- Yanstore V6.9.21.5 - Statistik Produk Exact Mapping -->
-<script id="v69215ExactClickStats">
+<!-- Yanstore V6.9.21.6 - Statistik Click Live Mapping FIX -->
+<script id="v69216LiveClickStats">
 (function(){
   const URL=()=>typeof V6_URL!=='undefined'?V6_URL:(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:'');
   const KEY=()=>typeof V6_KEY!=='undefined'?V6_KEY:(typeof SUPABASE_KEY!=='undefined'?SUPABASE_KEY:'');
   function safe(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
-  function findByName(name){
-    try{return Array.isArray(products)?products.find(p=>String(p.name||'').trim().toLowerCase()===String(name||'').trim().toLowerCase()):null}catch(_){return null}
+  function byName(name){
+    const n=String(name||'').trim().toLowerCase();
+    try{return Array.isArray(products)?products.find(p=>String(p.name||'').trim().toLowerCase()===n):null}catch(_){return null}
   }
-  function annotateCards(){
-    document.querySelectorAll('#productGrid .card').forEach(card=>{
-      const name=(card.querySelector('h3')?.textContent||'').trim();
-      const p=findByName(name); if(!p)return;
-      card.dataset.v69215ProductId=String(p.id);
-      card.dataset.v69215ProductName=String(p.name||name);
-    });
-  }
-  const oldRender=window.renderProducts;
-  if(typeof oldRender==='function'){
-    window.renderProducts=function(){const r=oldRender.apply(this,arguments);setTimeout(annotateCards,0);return r;};
-  }
-  const oldOpen=window.v64OpenVariants;
-  if(typeof oldOpen==='function'){
-    window.v64OpenVariants=function(productId){
-      const p=Array.isArray(products)?products.find(x=>String(x.id)===String(productId)||Number(x.id)===Number(productId)):null;
-      const r=oldOpen.apply(this,arguments);
-      const modal=document.getElementById('v64VariantModal');
-      if(modal&&p){modal.dataset.v69215ProductId=String(p.id);modal.dataset.v69215ProductName=String(p.name||'');}
-      setTimeout(()=>{
-        if(!p)return;
-        const rows=(typeof v64VariantsFor==='function')?v64VariantsFor(p.id):[];
-        document.querySelectorAll('#v64VariantGrid .v64-variant-card').forEach(card=>{
-          const vn=(card.querySelector('.v691-variant-name')?.textContent||card.querySelector('h3')?.textContent||'').trim();
-          const v=rows.find(x=>String(x.name||'').trim()===vn);
-          card.dataset.v69215ProductId=String(p.id); card.dataset.v69215ProductName=String(p.name||'');
-          if(v){card.dataset.v69215VariantId=String(v.id);card.dataset.v69215VariantName=String(v.name||vn);}
-        });
-      },0);
-      return r;
-    };
+  function clickData(a){
+    const variantCard=a.closest('.v64-variant-card');
+    if(variantCard){
+      const productName=(variantCard.querySelector('.v691-product-label')?.textContent||'').trim();
+      const variantName=(variantCard.querySelector('.v691-variant-name')?.textContent||variantCard.querySelector('h3')?.textContent||'').trim();
+      const p=byName(productName); if(!p)return null;
+      let v=null;
+      try{const rows=typeof v64VariantsFor==='function'?v64VariantsFor(p.id):[];v=rows.find(x=>String(x.name||'').trim()===variantName)||null}catch(_){}
+      return {product_id:p.id,product_name:p.name||productName,variant_id:v?.id??null,variant_name:v?.name||variantName||null};
+    }
+    const card=a.closest('#productGrid .card'); if(!card)return null;
+    const productName=(card.querySelector('h3')?.textContent||'').trim();
+    const p=byName(productName); if(!p)return null;
+    return {product_id:p.id,product_name:p.name||productName,variant_id:null,variant_name:null};
   }
   async function record(d){
-    const pid=Number(d.product_id);
+    const pid=Number(d.product_id),vid=(d.variant_id==null||d.variant_id==='')?null:Number(d.variant_id);
     if(!Number.isFinite(pid)||pid<=0)throw new Error('ID produk tidak valid: '+String(d.product_id));
-    const vid=d.variant_id==null||d.variant_id===''?null:Number(d.variant_id);
     const body={p_product_id:pid,p_product_name:String(d.product_name||''),p_variant_id:Number.isFinite(vid)?vid:null,p_variant_name:d.variant_name?String(d.variant_name):null};
-    const r=await fetch(URL()+'/rest/v1/rpc/record_product_click',{method:'POST',headers:{apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const raw=await r.text(); if(!r.ok)throw new Error('HTTP '+r.status+' '+raw);
+    const r=await fetch(URL()+'/rest/v1/rpc/record_product_click',{method:'POST',keepalive:true,headers:{apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const raw=await r.text();if(!r.ok)throw new Error('HTTP '+r.status+' '+raw);
   }
   document.addEventListener('click',async function(e){
-    const a=e.target.closest&&e.target.closest('a.btn.buy[href*="wa.me"]'); if(!a||a.dataset.v69215Busy==='1')return;
-    let d=null;
-    const vc=a.closest('.v64-variant-card');
-    if(vc){
-      d={product_id:vc.dataset.v69215ProductId,product_name:vc.dataset.v69215ProductName,variant_id:vc.dataset.v69215VariantId||null,variant_name:vc.dataset.v69215VariantName||null};
-      if(!d.product_id){const modal=document.getElementById('v64VariantModal');d.product_id=modal?.dataset.v69215ProductId;d.product_name=modal?.dataset.v69215ProductName;}
-    }else{
-      const card=a.closest('#productGrid .card');
-      d=card?{product_id:card.dataset.v69215ProductId,product_name:card.dataset.v69215ProductName,variant_id:null,variant_name:null}:null;
-    }
-    if(!d?.product_id)return;
-    e.preventDefault();e.stopImmediatePropagation();a.dataset.v69215Busy='1';
-    const href=a.href,txt=a.textContent; a.textContent='MEMBUKA...';
+    const a=e.target.closest&&e.target.closest('a.btn.buy[href*="wa.me"]');
+    if(!a||a.dataset.v69216Busy==='1')return;
+    const d=clickData(a);
+    if(!d){console.warn('Yanstore statistik: produk klik tidak ditemukan');return;}
+    e.preventDefault();e.stopImmediatePropagation();
+    a.dataset.v69216Busy='1';const href=a.href,txt=a.textContent;a.textContent='MEMBUKA...';
     let popup=null;try{popup=window.open('about:blank','_blank')}catch(_){}
-    try{await Promise.race([record(d),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),2200))]);}
+    try{await record(d);}
     catch(err){console.warn('Yanstore statistik gagal:',err);}
-    finally{a.textContent=txt;a.dataset.v69215Busy='0';if(popup){try{popup.location.href=href}catch(_){location.href=href}}else location.href=href;}
+    finally{a.textContent=txt;a.dataset.v69216Busy='0';if(popup){try{popup.location.href=href}catch(_){location.href=href}}else location.href=href;}
   },true);
 
   function mount(){
@@ -4283,7 +4259,7 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
     if(!window.v6Session?.access_token){msg('Login Admin terlebih dahulu.');return;}if(!confirm('Reset semua statistik klik produk? Data produk tidak terpengaruh.'))return;
     try{const r=await v62Fetch(URL()+'/rest/v1/product_clicks?id=gt.0',{method:'DELETE',headers:{apikey:KEY(),Prefer:'return=minimal'}});if(!r.ok)throw new Error('HTTP '+r.status);await v6921LoadStats();msg('✅ Statistik klik sudah direset.');}catch(e){msg('Gagal reset statistik: '+e.message);}
   };
-  function boot(){annotateCards();mount();setTimeout(annotateCards,500);setTimeout(mount,500);setTimeout(annotateCards,1500);setTimeout(mount,1500);}
+  function boot(){mount();setTimeout(mount,600);setTimeout(mount,1600);}
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
 })();
 </script>
