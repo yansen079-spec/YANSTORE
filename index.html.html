@@ -4197,8 +4197,19 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
   function publicHeaders(){return {apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json',Prefer:'return=minimal'};}
   async function track(payload){
     try{
-      await fetch(URL()+'/rest/v1/product_clicks',{method:'POST',headers:publicHeaders(),body:JSON.stringify(payload),keepalive:true});
-    }catch(_){/* statistik tidak boleh mengganggu proses order */}
+      const endpoint=URL()+'/rest/v1/product_clicks';
+      let r=await fetch(endpoint,{method:'POST',headers:publicHeaders(),body:JSON.stringify(payload),keepalive:true});
+      if(!r.ok){
+        // Retry ringan tanpa Authorization header untuk kompatibilitas publishable key Supabase.
+        r=await fetch(endpoint,{method:'POST',headers:{apikey:KEY(),'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload),keepalive:true});
+      }
+      if(!r.ok){
+        const d=await r.json().catch(()=>({}));
+        console.warn('Yanstore click stats gagal dicatat:',d.message||('HTTP '+r.status));
+      }
+    }catch(err){
+      console.warn('Yanstore click stats error:',err);
+    }
   }
   document.addEventListener('click',function(e){
     const a=e.target.closest && e.target.closest('a.btn.buy[href*="wa.me"]'); if(!a)return;
