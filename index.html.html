@@ -4197,15 +4197,17 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
   function publicHeaders(){return {apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json',Prefer:'return=minimal'};}
   async function track(payload){
     try{
-      const endpoint=URL()+'/rest/v1/product_clicks';
-      let r=await fetch(endpoint,{method:'POST',headers:publicHeaders(),body:JSON.stringify(payload),keepalive:true});
-      if(!r.ok){
-        // Retry ringan tanpa Authorization header untuk kompatibilitas publishable key Supabase.
-        r=await fetch(endpoint,{method:'POST',headers:{apikey:KEY(),'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload),keepalive:true});
-      }
+      const endpoint=URL()+'/rest/v1/rpc/record_product_click';
+      const rpcBody={
+        p_product_id:Number(payload.product_id),
+        p_product_name:String(payload.product_name||''),
+        p_variant_id:payload.variant_id==null?null:Number(payload.variant_id),
+        p_variant_name:payload.variant_name==null?null:String(payload.variant_name)
+      };
+      const r=await fetch(endpoint,{method:'POST',headers:publicHeaders(),body:JSON.stringify(rpcBody),keepalive:true});
       if(!r.ok){
         const d=await r.json().catch(()=>({}));
-        console.warn('Yanstore click stats gagal dicatat:',d.message||('HTTP '+r.status));
+        console.warn('Yanstore click stats RPC gagal:',d.message||d.hint||('HTTP '+r.status));
       }
     }catch(err){
       console.warn('Yanstore click stats error:',err);
