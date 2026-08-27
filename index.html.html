@@ -4235,5 +4235,66 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 })();
 </script>
 
+
+
+<!-- Yanstore V6.9.22 - Bagikan Produk -->
+<style id="v6922ShareStyle">
+.v6922-share-btn{width:100%;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(168,85,247,.32);border-radius:12px;background:rgba(168,85,247,.07);color:#ddd6fe;padding:10px 12px;font-weight:850;cursor:pointer;transition:.18s ease}
+.v6922-share-btn:hover{transform:translateY(-1px);border-color:rgba(168,85,247,.6);background:rgba(168,85,247,.13)}
+.v6922-share-btn:active{transform:translateY(0)}
+</style>
+<script id="v6922ShareScript">
+(function(){
+  function cleanUrl(){
+    try{const u=new URL(location.href);u.hash='';return u.toString();}catch(_){return location.href.split('#')[0];}
+  }
+  async function shareProduct(card){
+    const name=(card?.querySelector('h3')?.textContent||'Produk YANSTORE').trim();
+    const price=(card?.querySelector('.price')?.textContent||'').trim();
+    const period=(card?.querySelector('.period')?.textContent||'').trim();
+    const stock=(card?.querySelector('.stock')?.textContent||'').trim();
+    const lines=[`✨ ${name} di YANSTORE`];
+    if(price) lines.push(`💰 ${price}${period?' • '+period:''}`);
+    if(stock) lines.push(`📦 Status: ${stock}`);
+    lines.push('Cek detail dan paketnya di YANSTORE:');
+    lines.push(cleanUrl());
+    const text=lines.join('\n');
+    try{
+      if(navigator.share){
+        await navigator.share({title:`${name} - YANSTORE`,text,url:cleanUrl()});
+        return;
+      }
+    }catch(e){
+      if(e && e.name==='AbortError') return;
+    }
+    window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank','noopener');
+  }
+  function enhance(){
+    const grid=document.getElementById('productGrid');
+    if(!grid)return;
+    grid.querySelectorAll('article.card').forEach(card=>{
+      if(card.querySelector('.v6922-share-btn'))return;
+      const btn=document.createElement('button');
+      btn.type='button';
+      btn.className='v6922-share-btn';
+      btn.innerHTML='🔗 BAGIKAN PRODUK';
+      btn.addEventListener('click',()=>shareProduct(card));
+      card.appendChild(btn);
+    });
+  }
+  function boot(){
+    enhance();
+    const grid=document.getElementById('productGrid');
+    if(grid){
+      const obs=new MutationObserver(()=>requestAnimationFrame(enhance));
+      obs.observe(grid,{childList:true});
+    }
+    setTimeout(enhance,700);
+    setTimeout(enhance,1800);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
 </body>
 </html>
