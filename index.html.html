@@ -91,6 +91,13 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 #v6AdminPanel{display:none}
 #v6AdminLogin{display:block}
 @media(max-width:700px){.v6grid{grid-template-columns:1fr}.v6grid .full{grid-column:auto}.v6item{align-items:flex-start;flex-direction:column}}
+
+/* Yanstore V6.9.17 - Status Toko ONLINE */
+.ys-store-status{display:inline-flex;align-items:center;gap:9px;margin:0 0 14px;padding:8px 12px;border:1px solid rgba(32,199,107,.42);border-radius:999px;background:rgba(32,199,107,.10);color:#8ff0b8;font-size:13px;font-weight:900;letter-spacing:.04em;box-shadow:0 0 20px rgba(32,199,107,.08)}
+.ys-store-status-dot{width:9px;height:9px;border-radius:50%;background:#20c76b;box-shadow:0 0 0 4px rgba(32,199,107,.13),0 0 14px rgba(32,199,107,.85);animation:ysStatusPulse 1.8s ease-in-out infinite}
+.ys-store-status small{font-weight:700;letter-spacing:0;color:#b9c5c0}
+@keyframes ysStatusPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.82);opacity:.65}}
+@media(max-width:700px){.ys-store-status{font-size:12px;gap:8px;flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -105,6 +112,7 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <div class="wrap">
 <div class="heroCard">
 <div class="eyebrow">⚡ Premium apps • fast order • friendly price</div>
+<div class="ys-store-status" id="yanstoreStoreStatus" role="status" aria-label="Status toko online"><span class="ys-store-status-dot" aria-hidden="true"></span><span>STATUS TOKO: ONLINE</span><small>• Admin siap melayani</small></div>
 <h1>Premium Apps,<br/>lebih <span>hemat.</span></h1>
 <p class="lead">Pilih produk digital favorit kamu, cek harga, lalu pesan langsung melalui WhatsApp Yanstore.</p>
 <div class="toolbar">
