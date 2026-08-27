@@ -4039,5 +4039,81 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 })();
 </script>
 
+
+<!-- Yanstore V6.9.19.1 - FIX preserve product logo when editing price/details -->
+<script id="v69191PreserveLogoOnEdit">
+(function(){
+  let originalLogo='';
+
+  function isUrl(v){ return /^https?:\/\//i.test(String(v||'').trim()); }
+
+  function ensureLogoOption(value){
+    const select=document.getElementById('v6Logo');
+    const logo=String(value||'').trim();
+    if(!select || !logo) return;
+
+    let option=Array.from(select.options).find(o=>o.value===logo);
+    if(!option){
+      option=document.createElement('option');
+      option.value=logo;
+      option.textContent=isUrl(logo)?'LOGO TERSIMPAN (JANGAN UBAH)':'Logo tersimpan';
+      option.dataset.v69191='1';
+      select.appendChild(option);
+    }
+    select.value=logo;
+  }
+
+  function productFromArg(arg){
+    if(arg && typeof arg==='object') return arg;
+    const id=Number(arg);
+    if(!Number.isFinite(id)) return null;
+    return (window.v62Rows||[]).find(p=>Number(p.id)===id)||null;
+  }
+
+  const previousEdit=window.v6Edit;
+  if(typeof previousEdit==='function'){
+    window.v6Edit=function(arg){
+      const product=productFromArg(arg);
+      originalLogo=String(product?.logo||'').trim();
+
+      const result=previousEdit.apply(this,arguments);
+
+      // Previous Yanstore versions may rebuild the logo manager shortly after EDIT.
+      // Re-apply the exact database value so an uploaded URL never becomes Netflix.
+      const restore=()=>{
+        if(originalLogo) ensureLogoOption(originalLogo);
+        const url=document.getElementById('v68LogoUrl');
+        const preview=document.getElementById('v68LogoPreview');
+        if(isUrl(originalLogo)){
+          if(url) url.value=originalLogo;
+          if(preview) preview.src=originalLogo;
+        }
+      };
+      restore();
+      setTimeout(restore,100);
+      setTimeout(restore,350);
+      return result;
+    };
+  }
+
+  const previousSave=window.v6Save;
+  if(typeof previousSave==='function'){
+    window.v6Save=async function(){
+      const id=document.getElementById('v6Id')?.value;
+      const select=document.getElementById('v6Logo');
+
+      // Editing an existing product: if the logo field was lost/emptied by an older
+      // manager, restore the exact logo that came from the database before PATCH.
+      if(id && originalLogo && select && !String(select.value||'').trim()){
+        ensureLogoOption(originalLogo);
+      }
+
+      const result=await previousSave.apply(this,arguments);
+      return result;
+    };
+  }
+})();
+</script>
+
 </body>
 </html>
