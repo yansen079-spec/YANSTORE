@@ -4259,5 +4259,70 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 })();
 </script>
 
+
+
+<!-- Yanstore V6.9.21.3 - reliable WhatsApp click tracking -->
+<script id="v69213ReliableClickTracking">
+(function(){
+  const URL=()=>typeof V6_URL!=='undefined'?V6_URL:(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:'');
+  const KEY=()=>typeof V6_KEY!=='undefined'?V6_KEY:(typeof SUPABASE_KEY!=='undefined'?SUPABASE_KEY:'');
+  function findProduct(name){
+    try{return Array.isArray(products)?products.find(p=>String(p.name||'').trim().toLowerCase()===String(name||'').trim().toLowerCase()):null}catch(_){return null}
+  }
+  async function send(payload){
+    const body={
+      p_product_id:Number(payload.product_id),
+      p_product_name:String(payload.product_name||''),
+      p_variant_id:payload.variant_id==null?null:Number(payload.variant_id),
+      p_variant_name:payload.variant_name==null?null:String(payload.variant_name)
+    };
+    if(!Number.isFinite(body.p_product_id) || body.p_product_id<=0) throw new Error('ID produk tidak valid');
+    if(body.p_variant_id!=null && !Number.isFinite(body.p_variant_id)) body.p_variant_id=null;
+    const r=await fetch(URL()+'/rest/v1/rpc/record_product_click',{
+      method:'POST',
+      headers:{apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.message||d.hint||('HTTP '+r.status));}
+    return true;
+  }
+  function details(a){
+    let p=null,v=null;
+    const vc=a.closest('.v64-variant-card');
+    if(vc){
+      let title=(document.getElementById('v64ModalTitle')?.textContent||'').replace(/\s*[—-]\s*Pilih Paket\s*$/i,'').trim();
+      p=findProduct(title);
+      const vn=(vc.querySelector('.v691-variant-name')?.textContent||vc.querySelector('h3')?.textContent||'').trim();
+      try{if(p && Array.isArray(v64Variants))v=v64Variants.find(x=>Number(x.product_id)===Number(p.id)&&String(x.name||'').trim()===vn)||null}catch(_){}
+    }else{
+      const card=a.closest('#productGrid .card');
+      const name=(card?.querySelector('h3')?.textContent||'').trim();
+      p=findProduct(name);
+    }
+    return p?{product_id:p.id,product_name:p.name,variant_id:v?.id??null,variant_name:v?.name??null}:null;
+  }
+  document.addEventListener('click',async function(e){
+    const a=e.target.closest&&e.target.closest('a.btn.buy[href*="wa.me"]');
+    if(!a || a.dataset.v69213Busy==='1') return;
+    const d=details(a); if(!d)return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    a.dataset.v69213Busy='1';
+    const href=a.href;
+    const original=a.textContent;
+    a.textContent='MEMBUKA...';
+    let popup=null;
+    try{popup=window.open('about:blank','_blank');}catch(_){}
+    try{
+      await Promise.race([send(d),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),1800))]);
+    }catch(err){console.warn('Yanstore statistik klik:',err);}
+    finally{
+      a.textContent=original; a.dataset.v69213Busy='0';
+      if(popup){try{popup.location.href=href}catch(_){location.href=href}}
+      else location.href=href;
+    }
+  },true);
+})();
+</script>
+
 </body>
 </html>
