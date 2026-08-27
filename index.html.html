@@ -4176,5 +4176,64 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 })();
 </script>
 
+
+
+<!-- YANSTORE V6.9.21 - Kenapa Pilih YANSTORE -->
+<style id="v6921WhyStyle">
+#yanstore-why{padding:42px 18px 22px;position:relative}
+#yanstore-why .v6921-wrap{max-width:1180px;margin:0 auto}
+#yanstore-why .v6921-head{text-align:center;margin-bottom:20px}
+#yanstore-why .v6921-kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid rgba(168,85,247,.34);background:rgba(168,85,247,.08);color:#d8b4fe;font-size:12px;font-weight:900;letter-spacing:.05em}
+#yanstore-why h2{margin:12px 0 7px;font-size:clamp(24px,4vw,34px);letter-spacing:-.03em}
+#yanstore-why .v6921-sub{max-width:650px;margin:0 auto;color:var(--muted);font-size:14px;line-height:1.65}
+#yanstore-why .v6921-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+#yanstore-why .v6921-card{padding:20px 17px;border:1px solid rgba(255,255,255,.09);border-radius:18px;background:linear-gradient(180deg,rgba(17,20,32,.96),rgba(10,12,20,.94));box-shadow:0 12px 28px rgba(0,0,0,.18);min-height:155px}
+#yanstore-why .v6921-icon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;margin-bottom:14px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.24);font-size:22px}
+#yanstore-why h3{margin:0 0 7px;font-size:16px}
+#yanstore-why p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
+#yanstore-why .v6921-note{margin-top:15px;text-align:center;color:#7f899f;font-size:11px}
+@media(max-width:900px){#yanstore-why .v6921-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){#yanstore-why{padding:34px 14px 18px}#yanstore-why .v6921-grid{grid-template-columns:1fr;gap:10px}#yanstore-why .v6921-card{min-height:auto;padding:17px}#yanstore-why .v6921-head{margin-bottom:16px}}
+</style>
+<script id="v6921WhyScript">
+(function(){
+  function createWhy(){
+    if(document.getElementById('yanstore-why')) return;
+    const sec=document.createElement('section');
+    sec.id='yanstore-why';
+    sec.innerHTML=`
+      <div class="v6921-wrap">
+        <div class="v6921-head">
+          <div class="v6921-kicker">✨ KENAPA PILIH YANSTORE?</div>
+          <h2>Order Lebih Nyaman, Nggak Ribet</h2>
+          <p class="v6921-sub">Kami berusaha bikin proses order aplikasi premium tetap sederhana, jelas, dan mudah dibantu dari awal sampai selesai.</p>
+        </div>
+        <div class="v6921-grid">
+          <article class="v6921-card"><div class="v6921-icon">⚡</div><h3>Proses Cepat</h3><p>Pilih produk dan paket yang kamu butuhkan, lalu lanjut chat Admin untuk proses pesanan.</p></article>
+          <article class="v6921-card"><div class="v6921-icon">💬</div><h3>Admin Siap Bantu</h3><p>Masih bingung pilih paket? Kamu bisa tanya dulu melalui WhatsApp sebelum melakukan order.</p></article>
+          <article class="v6921-card"><div class="v6921-icon">🏷️</div><h3>Harga Jelas</h3><p>Harga dan pilihan paket ditampilkan di katalog agar kamu lebih mudah membandingkan sebelum pesan.</p></article>
+          <article class="v6921-card"><div class="v6921-icon">🛠️</div><h3>Bantuan Setelah Order</h3><p>Jika ada kendala terkait pesanan, kamu tetap bisa menghubungi Admin untuk mendapatkan bantuan.</p></article>
+        </div>
+        <div class="v6921-note">YANSTORE • Premium Apps</div>
+      </div>`;
+
+    const testimonial=document.getElementById('yanstore-testimonials');
+    const cara=document.getElementById('yanstore-cara-order');
+    if(testimonial && testimonial.parentNode){
+      testimonial.parentNode.insertBefore(sec,testimonial);
+    }else if(cara && cara.parentNode){
+      cara.parentNode.insertBefore(sec,cara);
+    }else{
+      const footer=document.querySelector('footer');
+      if(footer && footer.parentNode) footer.parentNode.insertBefore(sec,footer);
+      else document.body.appendChild(sec);
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',createWhy,{once:true});
+  else createWhy();
+  setTimeout(createWhy,600);
+})();
+</script>
+
 </body>
 </html>
