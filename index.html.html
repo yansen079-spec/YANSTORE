@@ -4188,179 +4188,103 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 #v6921Msg{min-height:18px;color:#aeb7cc;font-size:12px;margin-bottom:8px}.v6921-list{display:grid;gap:8px}.v6921-row{display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;padding:11px 12px;border:1px solid #2d354d;border-radius:12px;background:#0d111b}.v6921-rank{font-weight:950;color:#bba6ff;text-align:center}.v6921-row small{display:block;color:#919cb3;margin-top:2px}.v6921-count{font-weight:950;font-size:18px}.v6921-empty{padding:12px;border:1px dashed #36405c;border-radius:12px;color:#98a4ba}
 @media(max-width:680px){.v6921-summary{grid-template-columns:1fr}.v6921-row{grid-template-columns:32px 1fr auto}}
 </style>
-<script id="v6921ClickStatsScript">
+
+
+<!-- Yanstore V6.9.21.5 - Statistik Produk Exact Mapping -->
+<script id="v69215ExactClickStats">
 (function(){
   const URL=()=>typeof V6_URL!=='undefined'?V6_URL:(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:'');
   const KEY=()=>typeof V6_KEY!=='undefined'?V6_KEY:(typeof SUPABASE_KEY!=='undefined'?SUPABASE_KEY:'');
   function safe(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
-  function findProductByName(name){return Array.isArray(products)?products.find(p=>String(p.name||'').trim()===String(name||'').trim()):null;}
-  function publicHeaders(){return {apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json',Prefer:'return=minimal'};}
-  async function track(payload){
-    try{
-      const endpoint=URL()+'/rest/v1/rpc/record_product_click';
-      const rpcBody={
-        p_product_id:Number(payload.product_id),
-        p_product_name:String(payload.product_name||''),
-        p_variant_id:payload.variant_id==null?null:Number(payload.variant_id),
-        p_variant_name:payload.variant_name==null?null:String(payload.variant_name)
-      };
-      const r=await fetch(endpoint,{method:'POST',headers:publicHeaders(),body:JSON.stringify(rpcBody),keepalive:true});
-      if(!r.ok){
-        const d=await r.json().catch(()=>({}));
-        console.warn('Yanstore click stats RPC gagal:',d.message||d.hint||('HTTP '+r.status));
-      }
-    }catch(err){
-      console.warn('Yanstore click stats error:',err);
-    }
+  function findByName(name){
+    try{return Array.isArray(products)?products.find(p=>String(p.name||'').trim().toLowerCase()===String(name||'').trim().toLowerCase()):null}catch(_){return null}
   }
-  document.addEventListener('click',function(e){
-    const a=e.target.closest && e.target.closest('a.btn.buy[href*="wa.me"]'); if(!a)return;
-    let product=null,variant=null;
-    const variantCard=a.closest('.v64-variant-card');
-    if(variantCard){
-      const title=(document.getElementById('v64ModalTitle')?.textContent||'').replace(/\s*[—-]\s*Pilih Paket\s*$/i,'').trim();
-      product=findProductByName(title);
-      const vname=(variantCard.querySelector('h3')?.textContent||'').trim();
-      if(product && Array.isArray(v64Variants))variant=v64Variants.find(v=>Number(v.product_id)===Number(product.id)&&String(v.name||'').trim()===vname);
+  function annotateCards(){
+    document.querySelectorAll('#productGrid .card').forEach(card=>{
+      const name=(card.querySelector('h3')?.textContent||'').trim();
+      const p=findByName(name); if(!p)return;
+      card.dataset.v69215ProductId=String(p.id);
+      card.dataset.v69215ProductName=String(p.name||name);
+    });
+  }
+  const oldRender=window.renderProducts;
+  if(typeof oldRender==='function'){
+    window.renderProducts=function(){const r=oldRender.apply(this,arguments);setTimeout(annotateCards,0);return r;};
+  }
+  const oldOpen=window.v64OpenVariants;
+  if(typeof oldOpen==='function'){
+    window.v64OpenVariants=function(productId){
+      const p=Array.isArray(products)?products.find(x=>String(x.id)===String(productId)||Number(x.id)===Number(productId)):null;
+      const r=oldOpen.apply(this,arguments);
+      const modal=document.getElementById('v64VariantModal');
+      if(modal&&p){modal.dataset.v69215ProductId=String(p.id);modal.dataset.v69215ProductName=String(p.name||'');}
+      setTimeout(()=>{
+        if(!p)return;
+        const rows=(typeof v64VariantsFor==='function')?v64VariantsFor(p.id):[];
+        document.querySelectorAll('#v64VariantGrid .v64-variant-card').forEach(card=>{
+          const vn=(card.querySelector('.v691-variant-name')?.textContent||card.querySelector('h3')?.textContent||'').trim();
+          const v=rows.find(x=>String(x.name||'').trim()===vn);
+          card.dataset.v69215ProductId=String(p.id); card.dataset.v69215ProductName=String(p.name||'');
+          if(v){card.dataset.v69215VariantId=String(v.id);card.dataset.v69215VariantName=String(v.name||vn);}
+        });
+      },0);
+      return r;
+    };
+  }
+  async function record(d){
+    const pid=Number(d.product_id);
+    if(!Number.isFinite(pid)||pid<=0)throw new Error('ID produk tidak valid: '+String(d.product_id));
+    const vid=d.variant_id==null||d.variant_id===''?null:Number(d.variant_id);
+    const body={p_product_id:pid,p_product_name:String(d.product_name||''),p_variant_id:Number.isFinite(vid)?vid:null,p_variant_name:d.variant_name?String(d.variant_name):null};
+    const r=await fetch(URL()+'/rest/v1/rpc/record_product_click',{method:'POST',headers:{apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const raw=await r.text(); if(!r.ok)throw new Error('HTTP '+r.status+' '+raw);
+  }
+  document.addEventListener('click',async function(e){
+    const a=e.target.closest&&e.target.closest('a.btn.buy[href*="wa.me"]'); if(!a||a.dataset.v69215Busy==='1')return;
+    let d=null;
+    const vc=a.closest('.v64-variant-card');
+    if(vc){
+      d={product_id:vc.dataset.v69215ProductId,product_name:vc.dataset.v69215ProductName,variant_id:vc.dataset.v69215VariantId||null,variant_name:vc.dataset.v69215VariantName||null};
+      if(!d.product_id){const modal=document.getElementById('v64VariantModal');d.product_id=modal?.dataset.v69215ProductId;d.product_name=modal?.dataset.v69215ProductName;}
     }else{
-      const card=a.closest('#productGrid .card'); const name=(card?.querySelector('h3')?.textContent||'').trim(); product=findProductByName(name);
+      const card=a.closest('#productGrid .card');
+      d=card?{product_id:card.dataset.v69215ProductId,product_name:card.dataset.v69215ProductName,variant_id:null,variant_name:null}:null;
     }
-    if(!product)return;
-    track({product_id:Number(product.id),product_name:String(product.name||''),variant_id:variant?Number(variant.id):null,variant_name:variant?String(variant.name||''):null});
+    if(!d?.product_id)return;
+    e.preventDefault();e.stopImmediatePropagation();a.dataset.v69215Busy='1';
+    const href=a.href,txt=a.textContent; a.textContent='MEMBUKA...';
+    let popup=null;try{popup=window.open('about:blank','_blank')}catch(_){}
+    try{await Promise.race([record(d),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),2200))]);}
+    catch(err){console.warn('Yanstore statistik gagal:',err);}
+    finally{a.textContent=txt;a.dataset.v69215Busy='0';if(popup){try{popup.location.href=href}catch(_){location.href=href}}else location.href=href;}
   },true);
 
   function mount(){
-    const panel=document.getElementById('v6AdminPanel'); if(!panel||document.getElementById('v6921Stats'))return;
+    const panel=document.getElementById('v6AdminPanel');if(!panel||document.getElementById('v6921Stats'))return;
     const box=document.createElement('div');box.id='v6921Stats';
-    box.innerHTML=`<h3>📊 Statistik Klik Produk</h3><div class="v6921-note">Menghitung klik tombol PESAN / PESAN PAKET. Angka ini menunjukkan minat customer, bukan pembayaran yang sudah selesai.</div><div class="v6921-summary"><div class="v6921-kpi"><strong id="v6921Total">0</strong><small>Total klik tercatat</small></div><div class="v6921-kpi"><strong id="v6921Today">0</strong><small>Klik hari ini</small></div><div class="v6921-kpi"><strong id="v6921Products">0</strong><small>Produk pernah diklik</small></div></div><div class="v6921-actions"><button type="button" onclick="v6921LoadStats()">REFRESH STATISTIK</button><button type="button" class="danger" onclick="v6921ResetStats()">RESET STATISTIK</button></div><div id="v6921Msg"></div><div id="v6921List" class="v6921-list"><div class="v6921-empty">Belum memuat statistik.</div></div>`;
+    box.innerHTML=`<h3>📊 Statistik Klik Produk</h3><div class="v6921-note">Menghitung klik tombol PESAN / PESAN PAKET. Angka menunjukkan minat customer, bukan pembayaran selesai.</div><div class="v6921-summary"><div class="v6921-kpi"><strong id="v6921Total">0</strong><small>Total klik tercatat</small></div><div class="v6921-kpi"><strong id="v6921Today">0</strong><small>Klik hari ini</small></div><div class="v6921-kpi"><strong id="v6921Products">0</strong><small>Produk pernah diklik</small></div></div><div class="v6921-actions"><button type="button" onclick="v6921LoadStats()">REFRESH STATISTIK</button><button type="button" class="danger" onclick="v6921ResetStats()">RESET STATISTIK</button></div><div id="v6921Msg"></div><div id="v6921List" class="v6921-list"><div class="v6921-empty">Belum memuat statistik.</div></div>`;
     panel.appendChild(box);
   }
   function msg(t){const x=document.getElementById('v6921Msg');if(x)x.textContent=t||'';}
   window.v6921LoadStats=async function(){
-    mount(); if(!window.v6Session?.access_token){msg('Login Admin terlebih dahulu.');return;}
-    msg('Mengambil statistik...');
+    mount();if(!window.v6Session?.access_token){msg('Login Admin terlebih dahulu.');return;}msg('Mengambil statistik...');
     try{
       const r=await v62Fetch(URL()+'/rest/v1/product_clicks?select=id,product_id,product_name,variant_id,variant_name,clicked_at&order=clicked_at.desc&limit=5000',{method:'GET',headers:{apikey:KEY()}});
       const rows=await r.json().catch(()=>[]);if(!r.ok)throw new Error(rows?.message||('HTTP '+r.status));
-      const map=new Map(); const today=new Date(); const y=today.getFullYear(),m=today.getMonth(),d=today.getDate();let todayCount=0;
-      rows.forEach(x=>{const k=String(x.product_id);const cur=map.get(k)||{name:x.product_name||('Produk '+k),count:0,variants:new Map()};cur.count++;if(x.variant_name)cur.variants.set(x.variant_name,(cur.variants.get(x.variant_name)||0)+1);map.set(k,cur);const dt=new Date(x.clicked_at);if(dt.getFullYear()===y&&dt.getMonth()===m&&dt.getDate()===d)todayCount++;});
+      const map=new Map(),now=new Date();let today=0;
+      rows.forEach(x=>{const k=String(x.product_id);const cur=map.get(k)||{name:x.product_name||('Produk '+k),count:0,variants:new Map()};cur.count++;if(x.variant_name)cur.variants.set(x.variant_name,(cur.variants.get(x.variant_name)||0)+1);map.set(k,cur);const dt=new Date(x.clicked_at);if(dt.toDateString()===now.toDateString())today++;});
       const ranked=[...map.values()].sort((a,b)=>b.count-a.count||String(a.name).localeCompare(String(b.name),'id'));
-      document.getElementById('v6921Total').textContent=rows.length;document.getElementById('v6921Today').textContent=todayCount;document.getElementById('v6921Products').textContent=ranked.length;
+      document.getElementById('v6921Total').textContent=rows.length;document.getElementById('v6921Today').textContent=today;document.getElementById('v6921Products').textContent=ranked.length;
       document.getElementById('v6921List').innerHTML=ranked.length?ranked.map((x,i)=>{const top=[...x.variants.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(([n,c])=>safe(n)+' ('+c+')').join(' • ');return `<div class="v6921-row"><div class="v6921-rank">#${i+1}</div><div><strong>${safe(x.name)}</strong><small>${top?'Paket terklik: '+top:'Klik tombol order produk'}</small></div><div class="v6921-count">${x.count}</div></div>`;}).join(''):'<div class="v6921-empty">Belum ada klik order yang tercatat.</div>';
-      msg('✅ Statistik berhasil dimuat. Maksimal 5.000 klik terbaru ditampilkan.');
+      msg('✅ Statistik berhasil dimuat.');
     }catch(e){msg('Gagal memuat statistik: '+e.message);}
   };
   window.v6921ResetStats=async function(){
-    if(!window.v6Session?.access_token){msg('Login Admin terlebih dahulu.');return;} if(!confirm('Reset semua statistik klik produk? Data klik akan dihapus, produk tidak terpengaruh.'))return;
+    if(!window.v6Session?.access_token){msg('Login Admin terlebih dahulu.');return;}if(!confirm('Reset semua statistik klik produk? Data produk tidak terpengaruh.'))return;
     try{const r=await v62Fetch(URL()+'/rest/v1/product_clicks?id=gt.0',{method:'DELETE',headers:{apikey:KEY(),Prefer:'return=minimal'}});if(!r.ok)throw new Error('HTTP '+r.status);await v6921LoadStats();msg('✅ Statistik klik sudah direset.');}catch(e){msg('Gagal reset statistik: '+e.message);}
   };
-  function boot(){mount();setTimeout(mount,500);setTimeout(mount,1400);}
+  function boot(){annotateCards();mount();setTimeout(annotateCards,500);setTimeout(mount,500);setTimeout(annotateCards,1500);setTimeout(mount,1500);}
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
-})();
-</script>
-
-
-
-<!-- Yanstore V6.9.21.3 - reliable WhatsApp click tracking -->
-<script id="v69213ReliableClickTracking">
-(function(){
-  const URL=()=>typeof V6_URL!=='undefined'?V6_URL:(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:'');
-  const KEY=()=>typeof V6_KEY!=='undefined'?V6_KEY:(typeof SUPABASE_KEY!=='undefined'?SUPABASE_KEY:'');
-  function findProduct(name){
-    try{return Array.isArray(products)?products.find(p=>String(p.name||'').trim().toLowerCase()===String(name||'').trim().toLowerCase()):null}catch(_){return null}
-  }
-  async function send(payload){
-    const body={
-      p_product_id:Number(payload.product_id),
-      p_product_name:String(payload.product_name||''),
-      p_variant_id:payload.variant_id==null?null:Number(payload.variant_id),
-      p_variant_name:payload.variant_name==null?null:String(payload.variant_name)
-    };
-    if(!Number.isFinite(body.p_product_id) || body.p_product_id<=0) throw new Error('ID produk tidak valid');
-    if(body.p_variant_id!=null && !Number.isFinite(body.p_variant_id)) body.p_variant_id=null;
-    const r=await fetch(URL()+'/rest/v1/rpc/record_product_click',{
-      method:'POST',
-      headers:{apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.message||d.hint||('HTTP '+r.status));}
-    return true;
-  }
-  function details(a){
-    let p=null,v=null;
-    const vc=a.closest('.v64-variant-card');
-    if(vc){
-      let title=(document.getElementById('v64ModalTitle')?.textContent||'').replace(/\s*[—-]\s*Pilih Paket\s*$/i,'').trim();
-      p=findProduct(title);
-      const vn=(vc.querySelector('.v691-variant-name')?.textContent||vc.querySelector('h3')?.textContent||'').trim();
-      try{if(p && Array.isArray(v64Variants))v=v64Variants.find(x=>Number(x.product_id)===Number(p.id)&&String(x.name||'').trim()===vn)||null}catch(_){}
-    }else{
-      const card=a.closest('#productGrid .card');
-      const name=(card?.querySelector('h3')?.textContent||'').trim();
-      p=findProduct(name);
-    }
-    return p?{product_id:p.id,product_name:p.name,variant_id:v?.id??null,variant_name:v?.name??null}:null;
-  }
-  document.addEventListener('click',async function(e){
-    const a=e.target.closest&&e.target.closest('a.btn.buy[href*="wa.me"]');
-    if(!a || a.dataset.v69213Busy==='1') return;
-    const d=details(a); if(!d)return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    a.dataset.v69213Busy='1';
-    const href=a.href;
-    const original=a.textContent;
-    a.textContent='MEMBUKA...';
-    let popup=null;
-    try{popup=window.open('about:blank','_blank');}catch(_){}
-    try{
-      await Promise.race([send(d),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),1800))]);
-    }catch(err){console.warn('Yanstore statistik klik:',err);}
-    finally{
-      a.textContent=original; a.dataset.v69213Busy='0';
-      if(popup){try{popup.location.href=href}catch(_){location.href=href}}
-      else location.href=href;
-    }
-  },true);
-})();
-</script>
-
-
-
-<!-- Yanstore V6.9.21.4 - Statistik Diagnostic -->
-<style id="v69214DiagStyle">
-#v69214Diag{margin-top:10px;padding:12px;border:1px dashed #4a5679;border-radius:12px;background:#0b101a}
-#v69214Diag button{border:1px solid #7657ef;background:#211a3d;color:#e9e1ff;border-radius:10px;padding:9px 12px;font-weight:900;cursor:pointer}
-#v69214DiagMsg{margin-top:8px;font-size:12px;line-height:1.55;color:#aeb7cc;white-space:pre-wrap;word-break:break-word}
-</style>
-<script id="v69214DiagScript">
-(function(){
- const URL=()=>typeof V6_URL!=='undefined'?V6_URL:(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:'');
- const KEY=()=>typeof V6_KEY!=='undefined'?V6_KEY:(typeof SUPABASE_KEY!=='undefined'?SUPABASE_KEY:'');
- function mount(){
-   const stats=document.getElementById('v6921Stats'); if(!stats||document.getElementById('v69214Diag'))return;
-   const d=document.createElement('div');d.id='v69214Diag';
-   d.innerHTML='<button type="button" onclick="v69214Test()">🧪 TES CATAT 1 KLIK</button><div id="v69214DiagMsg">Tes ini hanya menambah 1 klik uji ke statistik. Tidak mengubah produk.</div>';
-   stats.appendChild(d);
- }
- window.v69214Test=async function(){
-   const m=document.getElementById('v69214DiagMsg');
-   try{
-     const list=Array.isArray(products)?products:[];
-     const p=list.find(x=>Number.isFinite(Number(x.id))&&Number(x.id)>0) || null;
-     if(!p)throw new Error('Tidak menemukan ID produk numerik dari katalog. Contoh ID pertama: '+String(list[0]?.id??'kosong'));
-     m.textContent='Mengirim tes untuk '+p.name+' (ID '+p.id+')...';
-     const body={p_product_id:Number(p.id),p_product_name:String(p.name||'TES'),p_variant_id:null,p_variant_name:null};
-     const r=await fetch(URL()+'/rest/v1/rpc/record_product_click',{method:'POST',headers:{apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json'},body:JSON.stringify(body)});
-     const raw=await r.text();
-     if(!r.ok)throw new Error('HTTP '+r.status+' — '+(raw||r.statusText));
-     m.textContent='✅ RPC BERHASIL. 1 klik uji sudah dikirim untuk '+p.name+'. Sekarang klik REFRESH STATISTIK.';
-     if(typeof v6921LoadStats==='function')setTimeout(v6921LoadStats,300);
-   }catch(e){
-     m.textContent='❌ TES GAGAL:\n'+e.message;
-   }
- };
- function boot(){mount();setTimeout(mount,600);setTimeout(mount,1500)}
- document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
 })();
 </script>
 
