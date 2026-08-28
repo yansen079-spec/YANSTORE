@@ -4497,5 +4497,73 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 })();
 </script>
 
+
+
+<!-- Yanstore V6.9.24 - Pencarian Paket Admin -->
+<style id="v6924VariantSearchStyle">
+#v6924VariantSearchWrap{margin:14px 0 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#v6924VariantSearch{flex:1;min-width:220px;padding:11px 13px;border-radius:12px;border:1px solid #37405d;background:#090d18;color:#fff;font:inherit;outline:none}
+#v6924VariantSearch:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.12)}
+#v6924VariantSearchClear{padding:10px 13px;border-radius:10px;border:1px solid #3a435f;background:#171d2d;color:#e9edff;font-weight:800;cursor:pointer}
+#v6924VariantSearchInfo{width:100%;font-size:12px;color:#a8afc4;margin-top:1px}
+@media(max-width:680px){#v6924VariantSearchWrap{gap:6px}#v6924VariantSearch{min-width:0;width:100%}#v6924VariantSearchClear{width:100%}}
+</style>
+<script id="v6924VariantSearchScript">
+(function(){
+  function ensure(){
+    const list=document.getElementById('v64VarList');
+    if(!list || document.getElementById('v6924VariantSearchWrap')) return;
+    const wrap=document.createElement('div');
+    wrap.id='v6924VariantSearchWrap';
+    wrap.innerHTML=`<input id="v6924VariantSearch" type="search" autocomplete="off" placeholder="🔎 Cari paket / produk... (contoh: CapCut, Private, 7 Hari)">
+      <button id="v6924VariantSearchClear" type="button">BERSIHKAN</button>
+      <div id="v6924VariantSearchInfo">Ketik untuk mencari paket tanpa scroll panjang.</div>`;
+    list.parentNode.insertBefore(wrap,list);
+    document.getElementById('v6924VariantSearch').addEventListener('input',apply);
+    document.getElementById('v6924VariantSearchClear').addEventListener('click',()=>{
+      const i=document.getElementById('v6924VariantSearch');
+      if(i){i.value='';i.focus();}
+      apply();
+    });
+  }
+  function norm(s){return String(s||'').toLowerCase().replace(/\s+/g,' ').trim();}
+  function apply(){
+    ensure();
+    const input=document.getElementById('v6924VariantSearch');
+    const info=document.getElementById('v6924VariantSearchInfo');
+    const list=document.getElementById('v64VarList');
+    if(!input||!list)return;
+    const q=norm(input.value);
+    const rows=[...list.querySelectorAll('.v64-varitem')];
+    let shown=0;
+    rows.forEach(row=>{
+      const ok=!q || norm(row.textContent).includes(q);
+      row.style.display=ok?'':'none';
+      if(ok)shown++;
+    });
+    if(info){
+      if(!rows.length) info.textContent='Belum ada paket untuk dicari.';
+      else if(!q) info.textContent=`Menampilkan semua ${rows.length} paket.`;
+      else info.textContent=`Ditemukan ${shown} dari ${rows.length} paket untuk “${input.value.trim()}”.`;
+    }
+  }
+  const boot=()=>{ensure();apply();};
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
+  setTimeout(boot,500);setTimeout(boot,1300);
+
+  // Setelah daftar paket dimuat ulang (save/edit/stock/delete), pencarian tetap aktif.
+  try{
+    const base=v64LoadAdminVariants;
+    if(typeof base==='function'){
+      v64LoadAdminVariants=async function(){
+        const result=await base.apply(this,arguments);
+        ensure();apply();
+        return result;
+      };
+    }
+  }catch(_){ }
+})();
+</script>
+
 </body>
 </html>
