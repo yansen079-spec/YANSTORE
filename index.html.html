@@ -4048,7 +4048,7 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
     finally{btn.disabled=false;btn.textContent='KIRIM TESTIMONI';}
   };
   window.v6918SetActive=async function(id,on){
-    if(!window.v6Session?.access_token)return alert('Login Admin terlebih dahulu.');
+    if(typeof v6Session==='undefined' || !v6Session?.access_token)return alert('Login Admin terlebih dahulu.');
     try{const r=await v62Fetch(api()+'/rest/v1/testimonials?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{apikey:key(),'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({active:!!on,updated_at:new Date().toISOString()})});if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.message||('HTTP '+r.status));}if(typeof v6915LoadAdmin==='function')await v6915LoadAdmin();location.hash='';setTimeout(()=>{try{document.getElementById('v6915AdminBox')?.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(_){}},50);if(typeof window.v6918RefreshPublic==='function')window.v6918RefreshPublic();}catch(e){alert('Gagal mengubah status: '+e.message);}
   };
   function enhanceAdmin(){
