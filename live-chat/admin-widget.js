@@ -41,7 +41,7 @@ async function messages(){
 if(!active||!get('ys-admin-messages'))return;
 try{const data=await request('yanstore_chat_messages?select=id,sender_id,body,created_at&thread_id=eq.'+encodeURIComponent(active)+'&order=created_at.asc&limit=200');
 const area=get('ys-admin-messages');area.replaceChildren();
-for(const m of data){const div=document.createElement('div');div.style.cssText='padding:8px;margin:5px 0;background:#1e293b;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere';div.textContent=m.body;area.appendChild(div)}area.scrollTop=area.scrollHeight;
+for(const m of data){const mine=m.sender_id===session()?.user?.id;const div=document.createElement('div');div.style.cssText='padding:10px 13px;margin:7px 0;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere;max-width:82%;width:fit-content;'+(mine?'margin-left:auto;background:#166534;color:#fff;border-bottom-right-radius:4px;':'margin-right:auto;background:#1e293b;color:#fff;border-bottom-left-radius:4px;');div.textContent=m.body;area.appendChild(div)}area.scrollTop=area.scrollHeight;
 }catch(e){note('Gagal membaca pesan: '+e.message)}
 }
 async function send(e){
