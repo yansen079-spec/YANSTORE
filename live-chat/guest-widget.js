@@ -22,6 +22,7 @@
 .ys-chat-bubble{max-width:85%;padding:9px 11px;border-radius:12px;background:#f3f4f6;overflow-wrap:anywhere;white-space:pre-wrap}
 .ys-chat-mine{align-self:flex-end;background:#dcfce7}
 #ys-chat-status{font-size:12px;color:#6b7280;padding:3px 12px}
+#ys-chat-hours{font-size:12px;background:#f0fdf4;color:#14532d;padding:9px 12px;border-bottom:1px solid #dcfce7}
 #ys-chat-form{display:flex;gap:6px;padding:10px;border-top:1px solid #eee}
 #ys-chat-input{flex:1;min-width:0;padding:9px;border:1px solid #ddd;border-radius:8px}
 #ys-chat-send{border:0;border-radius:8px;background:#166534;color:white;padding:8px 12px;cursor:pointer}
@@ -30,7 +31,7 @@
 <button id="ys-chat-open" type="button" aria-expanded="false">💬 Chat Admin</button>
 <div id="ys-chat-panel" role="dialog" aria-label="Chat dengan admin" data-open="false">
 <div id="ys-chat-head"><strong>Chat Admin YanStore</strong><button id="ys-chat-close" type="button" aria-label="Tutup chat">×</button></div>
-<div id="ys-chat-messages" aria-live="polite"></div><div id="ys-chat-status"></div>
+<div id="ys-chat-hours" role="status">🕒 Memeriksa jam layanan...</div><div id="ys-chat-messages" aria-live="polite"></div><div id="ys-chat-status"></div>
 <form id="ys-chat-form"><input id="ys-chat-input" maxlength="2000" placeholder="Tulis pesan..." aria-label="Pesan" required><button id="ys-chat-send" type="submit">Kirim</button></form>
 <a id="ys-chat-wa" target="_blank" rel="noopener noreferrer">Lanjut lewat WhatsApp ↗</a></div>`;
   document.body.append(root);
@@ -40,6 +41,10 @@
   if (wa) el('ys-chat-wa').href='https://wa.me/'+wa;
   else el('ys-chat-wa').hidden=true;
   let user=null,thread=null,timer=null,loading=false;
+  // Informational schedule only; it is NOT proof that an admin is online.
+  const hours=cfg.serviceHours||{start:9,end:21,timeZone:'Asia/Jakarta'};
+  function showHours(){try{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:hours.timeZone||'Asia/Jakarta',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());const h=Number(parts.find(p=>p.type==='hour')?.value),m=Number(parts.find(p=>p.type==='minute')?.value),now=h*60+m;const start=Number(hours.start)*60,end=Number(hours.end)*60;const within=start<=end?now>=start&&now<end:now>=start||now<end;el('ys-chat-hours').textContent=(within?'🟢 Dalam jam layanan':'🌙 Di luar jam layanan')+' · Jadwal '+String(hours.start).padStart(2,'0')+':00–'+String(hours.end).padStart(2,'0')+':00 WIB · Balasan admin menyesuaikan ketersediaan';}catch(e){el('ys-chat-hours').textContent='🕒 Jam layanan mengikuti waktu Indonesia Barat (WIB)';}}
+  showHours();setInterval(showHours,60000);
   const say=s=>{status.textContent=s;};
   async function ensureAuth(){
     let {data:{session},error}=await db.auth.getSession();
