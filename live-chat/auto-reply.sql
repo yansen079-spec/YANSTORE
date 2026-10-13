@@ -20,6 +20,9 @@ begin
     return new;
   end if;
 
+  -- Serialize concurrent first messages per thread to prevent duplicate replies.
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(new.thread_id::text, 0));
+
   -- Reply only to the first customer message of a conversation.
   if exists (
     select 1 from public.yanstore_chat_messages m
