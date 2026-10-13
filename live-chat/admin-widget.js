@@ -27,6 +27,9 @@ el.querySelector('#ys-thread-toggle').onclick=toggleThread;
 load();heartbeat();setInterval(heartbeat,30000);document.addEventListener('visibilitychange',heartbeat);
 }
 const get=id=>document.getElementById(id);
+const clock=v=>{try{return new Intl.DateTimeFormat('id-ID',{timeZone:'Asia/Jakarta',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(v))+' WIB'}catch{return ''}};
+const nickKey='yanstore_chat_nicknames';
+const names=(()=>{try{return JSON.parse(localStorage.getItem(nickKey)||'{}')}catch{return {}}})();
 const note=s=>{if(get('ys-admin-note'))get('ys-admin-note').textContent=s};
 const badge=()=>{const n=[...unread.values()].reduce((a,b)=>a+b,0);if(get('ys-unread-count'))get('ys-unread-count').textContent=n?'🔴 '+n+' pesan pelanggan baru':'Tidak ada pesan baru';if(window.YANSTORE_CHAT_STANDALONE)document.title=(n?'('+n+') ':'')+'YanStore | Dashboard Live Chat';};
 function beep(){if(!soundOn)return;try{const ctx=audio||(audio=new (window.AudioContext||window.webkitAudioContext)());if(ctx.state==='suspended')ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=850;g.gain.setValueAtTime(.07,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.18)}catch(e){console.warn('Sound unavailable',e)}}
@@ -39,7 +42,7 @@ refreshing=true;
 try{
 const threads=await request('yanstore_chat_threads?select=id,customer_id,created_at,status&order=created_at.desc&limit=100');
 const wrap=get('ys-admin-threads');wrap.replaceChildren();
-for(const t of threads){const b=document.createElement('button');b.type='button';b.dataset.thread=t.id;b.textContent='Chat '+String(t.id).slice(0,8)+(t.status==='open'?' ●':'')+(unread.get(t.id)?' 🔴 '+unread.get(t.id):'');b.style.cssText='padding:7px;border-radius:7px;cursor:pointer';b.onclick=()=>{active=t.id;activeStatus=t.status;unread.delete(t.id);badge();updateThreadControls();messages()};wrap.appendChild(b)}
+for(const t of threads){const b=document.createElement('button');b.type='button';b.dataset.thread=t.id;b.textContent=(names[t.customer_id]||'Pelanggan '+String(t.customer_id).slice(0,8))+(t.status==='open'?' ●':'')+(unread.get(t.id)?' 🔴 '+unread.get(t.id):'');b.style.cssText='padding:7px;border-radius:7px;cursor:pointer';b.ondblclick=()=>{const n=prompt('Nama panggilan pelanggan (disimpan di browser admin ini):',names[t.customer_id]||'');if(n===null)return;if(n.trim())names[t.customer_id]=n.trim().slice(0,40);else delete names[t.customer_id];localStorage.setItem(nickKey,JSON.stringify(names));load()};b.title='Klik untuk buka chat · klik dua kali untuk ubah nama';b.onclick=()=>{active=t.id;activeStatus=t.status;unread.delete(t.id);badge();updateThreadControls();messages()};wrap.appendChild(b)}
 if(!threads.length)note('Tidak ada percakapan yang dapat dibaca oleh akun ini. Jika pelanggan sudah mengirim pesan, periksa kebijakan RLS dan hak akses admin di Supabase.');
 else{note(threads.length+' percakapan ditemukan.');if(!active||!threads.some(t=>t.id===active))active=threads[0].id;activeStatus=threads.find(t=>t.id===active).status;updateThreadControls();await messages()}
 await checkIncoming(threads);for(const t of threads){const b=[...wrap.children].find(b=>b.dataset.thread===t.id);if(b)b.textContent='Chat '+String(t.id).slice(0,8)+(t.status==='open'?' ●':'')+(unread.get(t.id)?' 🔴 '+unread.get(t.id):'')}
@@ -52,7 +55,7 @@ async function messages(){
 if(!active||!get('ys-admin-messages'))return;
 try{const data=await request('yanstore_chat_messages?select=id,sender_id,body,created_at&thread_id=eq.'+encodeURIComponent(active)+'&order=created_at.asc&limit=200');
 const area=get('ys-admin-messages');area.replaceChildren();
-for(const m of data){const mine=m.sender_id===session()?.user?.id;const div=document.createElement('div');div.style.cssText='padding:10px 13px;margin:7px 0;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere;max-width:82%;width:fit-content;'+(mine?'margin-left:auto;background:#166534;color:#fff;border-bottom-right-radius:4px;':'margin-right:auto;background:#1e293b;color:#fff;border-bottom-left-radius:4px;');div.textContent=m.body;area.appendChild(div)}area.scrollTop=area.scrollHeight;
+for(const m of data){const mine=m.sender_id===session()?.user?.id;const div=document.createElement('div');div.style.cssText='padding:10px 13px;margin:7px 0;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere;max-width:82%;width:fit-content;'+(mine?'margin-left:auto;background:#166534;color:#fff;border-bottom-right-radius:4px;':'margin-right:auto;background:#1e293b;color:#fff;border-bottom-left-radius:4px;');div.textContent=m.body;const stamp=document.createElement('small');stamp.style.cssText='display:block;opacity:.7;font-size:10px;margin-top:5px;text-align:right';stamp.textContent=clock(m.created_at);div.appendChild(stamp);area.appendChild(div)}area.scrollTop=area.scrollHeight;
 }catch(e){note('Gagal membaca pesan: '+e.message)}
 }
 async function send(e){
