@@ -3,7 +3,7 @@
 const cfg=window.YANSTORE_CHAT_CONFIG||{};
 if(!cfg.supabaseUrl||!cfg.supabaseAnonKey||!window.supabase?.createClient)return;
 const db=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
-let active=null,interval=null;
+let active=null,interval=null,refreshing=false;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const panel=()=>document.getElementById('v6AdminPanel')||document.getElementById('v6Admin');
 const session=()=>{try{return typeof v6Session!=='undefined'?v6Session:null}catch{return null}};
@@ -26,14 +26,16 @@ load();
 const get=id=>document.getElementById(id);
 const note=s=>{if(get('ys-admin-note'))get('ys-admin-note').textContent=s};
 async function load(){
-if(!get('ys-admin-inbox')||!session()?.access_token)return;
+if(refreshing||!get('ys-admin-inbox')||!session()?.access_token)return;
+refreshing=true;
 try{
 const threads=await request('yanstore_chat_threads?select=id,created_at,status&order=created_at.desc&limit=100');
 const wrap=get('ys-admin-threads');wrap.replaceChildren();
 for(const t of threads){const b=document.createElement('button');b.type='button';b.textContent='Chat '+String(t.id).slice(0,8)+(t.status==='open'?' ●':'');b.style.cssText='padding:7px;border-radius:7px;cursor:pointer';b.onclick=()=>{active=t.id;messages()};wrap.appendChild(b)}
-if(!threads.length)note('Belum ada percakapan.');
+if(!threads.length)note('Tidak ada percakapan yang dapat dibaca oleh akun ini. Jika pelanggan sudah mengirim pesan, periksa kebijakan RLS dan hak akses admin di Supabase.');
 else{note(threads.length+' percakapan ditemukan.');if(!active||!threads.some(t=>t.id===active))active=threads[0].id;await messages()}
 }catch(e){note('Gagal memuat inbox: '+e.message+'. Periksa izin RLS admin di Supabase.')}
+finally{refreshing=false}
 }
 async function messages(){
 if(!active||!get('ys-admin-messages'))return;
@@ -49,7 +51,7 @@ try{await request('yanstore_chat_messages',{method:'POST',headers:{Prefer:'retur
 catch(err){note('Gagal membalas: '+err.message)}
 finally{button.disabled=false}
 }
-setInterval(()=>{if(session()?.access_token){mount();if(get('ys-admin-inbox')&&panel()?.offsetParent!==null){if(active)messages()}}},4000);
+setInterval(()=>{if(session()?.access_token){mount();if(get('ys-admin-inbox')&&panel()?.offsetParent!==null){load()}}},4000);
 document.addEventListener('click',()=>setTimeout(mount,300));
 setTimeout(mount,1200);
 })();
