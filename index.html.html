@@ -268,7 +268,7 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 </div>
 <div class="v6msg" id="v6LoginMsg">Masukkan password khusus Admin Yanstore, lalu tekan LOGIN ADMIN.</div>
 </div>
-<div id="v6AdminPanel">
+<div id="v6AdminPanel">\n<a href="semi-auto-order/admin.html" target="_blank" rel="noopener" style="display:block;background:#0f766e;color:white;padding:14px;margin:12px 0;border-radius:10px;text-align:center;font-weight:700;text-decoration:none">📦 Kelola Pesanan QRIS Manual ↗</a>
 <a href="sales/index.html" target="_blank" rel="noopener" style="display:block;background:#166534;color:white;padding:14px;margin:12px 0;border-radius:10px;text-align:center;font-weight:700;text-decoration:none">📊 Dashboard Statistik Penjualan YanStore ↗</a>
 <div class="v6head">
 <div><h2 style="margin:0">⚡ Kelola Produk Online</h2><p style="margin:6px 0 0;color:#aab2c8">Perubahan tersimpan ke database dan terlihat oleh customer.</p></div>
@@ -4707,6 +4707,7 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
   <div class="v6926-total"><span>Total item READY</span><b id="v6926Total">Rp0</b></div>
   <div class="v6926-actions">
    <button id="v6926Checkout" class="v6926-checkout" type="button">💳 BAYAR KERANJANG VIA QRIS</button>
+   <button id="ysManualOrder" class="v6926-checkout" type="button" style="background:#0f766e">📦 BUAT NOMOR PESANAN (QRIS MANUAL)</button>
    <button id="v6926Whatsapp" class="v6926-whatsapp" type="button">💬 PESAN KERANJANG VIA WHATSAPP</button>
   </div>
  </div>
@@ -4904,6 +4905,13 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
     const lines=items.map((x,i)=>`${i+1}. ${x.product} — ${x.package} — ${rupiah(x.price)}`).join('\n');
     const msg=`Halo Admin YANSTORE 👋\n\nSaya mau pesan dari keranjang:\n${lines}\n\nTOTAL: ${rupiah(total)}\n\nMohon diproses ya.`;
     window.open('https://wa.me/6285783984748?text='+encodeURIComponent(msg),'_blank','noopener');
+  });
+
+  document.getElementById('ysManualOrder').addEventListener('click',async()=>{
+    await fetchFresh();const items=[...cart.values()];
+    if(!items.length||items.some(x=>!effectiveReady(x)))return toast('⚠️ Pilih produk READY dahulu');
+    sessionStorage.setItem('yanstore_manual_checkout',JSON.stringify(items.map(x=>({product:x.product,package:x.package,price:num(x.price),variantId:x.variantId||null}))));
+    window.location.href='semi-auto-order/checkout.html';
   });
 
   document.getElementById('v6926Checkout').addEventListener('click',async()=>{
