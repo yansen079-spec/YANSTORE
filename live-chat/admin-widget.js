@@ -3,7 +3,7 @@
 const cfg=window.YANSTORE_CHAT_CONFIG||{};
 if(!cfg.supabaseUrl||!cfg.supabaseAnonKey||!window.supabase?.createClient)return;
 const db=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
-let active=null,interval=null,refreshing=false,seen=new Set(),initialized=false,unread=new Map(),soundOn=false,audio=null;
+let active=null,activeStatus='open',interval=null,refreshing=false,seen=new Set(),initialized=false,unread=new Map(),soundOn=false,audio=null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const panel=()=>document.getElementById('v6AdminPanel')||document.getElementById('v6Admin');
 const session=()=>{try{return typeof v6Session!=='undefined'?v6Session:null}catch{return null}};
@@ -17,11 +17,12 @@ function mount(){
 const p=panel();if(!p||document.getElementById('ys-admin-inbox')||document.getElementById('ys-chat-open-dashboard'))return;
 if(!window.YANSTORE_CHAT_STANDALONE){const link=document.createElement('a');link.id='ys-chat-open-dashboard';link.href='live-chat/admin.html';link.target='_blank';link.rel='noopener';link.textContent='💬 Buka Dashboard Live Chat (Tab Baru) ↗';link.style.cssText='display:block;margin:18px 0;padding:16px;background:#166534;color:#fff;border-radius:12px;text-align:center;font-weight:700;text-decoration:none';p.appendChild(link);return;}
 const el=document.createElement('section');el.id='ys-admin-inbox';el.style.cssText='margin:18px 0;padding:24px;border:1px solid #35405b;border-radius:14px;background:#111827;color:white;width:100%;min-height:75vh';
-el.innerHTML='<h3 style="margin:0 0 10px">💬 Inbox Live Chat</h3><p style="font-size:12px;color:#aeb9ca">Balas pesan pelanggan langsung dari panel admin.</p><button type="button" id="ys-admin-refresh">Muat Percakapan</button><div id="ys-admin-note" role="status" style="padding:10px;font-size:12px"></div><div id="ys-admin-threads" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"></div><div id="ys-admin-messages" style="height:55vh;min-height:320px;overflow:auto;padding:10px;background:#0b1220;border-radius:10px"></div><form id="ys-admin-form" style="display:flex;gap:8px;margin-top:10px"><input id="ys-admin-input" placeholder="Tulis balasan..." maxlength="2000" required style="flex:1;min-width:0;padding:10px;color:#111"><button type="submit">Balas</button></form>';
+el.innerHTML='<h3 style="margin:0 0 10px">💬 Inbox Live Chat</h3><p style="font-size:12px;color:#aeb9ca">Balas pesan pelanggan langsung dari panel admin.</p><button type="button" id="ys-admin-refresh">Muat Percakapan</button><div id="ys-admin-note" role="status" style="padding:10px;font-size:12px"></div><div id="ys-admin-threads" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"></div><div id="ys-thread-actions" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0"><span id="ys-thread-status">Pilih percakapan</span><button type="button" id="ys-thread-toggle">Tutup Percakapan</button></div><div id="ys-admin-messages" style="height:55vh;min-height:320px;overflow:auto;padding:10px;background:#0b1220;border-radius:10px"></div><form id="ys-admin-form" style="display:flex;gap:8px;margin-top:10px"><input id="ys-admin-input" placeholder="Tulis balasan..." maxlength="2000" required style="flex:1;min-width:0;padding:10px;color:#111"><button type="submit">Balas</button></form>';
 p.appendChild(el);
 const controls=document.createElement('div');controls.style.cssText='display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0';controls.innerHTML='<button type="button" id="ys-notify-enable">🔔 Aktifkan Suara & Notifikasi</button><span id="ys-unread-count" aria-live="polite">Belum ada pesan baru</span>';el.querySelector('#ys-admin-refresh').after(controls);get('ys-notify-enable').onclick=enableNotifications;
 el.querySelector('#ys-admin-refresh').onclick=load;
 el.querySelector('#ys-admin-form').onsubmit=send;
+el.querySelector('#ys-thread-toggle').onclick=toggleThread;
 load();
 }
 const get=id=>document.getElementById(id);
@@ -36,13 +37,15 @@ refreshing=true;
 try{
 const threads=await request('yanstore_chat_threads?select=id,customer_id,created_at,status&order=created_at.desc&limit=100');
 const wrap=get('ys-admin-threads');wrap.replaceChildren();
-for(const t of threads){const b=document.createElement('button');b.type='button';b.dataset.thread=t.id;b.textContent='Chat '+String(t.id).slice(0,8)+(t.status==='open'?' ●':'')+(unread.get(t.id)?' 🔴 '+unread.get(t.id):'');b.style.cssText='padding:7px;border-radius:7px;cursor:pointer';b.onclick=()=>{active=t.id;unread.delete(t.id);badge();messages()};wrap.appendChild(b)}
+for(const t of threads){const b=document.createElement('button');b.type='button';b.dataset.thread=t.id;b.textContent='Chat '+String(t.id).slice(0,8)+(t.status==='open'?' ●':'')+(unread.get(t.id)?' 🔴 '+unread.get(t.id):'');b.style.cssText='padding:7px;border-radius:7px;cursor:pointer';b.onclick=()=>{active=t.id;activeStatus=t.status;unread.delete(t.id);badge();updateThreadControls();messages()};wrap.appendChild(b)}
 if(!threads.length)note('Tidak ada percakapan yang dapat dibaca oleh akun ini. Jika pelanggan sudah mengirim pesan, periksa kebijakan RLS dan hak akses admin di Supabase.');
-else{note(threads.length+' percakapan ditemukan.');if(!active||!threads.some(t=>t.id===active))active=threads[0].id;await messages()}
+else{note(threads.length+' percakapan ditemukan.');if(!active||!threads.some(t=>t.id===active))active=threads[0].id;activeStatus=threads.find(t=>t.id===active).status;updateThreadControls();await messages()}
 await checkIncoming(threads);for(const t of threads){const b=[...wrap.children].find(b=>b.dataset.thread===t.id);if(b)b.textContent='Chat '+String(t.id).slice(0,8)+(t.status==='open'?' ●':'')+(unread.get(t.id)?' 🔴 '+unread.get(t.id):'')}
 }catch(e){note('Gagal memuat inbox: '+e.message+'. Periksa izin RLS admin di Supabase.')}
 finally{refreshing=false}
 }
+function updateThreadControls(){const st=get('ys-thread-status'),btn=get('ys-thread-toggle'),input=get('ys-admin-input'),sendBtn=get('ys-admin-form')?.querySelector('button');if(st)st.textContent=active?'Status: '+(activeStatus==='open'?'🟢 Terbuka':'⚪ Ditutup'):'Pilih percakapan';if(btn){btn.disabled=!active;btn.textContent=activeStatus==='open'?'✓ Tutup Percakapan':'↻ Buka Kembali'}if(input)input.disabled=activeStatus!=='open';if(sendBtn)sendBtn.disabled=activeStatus!=='open'}
+async function toggleThread(){if(!active)return;const next=activeStatus==='open'?'closed':'open';try{await request('yanstore_chat_threads?id=eq.'+encodeURIComponent(active),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:next})});activeStatus=next;updateThreadControls();note(next==='closed'?'Percakapan ditutup. Bisa dibuka kembali.':'Percakapan dibuka kembali.');await load()}catch(e){note('Gagal mengubah status: '+e.message)}}
 async function messages(){
 if(!active||!get('ys-admin-messages'))return;
 try{const data=await request('yanstore_chat_messages?select=id,sender_id,body,created_at&thread_id=eq.'+encodeURIComponent(active)+'&order=created_at.asc&limit=200');
@@ -51,7 +54,7 @@ for(const m of data){const mine=m.sender_id===session()?.user?.id;const div=docu
 }catch(e){note('Gagal membaca pesan: '+e.message)}
 }
 async function send(e){
-e.preventDefault();const s=session();const input=get('ys-admin-input');const body=input?.value.trim();if(!active||!body||!s?.user?.id){note('Sesi admin tidak tersedia. Login ulang.');return}
+e.preventDefault();const s=session();const input=get('ys-admin-input');const body=input?.value.trim();if(!active||activeStatus!=='open'||!body||!s?.user?.id){note('Sesi admin tidak tersedia. Login ulang.');return}
 const button=e.currentTarget.querySelector('button');button.disabled=true;
 try{await request('yanstore_chat_messages',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({thread_id:active,sender_id:s.user.id,body})});input.value='';await messages();note('Balasan terkirim.')}
 catch(err){note('Gagal membalas: '+err.message)}
