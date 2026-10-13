@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>YanStore | Dashboard Live Chat</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#070811;color:#f8f9ff;font:16px system-ui,Arial,sans-serif}header{padding:20px 4%;background:#111827;border-bottom:1px solid #334155;display:flex;justify-content:space-between;align-items:center}header a{color:#bbf7d0;text-decoration:none}main{width:min(1400px,96%);margin:20px auto}#v6AdminPanel{width:100%}#ys-admin-inbox button{padding:10px 15px;border:0;border-radius:8px;background:#16a34a;color:white;cursor:pointer;font-weight:600}#ys-admin-inbox input{font-size:16px}#ys-admin-inbox h3{font-size:24px}#ys-admin-threads button{background:#334155}#ys-admin-note{color:#cbd5e1}</style></head>
+<body><header><strong>💬 YanStore — Dashboard Live Chat</strong><a href="../" target="_blank" rel="noopener">← Kembali ke Toko</a></header><main><p id="login-warning">Memeriksa sesi admin...</p><div id="v6AdminPanel"></div></main>
+<script>let v6Session=null;try{v6Session=JSON.parse(localStorage.getItem('yanstore_v6_session')||'null')}catch(e){}
+window.YANSTORE_CHAT_STANDALONE=true;
+window.YANSTORE_CHAT_CONFIG={supabaseUrl:'https://ivnohbhlahevaihunmbp.supabase.co',supabaseAnonKey:'sb_publishable_uyzGj6RZJfhDdGqf2rAldg_NRQTNEZH',whatsappNumber:'6285783984748'};
+const warning=document.getElementById('login-warning');
+if(!v6Session?.access_token||!v6Session?.user?.id){warning.textContent='Silakan login admin dari halaman utama YanStore terlebih dahulu, lalu buka halaman ini lagi.';document.getElementById('v6AdminPanel').remove()}
+else warning.textContent='Sesi admin terdeteksi. Memuat percakapan...';
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script defer src="admin-widget.js"></script>
+</body></html>
