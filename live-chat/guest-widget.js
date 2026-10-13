@@ -68,23 +68,28 @@
       const r=await db.from('yanstore_chat_messages').select('id,sender_id,body,created_at').eq('thread_id',thread).order('created_at',{ascending:true}).limit(200);
       if(r.error)throw r.error;
       const last=list.lastElementChild?.dataset?.id;
-      if(last===r.data.at(-1)?.id && list.children.length===r.data.length)return;
+      if(last===r.data.at(-1)?.id && list.children.length===r.data.length){say(r.data.length?'Terhubung · Pesan tersinkron':'Terhubung · Belum ada pesan. Silakan mulai chat.');return;}
       list.replaceChildren();
       for(const msg of r.data){
         const b=document.createElement('div');
         b.className='ys-chat-bubble'+(msg.sender_id===user.id?' ys-chat-mine':'');
         b.dataset.id=msg.id;b.textContent=msg.body;list.append(b);
       }
-      list.scrollTop=list.scrollHeight;say('');
+      list.scrollTop=list.scrollHeight;say(r.data.length?'Terhubung · Pesan tersinkron':'Terhubung · Belum ada pesan. Silakan mulai chat.');
     }catch(e){say('Gagal memuat pesan. Coba lagi.');console.error(e);}
     finally{loading=false;}
   }
+  let starting=null;
   async function start(){
+    if(starting)return starting;
     say('Menghubungkan...');
+    starting=(async()=>{
     try{await ensureAuth();await ensureThread();await refresh();if(!timer)timer=setInterval(()=>{if(panel.dataset.open==='true')refresh();},4000);}
-    catch(e){say('Chat belum tersedia. Silakan gunakan WhatsApp.');console.error(e);}
+    catch(e){say('Chat belum tersedia. Coba buka ulang chat atau gunakan WhatsApp.');console.error(e);}
+    finally{starting=null;}
+    })();return starting;
   }
-  open.addEventListener('click',()=>{panel.dataset.open='true';open.hidden=true;open.setAttribute('aria-expanded','true');start();});
+  open.addEventListener('click',()=>{panel.dataset.open='true';open.hidden=true;open.setAttribute('aria-expanded','true');if(thread&&user){say('Terhubung · Memuat pesan...');refresh();}else start();});
   el('ys-chat-close').addEventListener('click',()=>{panel.dataset.open='false';open.hidden=false;open.setAttribute('aria-expanded','false');});
   el('ys-chat-form').addEventListener('submit',async e=>{
     e.preventDefault();const body=input.value.trim();if(!body||!thread||!user)return;
