@@ -27,7 +27,7 @@
 #ys-chat-input{flex:1;min-width:0;padding:9px;border:1px solid #ddd;border-radius:8px}
 #ys-chat-send{border:0;border-radius:8px;background:#166534;color:white;padding:8px 12px;cursor:pointer}
 #ys-chat-wa{display:block;text-align:center;padding:9px;color:#166534;text-decoration:none;border-top:1px solid #eee}
-</style>
+@media(max-width:600px){#yanstore-live-chat{right:10px;bottom:max(10px,env(safe-area-inset-bottom));left:10px}#ys-chat-open{margin-left:auto;display:block;min-height:46px}#ys-chat-panel{width:100%;height:min(620px,calc(100dvh - 82px));max-height:calc(100dvh - 82px);border-radius:16px}#ys-chat-input{font-size:16px;min-height:44px}#ys-chat-send,#ys-chat-head button{min-width:44px;min-height:44px}#ys-chat-hours{line-height:1.4}#ys-chat-form{padding-bottom:max(10px,env(safe-area-inset-bottom))}}\n</style>
 <button id="ys-chat-open" type="button" aria-expanded="false">💬 Chat Admin</button>
 <div id="ys-chat-panel" role="dialog" aria-label="Chat dengan admin" data-open="false">
 <div id="ys-chat-head"><strong>Chat Admin YanStore</strong><button id="ys-chat-close" type="button" aria-label="Tutup chat">×</button></div>
