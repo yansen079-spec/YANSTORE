@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>YanStore - Inbox Admin</title>
+<style>body{font:15px system-ui,sans-serif;background:#f5f7f8;color:#15251a;margin:0}header{background:#166534;color:#fff;padding:18px}main{max-width:1000px;margin:auto;padding:16px}button,input,textarea{font:inherit;padding:10px;border:1px solid #ddd;border-radius:8px}button{cursor:pointer;background:#166534;color:white}button:disabled{opacity:.6}input,textarea{box-sizing:border-box;width:100%}.layout{display:grid;grid-template-columns:minmax(180px,300px) 1fr;gap:16px}.card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px}.threads{display:grid;gap:8px}.threads button{background:#f1f5f9;color:#111;text-align:left}.threads button.active{background:#dcfce7}.messages{height:370px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:8px}.bubble{max-width:85%;background:#eee;border-radius:10px;padding:10px;white-space:pre-wrap;overflow-wrap:anywhere}.mine{align-self:end;background:#dcfce7}.row{display:flex;gap:8px}#signin{max-width:370px;margin:20px auto}#app{display:none}#status{min-height:22px;color:#475569}form{display:grid;gap:8px}@media(max-width:650px){.layout{grid-template-columns:1fr}.messages{height:300px}}</style></head>
+<body><header><strong>YanStore · Inbox Admin</strong></header><main><p id="status" role="status"></p>
+<section id="signin" class="card"><h2>Login Admin</h2><form id="login"><label>Email<input id="email" type="email" autocomplete="username" required></label><label>Password<input id="password" type="password" autocomplete="current-password" required></label><button type="submit">Masuk</button></form></section>
+<section id="app"><div class="row" style="justify-content:space-between;align-items:center"><h2>Pesan pelanggan</h2><button id="logout">Keluar</button></div><div class="layout"><aside class="card"><h3>Percakapan</h3><div id="threads" class="threads"></div></aside><article class="card"><h3 id="conversation">Pilih percakapan</h3><div id="messages" class="messages"></div><form id="reply"><textarea id="message" maxlength="2000" rows="2" placeholder="Tulis balasan..." required></textarea><button id="send" type="submit" disabled>Kirim balasan</button></form></article></div></section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(() => {
+const config=window.YANSTORE_CHAT_CONFIG || {};
+const status=document.getElementById('status'),signin=document.getElementById('signin'),app=document.getElementById('app');
+const el=id=>document.getElementById(id);
+const say=s=>status.textContent=s;
+if(!config.supabaseUrl||!config.supabaseAnonKey){say('Konfigurasi Supabase belum dipasang.');return;}
+const db=supabase.createClient(config.supabaseUrl,config.supabaseAnonKey);
+let user=null,threadId=null,timer=null,busy=false;
+async function check(){
+ const {data:{session},error}=await db.auth.getSession();if(error)throw error;
+ user=session?.user||null;
+ if(!user){signin.style.display='block';app.style.display='none';stop();return;}
+ const r=await db.rpc('yanstore_is_chat_admin');if(r.error)throw r.error;
+ if(r.data!==true){await db.auth.signOut();user=null;signin.style.display='block';app.style.display='none';say('Akun ini belum mendapat izin admin chat.');stop();return;}
+ signin.style.display='none';app.style.display='block';say('Admin terhubung.');
+ await refresh();if(!timer)timer=setInterval(refresh,5000);
+}
+function stop(){if(timer)clearInterval(timer);timer=null;threadId=null;}
+async function refresh(){
+ if(busy||!user)return;busy=true;
+ try{
+ const t=await db.from('yanstore_chat_threads').select('id,status,created_at').order('created_at',{ascending:false}).limit(100);
+ if(t.error)throw t.error;
+ const threads=el('threads');threads.replaceChildren();
+ for(const x of t.data){
+  const b=document.createElement('button');b.type='button';b.textContent='Chat '+x.id.slice(0,8)+' · '+x.status;
+  if(x.id===threadId)b.className='active';
+  b.onclick=()=>{threadId=x.id;el('conversation').textContent='Chat '+x.id.slice(0,8);el('send').disabled=x.status!=='open';refreshMessages();};
+  threads.append(b);
+ }
+ if(threadId)await refreshMessages();
+ }catch(e){say('Gagal memuat percakapan: '+e.message);}
+ finally{busy=false;}
+}
+async function refreshMessages(){
+ if(!threadId)return;
+ const id=threadId,r=await db.from('yanstore_chat_messages').select('id,body,sender_id,created_at').eq('thread_id',id).order('created_at',{ascending:true}).limit(200);
+ if(r.error){say('Gagal memuat pesan: '+r.error.message);return;}
+ if(id!==threadId)return;
+ const list=el('messages');if(list.children.length===r.data.length && list.lastElementChild?.dataset.id===r.data.at(-1)?.id)return;
+ list.replaceChildren();
+ for(const m of r.data){const b=document.createElement('div');b.className='bubble'+(m.sender_id===user.id?' mine':'');b.textContent=m.body;b.dataset.id=m.id;list.append(b);}
+ list.scrollTop=list.scrollHeight;
+}
+el('login').onsubmit=async e=>{e.preventDefault();say('Memeriksa akun...');const b=e.target.querySelector('button');b.disabled=true;try{const r=await db.auth.signInWithPassword({email:el('email').value,password:el('password').value});if(r.error)throw r.error;el('password').value='';await check();}catch(err){say('Login gagal: '+err.message);}finally{b.disabled=false;}};
+el('logout').onclick=async()=>{stop();await db.auth.signOut();await check();say('Berhasil keluar.');};
+el('reply').onsubmit=async e=>{e.preventDefault();const body=el('message').value.trim();if(!threadId||!body)return;el('send').disabled=true;try{const r=await db.from('yanstore_chat_messages').insert({thread_id:threadId,sender_id:user.id,body});if(r.error)throw r.error;el('message').value='';await refreshMessages();}catch(err){say('Gagal mengirim: '+err.message);}finally{el('send').disabled=false;}};
+check().catch(e=>say('Tidak dapat memeriksa admin: '+e.message));
+})();
+</script></body></html>
