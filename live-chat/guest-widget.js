@@ -42,9 +42,11 @@
   else el('ys-chat-wa').hidden=true;
   let user=null,thread=null,timer=null,loading=false;
   // Informational schedule only; it is NOT proof that an admin is online.
-  const hours=cfg.serviceHours||null;
-  function showHours(){if(!hours||!Number.isFinite(Number(hours.start))||!Number.isFinite(Number(hours.end))){el('ys-chat-hours').textContent='💬 Chat tersedia 24 jam · Admin membalas saat tersedia';return;}try{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:hours.timeZone||'Asia/Jakarta',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());const h=Number(parts.find(p=>p.type==='hour')?.value),m=Number(parts.find(p=>p.type==='minute')?.value),now=h*60+m;const start=Number(hours.start)*60,end=Number(hours.end)*60;const within=start<=end?now>=start&&now<end:now>=start||now<end;el('ys-chat-hours').textContent=(within?'🟢 Dalam jam layanan':'🌙 Di luar jam layanan')+' · Jadwal '+String(hours.start).padStart(2,'0')+':00–'+String(hours.end).padStart(2,'0')+':00 WIB · Balasan admin menyesuaikan ketersediaan';}catch(e){el('ys-chat-hours').textContent='🕒 Jam layanan mengikuti waktu Indonesia Barat (WIB)';}}
-  showHours();setInterval(showHours,60000);
+  const hours={start:9,end:21,timeZone:'Asia/Jakarta'};
+  let online=false,presenceReady=false;
+  async function refreshPresence(){try{const r=await db.rpc('yanstore_chat_online');if(r.error)throw r.error;online=r.data===true;presenceReady=true;}catch(e){online=false;presenceReady=false;}showHours();}
+  function showHours(){if(!hours||!Number.isFinite(Number(hours.start))||!Number.isFinite(Number(hours.end))){el('ys-chat-hours').textContent='💬 Chat tersedia 24 jam · Admin membalas saat tersedia';return;}try{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:hours.timeZone||'Asia/Jakarta',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());const h=Number(parts.find(p=>p.type==='hour')?.value),m=Number(parts.find(p=>p.type==='minute')?.value),now=h*60+m;const start=Number(hours.start)*60,end=Number(hours.end)*60;const within=start<=end?now>=start&&now<end:now>=start||now<end;el('ys-chat-hours').textContent=(presenceReady?(online?'🟢 Admin online':'⚪ Admin offline'):'⚪ Status admin belum tersedia')+' · '+(within?'Dalam jam layanan':'Di luar jam layanan')+' · 09.00–21.00 WIB';}catch(e){el('ys-chat-hours').textContent='🕒 Jam layanan mengikuti waktu Indonesia Barat (WIB)';}}
+  showHours();refreshPresence();setInterval(refreshPresence,30000);setInterval(showHours,60000);
   const say=s=>{status.textContent=s;};
   async function ensureAuth(){
     let {data:{session},error}=await db.auth.getSession();
