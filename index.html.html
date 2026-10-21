@@ -5043,10 +5043,10 @@ window.YANSTORE_CHAT_CONFIG = {
    source.innerHTML=detailCards[i];
    const variantButton=source.querySelector('.v64-variant-btn');
    if(variantButton && typeof window.v64OpenVariants==='function'){
-     const match=variantButton.getAttribute('onclick')?.match(/[0-9]+/);
+     const match=variantButton.getAttribute('onclick')?.match(/\(([0-9]+)\)/);
      if(match){
        window.ysCloseProduct();
-       window.v64OpenVariants(Number(match[0]));
+       window.v64OpenVariants(Number(match[1]));
        return;
      }
    }
