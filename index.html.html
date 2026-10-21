@@ -1584,22 +1584,31 @@ img{max-width:100%}
     const preview=document.getElementById('v68LogoPreview');if(preview)preview.src=url;
   }
 
-  // Decode PNG in the browser and re-encode it as a clean PNG to remove
-  // problematic metadata/encoding while preserving transparency.
+  // Normalize PNG and shrink oversized uploads locally; keep alpha transparency.
   async function v68NormalizePng(file){
     if(file.type!=='image/png')return file;
     const bitmap=await createImageBitmap(file);
     try{
-      const canvas=document.createElement('canvas');
-      canvas.width=bitmap.width;canvas.height=bitmap.height;
-      if(!canvas.width||!canvas.height||canvas.width*canvas.height>16000000)throw new Error('Dimensi PNG tidak didukung (maksimal 16 megapiksel).');
-      const ctx=canvas.getContext('2d');
-      if(!ctx)throw new Error('Browser tidak bisa memproses PNG ini.');
-      ctx.drawImage(bitmap,0,0);
-      const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG gagal dikonversi.')),'image/png'));
-      return blob;
+      if(!bitmap.width||!bitmap.height)throw new Error('PNG tidak valid.');
+      const limit=2*1024*1024;
+      let scale=Math.min(1,Math.sqrt(16000000/(bitmap.width*bitmap.height)));
+      for(let attempt=0;attempt<9;attempt++){
+        const canvas=document.createElement('canvas');
+        canvas.width=Math.max(1,Math.round(bitmap.width*scale));
+        canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+        const ctx=canvas.getContext('2d');
+        if(!ctx)throw new Error('Browser tidak dapat memproses gambar.');
+        ctx.imageSmoothingEnabled=true;
+        ctx.imageSmoothingQuality='high';
+        ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+        const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG gagal dikompresi.')),'image/png'));
+        if(blob.size<=limit)return blob;
+        scale*=0.78;
+      }
+      throw new Error('PNG masih terlalu besar setelah kompresi. Coba gambar dengan resolusi lebih kecil.');
     }finally{bitmap.close();}
   }
+
   function v68CheckRemoteImage(url){
     return new Promise((resolve,reject)=>{
       const img=new Image();
@@ -1612,14 +1621,15 @@ img{max-width:100%}
   window.v68UploadLogo=async function(){
     const file=document.getElementById('v68LogoFile')?.files?.[0];
     if(!file){v68Msg('Pilih file logo terlebih dahulu.');return;}
-    if(file.size>2*1024*1024){v68Msg('File terlalu besar. Maksimal 2 MB.');return;}
+    if(file.size>20*1024*1024){v68Msg('File sumber terlalu besar. Maksimal 20 MB untuk diproses.');return;}
     if(!v6Session?.access_token){v68Msg('Login Admin terlebih dahulu.');return;}
     const allowed=['image/png','image/jpeg','image/webp','image/gif'];
     if(!allowed.includes(file.type)){v68Msg('Format harus PNG, JPG, WebP, atau GIF.');return;}
-    v68Msg('Memproses dan mengupload logo...');
+    v68Msg(file.type==='image/png'?'Memproses dan mengompresi PNG otomatis...':'Memproses dan mengupload logo...');
     try{
       const body=await v68NormalizePng(file);
-      if(body.size>2*1024*1024)throw new Error('PNG setelah diproses melebihi 2 MB. Coba kecilkan resolusinya.');
+      if(body.size>2*1024*1024)throw new Error('File hasil proses melebihi 2 MB. Gunakan gambar lebih kecil.');
+      v68Msg('Mengupload logo ('+(body.size/1024/1024).toFixed(2)+' MB)...');
       const ext=file.type==='image/png'?'png':file.type==='image/jpeg'?'jpg':file.type==='image/webp'?'webp':'gif';
       const productId=v68CurrentProductId()||'new';
       const path=`product-${productId}-${Date.now()}-${Math.random().toString(36).slice(2,9)}.${ext}`;
