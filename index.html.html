@@ -1584,6 +1584,31 @@ img{max-width:100%}
     const preview=document.getElementById('v68LogoPreview');if(preview)preview.src=url;
   }
 
+  // Decode PNG in the browser and re-encode it as a clean PNG to remove
+  // problematic metadata/encoding while preserving transparency.
+  async function v68NormalizePng(file){
+    if(file.type!=='image/png')return file;
+    const bitmap=await createImageBitmap(file);
+    try{
+      const canvas=document.createElement('canvas');
+      canvas.width=bitmap.width;canvas.height=bitmap.height;
+      if(!canvas.width||!canvas.height||canvas.width*canvas.height>16000000)throw new Error('Dimensi PNG tidak didukung (maksimal 16 megapiksel).');
+      const ctx=canvas.getContext('2d');
+      if(!ctx)throw new Error('Browser tidak bisa memproses PNG ini.');
+      ctx.drawImage(bitmap,0,0);
+      const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG gagal dikonversi.')),'image/png'));
+      return blob;
+    }finally{bitmap.close();}
+  }
+  function v68CheckRemoteImage(url){
+    return new Promise((resolve,reject)=>{
+      const img=new Image();
+      const timer=setTimeout(()=>{img.onload=null;img.onerror=null;reject(new Error('Logo tersimpan tetapi gambar belum bisa dimuat.'));},12000);
+      img.onload=()=>{clearTimeout(timer);resolve();};
+      img.onerror=()=>{clearTimeout(timer);reject(new Error('URL logo baru tidak dapat menampilkan gambar.'));};
+      img.src=url;
+    });
+  }
   window.v68UploadLogo=async function(){
     const file=document.getElementById('v68LogoFile')?.files?.[0];
     if(!file){v68Msg('Pilih file logo terlebih dahulu.');return;}
@@ -1591,26 +1616,27 @@ img{max-width:100%}
     if(!v6Session?.access_token){v68Msg('Login Admin terlebih dahulu.');return;}
     const allowed=['image/png','image/jpeg','image/webp','image/gif'];
     if(!allowed.includes(file.type)){v68Msg('Format harus PNG, JPG, WebP, atau GIF.');return;}
-
-    const ext=(file.name.split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'');
-    const productId=v68CurrentProductId()||'new';
-    const path=`product-${productId}-${Date.now()}.${ext}`;
-    v68Msg('Mengupload logo...');
-
+    v68Msg('Memproses dan mengupload logo...');
     try{
+      const body=await v68NormalizePng(file);
+      if(body.size>2*1024*1024)throw new Error('PNG setelah diproses melebihi 2 MB. Coba kecilkan resolusinya.');
+      const ext=file.type==='image/png'?'png':file.type==='image/jpeg'?'jpg':file.type==='image/webp'?'webp':'gif';
+      const productId=v68CurrentProductId()||'new';
+      const path=`product-${productId}-${Date.now()}-${Math.random().toString(36).slice(2,9)}.${ext}`;
       const r=await fetch(V6_URL+'/storage/v1/object/'+V68_BUCKET+'/'+encodeURIComponent(path),{
         method:'POST',
         headers:{apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token,'Content-Type':file.type,'x-upsert':'false'},
-        body:file
+        body
       });
       const data=await r.json().catch(()=>({}));
       if(!r.ok)throw new Error(data.message||data.error||('HTTP '+r.status));
       const publicUrl=V68_PUBLIC_BASE+encodeURIComponent(path);
+      await v68CheckRemoteImage(publicUrl);
       v68SetLogoField(publicUrl);
       document.getElementById('v68LogoUrl').value=publicUrl;
       v68Msg('✅ Logo berhasil diupload. Sekarang klik SIMPAN PRODUK agar logo terhubung ke produk.');
     }catch(e){
-      v68Msg('Gagal upload logo: '+e.message);
+      v68Msg('Gagal memproses/upload logo: '+e.message);
     }
   };
 
