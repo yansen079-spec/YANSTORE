@@ -2779,7 +2779,7 @@ img{max-width:100%}
       document.body.appendChild(wrap);
     }
 
-    document.getElementById('v6912AdminTrigger')?.addEventListener('click',openAdminModal);
+    document.getElementById('v6912AdminTrigger')?.addEventListener('click',()=>window.open('/?yanstore_admin=1','_blank','noopener'));
   }
 
   function moveAdminIntoModal(){
@@ -2821,6 +2821,12 @@ img{max-width:100%}
     ensureAdminModal();
     ensureTrigger();
     moveAdminIntoModal();
+    if(new URLSearchParams(location.search).get('yanstore_admin')==='1'){
+      document.body.classList.add('ys-admin-fullpage');
+      openAdminModal();
+      const close=document.getElementById('v6912AdminClose');
+      if(close)close.onclick=()=>location.assign('/');
+    }
   }
 
   if(document.readyState==='loading'){
@@ -2832,6 +2838,16 @@ img{max-width:100%}
 </script>
 
 
+<style id="ys-admin-fullpage-style">
+body.ys-admin-fullpage > *:not(#v6912AdminModal):not(script):not(style){display:none!important}
+body.ys-admin-fullpage #v6912AdminModal{position:fixed;inset:0;display:flex!important;padding:0;background:#080b15;backdrop-filter:none;align-items:stretch;justify-content:center}
+body.ys-admin-fullpage #v6912AdminCard{width:100%;max-width:1600px;max-height:100vh;height:100vh;overflow:auto;border:0;border-radius:0;box-shadow:none;padding:clamp(16px,3vw,36px)}
+body.ys-admin-fullpage #v6912AdminMount #v6Admin{max-width:1500px;width:100%;margin:0 auto;padding:0}
+body.ys-admin-fullpage #v6912AdminMount #v6AdminPanel{width:100%;max-width:none}
+body.ys-admin-fullpage #v6912AdminMount .v6grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.ys-admin-fullpage #v6912AdminMount textarea{min-height:110px}
+@media(max-width:700px){body.ys-admin-fullpage #v6912AdminMount .v6grid{grid-template-columns:minmax(0,1fr)}}
+</style>
 <style id="v6913FaqStyle">
 #yanstore-faq{
   padding:34px 0 30px;
