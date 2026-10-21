@@ -5185,7 +5185,7 @@ window.YANSTORE_CHAT_CONFIG = {
 (function(){
 'use strict';
 const base='https://ivnohbhlahevaihunmbp.supabase.co';
-const bucket='product-logos',manifest='yanstore-promo-slides.json';
+const bucket='product-logos',manifest='yanstore-promo-slides.png';
 const defaults=[
 {title:'NETFLIX PREMIUM',subtitle:'Nikmati hiburan favoritmu dengan harga hemat',link:'#produk',image:''},
 {title:'PROMO APLIKASI PREMIUM',subtitle:'Cari paket favoritmu di katalog YanStore',link:'#produk',image:''},
@@ -5211,7 +5211,9 @@ for(const [symbol,step,cls] of [['‹',-1,'ys-promo-prev'],['›',1,'ys-promo-ne
 function show(i){active=(i+slides.length)%slides.length;render();resetTimer();}
 function resetTimer(){clearInterval(timer);timer=setInterval(()=>{if(!document.hidden){active=(active+1)%slides.length;render();}},5000);}
 const manifestUrl=base+'/storage/v1/object/public/'+bucket+'/'+manifest;
-async function load(){try{const r=await fetch(manifestUrl+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const data=await r.json();slides=normalize(data.slides);}}catch(e){console.warn('Promo defaults in use:',e);}render();editor();}
+async function encodeManifest(data){const bytes=new TextEncoder().encode(JSON.stringify(data));const width=256,height=Math.ceil((bytes.length+4)/(width*3));const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');const image=ctx.createImageData(width,height);const payload=new Uint8Array(4+bytes.length);new DataView(payload.buffer).setUint32(0,bytes.length);payload.set(bytes,4);for(let i=0;i<payload.length;i++){const p=Math.floor(i/3)*4+(i%3);image.data[p]=payload[i];}for(let i=3;i<image.data.length;i+=4)image.data[i]=255;ctx.putImageData(image,0,0);return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Gagal membuat konfigurasi banner')),'image/png'));}
+async function decodeManifest(blob){const bitmap=await createImageBitmap(blob);const canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(bitmap,0,0);bitmap.close?.();const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;const bytes=new Uint8Array(Math.floor(pixels.length/4)*3);for(let i=0;i<bytes.length;i++)bytes[i]=pixels[Math.floor(i/3)*4+(i%3)];const size=new DataView(bytes.buffer).getUint32(0);if(size<1||size>bytes.length-4)throw Error('Konfigurasi banner tidak valid');return JSON.parse(new TextDecoder().decode(bytes.slice(4,4+size)));}
+async function load(){try{const r=await fetch(manifestUrl+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const data=await decodeManifest(await r.blob());slides=normalize(data.slides);}}catch(e){console.warn('Promo defaults in use:',e);}render();editor();}
 function editor(){const root=el('ysPromoEditor');if(!root)return;root.replaceChildren();slides.forEach((p,i)=>{const group=document.createElement('div');group.className='ys-promo-edit';const heading=document.createElement('strong');heading.textContent='Slide '+(i+1);heading.style.gridColumn='1/-1';group.append(heading);
 for(const [key,label] of [['title','Judul'],['subtitle','Keterangan'],['link','Link tujuan'],['image','URL gambar banner']]){const box=document.createElement('label');box.textContent=label;const input=document.createElement('input');input.value=p[key];input.dataset.index=i;input.dataset.key=key;box.append(input);group.append(box);}
 const label=document.createElement('label');label.textContent='Atau upload gambar PNG/JPG/WebP';const input=document.createElement('input');input.type='file';input.accept='image/png,image/jpeg,image/webp';input.dataset.index=i;input.className='ys-promo-file';label.append(input);group.append(label);root.append(group);});}
@@ -5223,8 +5225,8 @@ try{
 const next=slides.map(x=>({...x}));el('ysPromoEditor').querySelectorAll('input[data-key]').forEach(input=>{next[Number(input.dataset.index)][input.dataset.key]=input.value.trim();});
 for(const input of el('ysPromoEditor').querySelectorAll('.ys-promo-file')){const file=input.files?.[0];if(file){msg('Mengupload banner slide '+(Number(input.dataset.index)+1)+'...');next[Number(input.dataset.index)].image=await upload(file,v6Session.access_token,Number(input.dataset.index));}}
 const clean=normalize(next);
-const body=new Blob([JSON.stringify({slides:clean,updatedAt:new Date().toISOString()})],{type:'application/json'});
-const r=await fetch(base+'/storage/v1/object/'+bucket+'/'+manifest,{method:'POST',headers:{apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token,'Content-Type':'application/json','x-upsert':'true'},body});
+const body=await encodeManifest({slides:clean,updatedAt:new Date().toISOString()});
+const r=await fetch(base+'/storage/v1/object/'+bucket+'/'+manifest,{method:'POST',headers:{apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token,'Content-Type':'image/png','x-upsert':'true'},body});
 if(!r.ok){const d=await r.json().catch(()=>({}));throw Error((d.message||d.error||'Gagal menyimpan konfigurasi')+'. Periksa izin INSERT/UPDATE Storage bucket product-logos.');}
 slides=clean;active=0;render();resetTimer();editor();msg('✅ Banner tersimpan online dan tampil untuk semua pengunjung.');
 }catch(e){msg('❌ '+e.message);}finally{btn.disabled=false;}
