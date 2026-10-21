@@ -4340,7 +4340,7 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
     const grid=document.getElementById('productGrid');
     if(!grid)return;
     grid.querySelectorAll('article.card').forEach(card=>{
-      if(card.querySelector('.v6922-share-btn'))return;
+      if(card.querySelector('.v6922-share-btn, .ys-market-share'))return;
       const btn=document.createElement('button');
       btn.type='button';
       btn.className='v6922-share-btn';
