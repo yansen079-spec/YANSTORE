@@ -7,9 +7,26 @@ let active=null,activeStatus='open',interval=null,refreshing=false,seen=new Set(
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const panel=()=>document.getElementById('v6AdminPanel')||document.getElementById('v6Admin');
 const session=()=>{try{return typeof v6Session!=='undefined'?v6Session:null}catch{return null}};
+let tokenRefresh=null;
+async function validSession(force=false){
+ const s=session();
+ if(!s?.access_token)throw Error('Login Admin terlebih dahulu');
+ const expires=s.expires_at||0;
+ if(!force&&(!expires||expires>Date.now()/1000+60))return s;
+ if(!s.refresh_token)throw Error('Sesi admin kedaluwarsa. Login ulang di halaman utama YanStore.');
+ if(!tokenRefresh)tokenRefresh=(async()=>{
+  const {data,error}=await db.auth.refreshSession({refresh_token:s.refresh_token});
+  if(error||!data?.session)throw Error('Sesi admin kedaluwarsa. Login ulang di halaman utama YanStore.');
+  const updated={...s,...data.session,user:data.user||data.session.user||s.user};
+  try{v6Session=updated;localStorage.setItem('yanstore_v6_session',JSON.stringify(updated))}catch(e){}
+  return updated;
+ })().finally(()=>{tokenRefresh=null});
+ return tokenRefresh;
+}
 async function request(path,opts={}){
-const s=session();if(!s?.access_token)throw Error('Login Admin terlebih dahulu');
-const r=await fetch(cfg.supabaseUrl+'/rest/v1/'+path,{...opts,headers:{apikey:cfg.supabaseAnonKey,Authorization:'Bearer '+s.access_token,'Content-Type':'application/json',...(opts.headers||{})}});
+const s=await validSession();
+let r=await fetch(cfg.supabaseUrl+'/rest/v1/'+path,{...opts,headers:{apikey:cfg.supabaseAnonKey,Authorization:'Bearer '+s.access_token,'Content-Type':'application/json',...(opts.headers||{})}});
+if(r.status===401){const fresh=await validSession(true);r=await fetch(cfg.supabaseUrl+'/rest/v1/'+path,{...opts,headers:{apikey:cfg.supabaseAnonKey,Authorization:'Bearer '+fresh.access_token,'Content-Type':'application/json',...(opts.headers||{})}})}
 if(!r.ok){const e=await r.json().catch(()=>({}));throw Error(e.message||'HTTP '+r.status)}
 return r.status===204?[]:r.json().catch(()=>[]);
 }
@@ -37,7 +54,7 @@ const badge=()=>{const n=[...unread.values()].reduce((a,b)=>a+b,0);if(get('ys-un
 function beep(){if(!soundOn)return;try{const ctx=audio||(audio=new (window.AudioContext||window.webkitAudioContext)());if(ctx.state==='suspended')ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=850;g.gain.setValueAtTime(.07,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.18)}catch(e){console.warn('Sound unavailable',e)}}
 async function enableNotifications(){soundOn=true;const btn=get('ys-notify-enable');if(btn)btn.textContent='🔔 Suara aktif';if('Notification' in window&&Notification.permission==='default'){const p=await Notification.requestPermission();if(btn)btn.textContent=p==='granted'?'🔔 Suara & notifikasi aktif':'🔔 Suara aktif (notifikasi browser tidak diizinkan)'}else if('Notification' in window&&Notification.permission==='granted'&&btn)btn.textContent='🔔 Suara & notifikasi aktif';beep()}
 async function checkIncoming(threads){if(!threads.length)return;try{const ids=threads.map(t=>t.id);const rows=await request('yanstore_chat_messages?select=id,thread_id,sender_id,created_at&thread_id=in.('+ids.join(',')+')&order=created_at.desc&limit=500');const customerIds=new Map(threads.map(t=>[t.id,t.customer_id]));let fresh=0;const latest=new Map();for(const m of rows){if(!latest.has(m.thread_id))latest.set(m.thread_id,m)}for(const t of threads){const last=latest.get(t.id);t.needsReply=!!last&&last.sender_id===t.customer_id}for(const m of rows){if(m.sender_id!==customerIds.get(m.thread_id))continue;if(!seen.has(m.id)){if(initialized){unread.set(m.thread_id,(unread.get(m.thread_id)||0)+1);fresh++}seen.add(m.id)}}if(fresh){beep();if('Notification' in window&&Notification.permission==='granted'&&document.hidden){try{const n=new Notification('YanStore: '+fresh+' pesan baru',{body:'Ada pesan pelanggan masuk di Live Chat.'});n.onclick=()=>{window.focus();n.close()}}catch(e){}}}initialized=true;badge()}catch(e){console.warn('YanStore notification check failed',e)}};
-async function heartbeat(){if(!window.YANSTORE_CHAT_STANDALONE||document.visibilityState!=='visible'||!session()?.access_token)return;const label=get('ys-admin-presence');try{const r=await fetch(cfg.supabaseUrl+'/rest/v1/rpc/yanstore_chat_heartbeat',{method:'POST',headers:{apikey:cfg.supabaseAnonKey,Authorization:'Bearer '+session().access_token,'Content-Type':'application/json'},body:'{}'});if(!r.ok||await r.json()!==true)throw Error('heartbeat unavailable');if(label)label.textContent='🟢 Admin online (dashboard aktif) · Jam layanan 09.00–21.00 WIB'}catch(e){if(label)label.textContent='⚪ Status online belum aktif · Jalankan presence.sql di Supabase'}}
+async function heartbeat(){if(!window.YANSTORE_CHAT_STANDALONE||document.visibilityState!=='visible'||!session()?.access_token)return;const label=get('ys-admin-presence');try{const s=await validSession();const r=await fetch(cfg.supabaseUrl+'/rest/v1/rpc/yanstore_chat_heartbeat',{method:'POST',headers:{apikey:cfg.supabaseAnonKey,Authorization:'Bearer '+s.access_token,'Content-Type':'application/json'},body:'{}'});if(!r.ok||await r.json()!==true)throw Error('heartbeat unavailable');if(label)label.textContent='🟢 Admin online (dashboard aktif) · Jam layanan 09.00–21.00 WIB'}catch(e){if(label)label.textContent='⚪ Status online gagal: '+e.message}}
 async function load(){
 if(refreshing||!get('ys-admin-inbox')||!session()?.access_token)return;
 refreshing=true;
