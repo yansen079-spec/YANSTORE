@@ -14,6 +14,10 @@
 }
 @media(max-width:760px){#ys-customer-search{margin:8px 0}#ys-admin-threads{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto;gap:7px!important;padding:7px 0}#ys-admin-threads button{flex:0 0 auto;max-width:220px}#ys-admin-threads button.ys-selected{background:#14532d!important;outline:2px solid #4ade80}#ys-admin-messages{border:1px solid #26364b}}
 #ys-admin-inbox button:disabled{opacity:.55;cursor:not-allowed}#ys-admin-form input{border-radius:9px;border:1px solid #64748b;background:#f8fafc}#ys-admin-messages:empty:before{content:'Pilih pelanggan untuk melihat percakapan';color:#94a3b8;display:block;text-align:center;padding:45px 10px}
+
+/* Fix clipped two-line customer rows */
+@media(min-width:761px){#ys-admin-threads button{height:auto!important;min-height:68px!important;max-height:none!important;flex:0 0 auto!important;overflow:hidden!important;justify-content:center;gap:6px!important;padding:12px 10px!important}#ys-admin-threads button strong,#ys-admin-threads button small{display:block!important;line-height:1.35!important;min-height:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;width:100%}}
+@media(max-width:760px){#ys-admin-threads button{height:auto!important;min-height:62px!important;max-height:none!important;overflow:hidden!important;gap:5px!important}#ys-admin-threads button strong,#ys-admin-threads button small{display:block!important;line-height:1.35!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;width:100%}}
 </style></head>
 <body><header><strong>💬 YanStore — Dashboard Live Chat</strong><a href="../" target="_blank" rel="noopener">← Kembali ke Toko</a></header><main><p id="login-warning">Memeriksa sesi admin...</p><div id="v6AdminPanel"></div></main>
 <script>let v6Session=null;try{v6Session=JSON.parse(localStorage.getItem('yanstore_v6_session')||'null')}catch(e){}
