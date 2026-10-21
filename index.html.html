@@ -4732,6 +4732,17 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 .v6926-add{width:100%;margin-top:7px!important;min-height:36px!important;border-radius:10px!important;border:1px solid rgba(139,92,246,.35)!important;background:rgba(139,92,246,.08)!important;color:#d8b4fe!important;font-size:11px!important;font-weight:900!important;cursor:pointer}
 .v6926-toast{position:fixed;left:50%;bottom:24px;z-index:1000005;transform:translateX(-50%);padding:10px 14px;border-radius:999px;background:#111827;color:#fff;border:1px solid #374151;font-size:11px;font-weight:900;opacity:0;pointer-events:none;transition:.2s}.v6926-toast.show{opacity:1}
 @media(max-width:680px){.v6926-cartbox{padding:15px;border-radius:18px}#v6926CartModal{padding:9px}}
+
+/* Compact aligned marketplace cards with manual QRIS payment */
+#productGrid .ys-market-card{min-width:0!important}
+#productGrid .ys-market-body{display:grid!important;grid-template-rows:42px 26px 17px 35px 35px 42px!important;gap:6px!important;align-content:start!important;padding:9px 10px 11px!important}
+#productGrid .ys-market-card h3{min-height:0!important;max-height:42px!important;font-size:14px!important;line-height:1.4!important}
+#productGrid .ys-market-price{font-size:16px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#productGrid .ys-market-meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#productGrid .ys-market-detail,#productGrid .ys-market-qr,#productGrid .ys-market-share{width:100%!important;min-height:0!important;height:35px!important;margin:0!important;border-radius:8px!important;padding:5px!important;font-size:11px!important;font-weight:750!important;cursor:pointer}
+#productGrid .ys-market-qr{background:#083a46;color:#8be9ff;border:1px solid #167d91}
+#productGrid .ys-market-share{height:42px!important;background:#292c47;color:#c9c3ea;border:1px solid #4c416e;line-height:1.3}
+@media(max-width:640px){#productGrid .ys-market-body{padding:8px!important;gap:5px!important}#productGrid .ys-market-card h3{font-size:13px!important}#productGrid .ys-market-price{font-size:14px!important}}
 </style>
 
 <div id="v6926CartModal" aria-hidden="true">
@@ -5033,6 +5044,22 @@ window.YANSTORE_CHAT_CONFIG = {
  };
  document.getElementById('ysMarketDialog')?.addEventListener('click',e=>{if(e.target.id==='ysMarketDialog')ysCloseProduct()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')ysCloseProduct()});
+ window.ysPayProduct=function(i){
+   const card=detailCards[i];
+   if(!card)return;
+   const el=document.createElement('div');el.innerHTML=card;
+   const product=el.querySelector('h3')?.textContent?.trim()||'Produk YanStore';
+   const price=el.querySelector('.price')?.textContent?.trim()||'Pilih paket di detail';
+   if(typeof window.v6925Open==='function')window.v6925Open({product,package:'Pilih paket / konfirmasi ke admin',price});
+   else window.ysOpenProduct(i);
+ };
+ window.ysShareProduct=async function(i){
+   const el=document.createElement('div');el.innerHTML=detailCards[i]||'';
+   const name=el.querySelector('h3')?.textContent?.trim()||'Produk YanStore';
+   const url=new URL(location.href);url.searchParams.set('produk',name);
+   if(navigator.share){try{await navigator.share({title:name,url:url.href});return}catch(e){if(e.name==='AbortError')return}}
+   try{await navigator.clipboard.writeText(url.href);alert('Link produk disalin!')}catch(e){prompt('Salin link produk:',url.href)}
+ };
  window.renderProducts=function(){
    previous.apply(this,arguments);
    const grid=document.getElementById('productGrid');
@@ -5050,7 +5077,7 @@ window.YANSTORE_CHAT_CONFIG = {
      const src=img?.getAttribute('src')||'';
      const isUploaded=/^https?:\/\//i.test(src)&&/supabase\.co\/storage\//i.test(src);
      const thumb=img ? '<img loading="lazy" referrerpolicy="no-referrer" class="'+(isUploaded?'':'ys-logo-placeholder')+'" src="'+src.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" onerror="this.style.display=\'none\';this.insertAdjacentHTML(\'afterend\',\'<span class=ys-initial>📦</span>\')">' : '<span class="ys-initial">'+(fallback?.textContent||'📦')+'</span>';
-     return {i,name,html:'<article class="card ys-market-card"><div class="ys-market-thumb">'+thumb+'<span class="ys-market-tag">'+(status==='HABIS'?'HABIS':'READY')+'</span></div><div class="ys-market-body"><h3>'+name.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</h3><div class="ys-market-price">'+price.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><div class="ys-market-meta">'+(pack||'Lihat detail & pesan').replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><button class="ys-market-detail" type="button" onclick="ysOpenProduct('+i+')">LIHAT DETAIL</button></div></article>'};
+     return {i,name,html:'<article class="card ys-market-card"><div class="ys-market-thumb">'+thumb+'<span class="ys-market-tag">'+(status==='HABIS'?'HABIS':'READY')+'</span></div><div class="ys-market-body"><h3>'+name.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</h3><div class="ys-market-price">'+price.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><div class="ys-market-meta">'+(pack||'Lihat detail & pesan').replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><button class="ys-market-detail" type="button" onclick="ysOpenProduct('+i+')">LIHAT DETAIL</button><button class="ys-market-qr" type="button" onclick="ysPayProduct('+i+')">💳 BAYAR QRIS</button><button class="ys-market-share" type="button" onclick="ysShareProduct('+i+')">🔗 BAGIKAN PRODUK</button></div></article>'};
    });
    const q=(document.getElementById('search')?.value||'').trim();
    const cat=document.getElementById('category')?.value||'all';
