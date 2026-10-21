@@ -1555,8 +1555,11 @@ img{max-width:100%}
     form.appendChild(box);
     document.getElementById('v68LogoFile').addEventListener('change',e=>{
       const f=e.target.files?.[0];if(!f)return;
-      const url=URL.createObjectURL(f);document.getElementById('v68LogoPreview').src=url;
-      v68Msg('Preview siap. Klik UPLOAD LOGO untuk menyimpan online.');
+      // A newly selected file must never inherit the previous product's logo URL.
+      const url=URL.createObjectURL(f);
+      document.getElementById('v68LogoPreview').src=url;
+      const urlInput=document.getElementById('v68LogoUrl');if(urlInput)urlInput.value='';
+      v68Msg('Preview file baru siap. Klik UPLOAD LOGO untuk menyimpan online.');
     });
   }
 
@@ -2096,9 +2099,13 @@ img{max-width:100%}
   const oldUpload=window.v68UploadLogo;
   if(typeof oldUpload==='function'){
     window.v68UploadLogo=async function(){
+      const file=document.getElementById('v68LogoFile')?.files?.[0];
+      const previousUrl=document.getElementById('v68LogoUrl')?.value?.trim()||'';
       await oldUpload.apply(this,arguments);
       const url=document.getElementById('v68LogoUrl')?.value?.trim();
-      if(isUrl(url)){
+      const msgText=document.getElementById('v68LogoMsg')?.textContent||'';
+      // Only lock a fresh URL after a confirmed successful upload.
+      if(file && isUrl(url) && url!==previousUrl && msgText.includes('berhasil diupload')){
         setExactLogo(url);
         const msg=document.getElementById('v68LogoMsg');
         if(msg)msg.textContent='✅ Logo berhasil diupload & dikunci sebagai pilihan produk. Sekarang klik SIMPAN PRODUK.';
