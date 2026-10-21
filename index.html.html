@@ -5039,6 +5039,17 @@ window.YANSTORE_CHAT_CONFIG = {
  window.ysOpenProduct=function(i){
    const host=document.getElementById('ysMarketDialogContent');
    if(!host||!detailCards[i])return;
+   const source=document.createElement('div');
+   source.innerHTML=detailCards[i];
+   const variantButton=source.querySelector('.v64-variant-btn');
+   if(variantButton && typeof window.v64OpenVariants==='function'){
+     const match=variantButton.getAttribute('onclick')?.match(/v64OpenVariants\\((\\d+)\\)/);
+     if(match){
+       window.ysCloseProduct();
+       window.v64OpenVariants(Number(match[1]));
+       return;
+     }
+   }
    host.innerHTML=detailCards[i];
    document.getElementById('ysMarketDialog').classList.add('ys-open');
  };
