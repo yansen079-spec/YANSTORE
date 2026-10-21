@@ -4207,6 +4207,10 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
     window.v6Edit=function(arg){
       const product=productFromArg(arg);
       originalLogo=String(product?.logo||'').trim();
+      // Switching products must not carry over the previously edited product image.
+      const oldFile=document.getElementById('v68LogoFile');if(oldFile)oldFile.value='';
+      const oldUrl=document.getElementById('v68LogoUrl');if(oldUrl)oldUrl.value='';
+      const oldPreview=document.getElementById('v68LogoPreview');if(oldPreview)oldPreview.removeAttribute('src');
 
       const result=previousEdit.apply(this,arguments);
 
@@ -4217,13 +4221,11 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
         const file=document.getElementById('v68LogoFile')?.files?.[0];
         const url=document.getElementById('v68LogoUrl');
         const currentUrl=String(url?.value||'').trim();
-        if(file || (isUrl(currentUrl) && currentUrl!==originalLogo))return;
+        if(file)return;
         if(originalLogo) ensureLogoOption(originalLogo);
         const preview=document.getElementById('v68LogoPreview');
-        if(isUrl(originalLogo)){
-          if(url) url.value=originalLogo;
-          if(preview) preview.src=originalLogo;
-        }
+        if(url)url.value=isUrl(originalLogo)?originalLogo:'';
+        if(preview){if(isUrl(originalLogo))preview.src=originalLogo;else preview.removeAttribute('src');}
       };
       restore();
       setTimeout(restore,100);
