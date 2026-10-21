@@ -264,6 +264,7 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 </div>
 <div class="v6actions">
 <button class="v6primary" onclick="v6Login()">LOGIN ADMIN</button>
+<button type="button" onclick="v6ForgotPassword()" style="background:transparent;border:0;color:#80e9ff;cursor:pointer;text-decoration:underline;padding:10px 4px;font-weight:600">🔑 Lupa Password? Kirim Link ke Email</button>
 
 </div>
 <div class="v6msg" id="v6LoginMsg">Masukkan password khusus Admin Yanstore, lalu tekan LOGIN ADMIN.</div>
@@ -389,6 +390,23 @@ async function v6CreateAdmin(){
     if(data.access_token){v6Session=data;localStorage.setItem('yanstore_v6_session',JSON.stringify(data));v6ShowPanel();}
     else msg.textContent='Akun dibuat. Cek inbox/spam '+V6_ADMIN+' untuk verifikasi email, lalu kembali dan tekan LOGIN ADMIN.';
   }catch(e){msg.textContent=e.message;}
+}
+async function v6ForgotPassword(){
+  const msg=document.getElementById('v6LoginMsg');
+  const btn=event?.currentTarget;
+  if(btn)btn.disabled=true;
+  msg.textContent='Meminta link pemulihan password...';
+  try{
+    const redirectTo=location.origin+'/reset-password.html';
+    const r=await fetch(V6_URL+'/auth/v1/recover?redirect_to='+encodeURIComponent(redirectTo),{
+      method:'POST',headers:{apikey:V6_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email:V6_ADMIN})
+    });
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(data.msg||data.message||data.error_description||data.error||'Gagal mengirim email');
+    msg.textContent='Jika akun terdaftar, link reset password akan dikirim ke '+V6_ADMIN+'. Cek Inbox dan Spam. Link hanya berlaku sementara.';
+  }catch(e){msg.textContent='Gagal mengirim link: '+e.message+'. Periksa pengaturan Redirect URLs di Supabase.';}
+  finally{if(btn)btn.disabled=false;}
 }
 async function v6Login(){
   const pass=document.getElementById('v6Password').value;
