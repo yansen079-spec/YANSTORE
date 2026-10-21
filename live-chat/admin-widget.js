@@ -43,6 +43,7 @@ const search=document.createElement('input');search.id='ys-customer-search';sear
 const rename=document.createElement('button');rename.type='button';rename.id='ys-rename-customer';rename.textContent='✏️ Ubah Nama';rename.onclick=()=>{const t=lastThreads.find(x=>x.id===active);if(t)renameCustomer(t)};el.querySelector('#ys-thread-toggle').before(rename);
 el.querySelector('#ys-admin-form').onsubmit=send;
 el.querySelector('#ys-thread-toggle').onclick=toggleThread;
+const del=document.createElement('button');del.type='button';del.id='ys-delete-chat';del.textContent='🗑️ Hapus Chat';del.style.cssText='background:#b91c1c;color:white';del.onclick=deleteChat;el.querySelector('#ys-thread-actions').appendChild(del);
 syncNames().then(load);heartbeat();setInterval(heartbeat,30000);document.addEventListener('visibilitychange',heartbeat);
 }
 const get=id=>document.getElementById(id);
@@ -113,7 +114,17 @@ await checkIncoming(threads);await loadPreviews(threads);renderThreadButtons();f
 }catch(e){note('Gagal memuat inbox: '+e.message+'. Periksa izin RLS admin di Supabase.')}
 finally{refreshing=false}
 }
-function updateThreadControls(){const st=get('ys-thread-status'),btn=get('ys-thread-toggle'),input=get('ys-admin-input'),sendBtn=get('ys-admin-form')?.querySelector('button');if(st)st.textContent=active?'Status: '+(activeStatus==='open'?'🟢 Terbuka':'⚪ Ditutup'):'Pilih percakapan';if(btn){btn.disabled=!active;btn.textContent=activeStatus==='open'?'✓ Tutup Percakapan':'↻ Buka Kembali'}if(input)input.disabled=activeStatus!=='open';if(sendBtn)sendBtn.disabled=activeStatus!=='open'}
+async function deleteChat(){
+ if(!active)return;
+ const t=lastThreads.find(x=>x.id===active);if(!t)return;
+ const name=displayName(t);
+ if(!confirm('HAPUS PERMANEN seluruh pesan dan percakapan '+name+'? Tindakan ini tidak dapat dibatalkan.'))return;
+ const btn=get('ys-delete-chat');btn.disabled=true;
+ try{const result=await request('rpc/yanstore_admin_delete_chat',{method:'POST',body:JSON.stringify({p_thread_id:active})});if(result!==true)throw Error('Percakapan tidak ditemukan atau sudah dihapus');unread.delete(active);active=null;get('ys-admin-messages')?.replaceChildren();note('Percakapan '+name+' berhasil dihapus permanen.');await load()}
+ catch(e){note('Gagal menghapus chat: '+e.message+'. Pastikan delete-chat.sql sudah dijalankan di Supabase.')}
+ finally{btn.disabled=false}
+}
+function updateThreadControls(){const st=get('ys-thread-status'),btn=get('ys-thread-toggle'),input=get('ys-admin-input'),sendBtn=get('ys-admin-form')?.querySelector('button');if(st)st.textContent=active?'Status: '+(activeStatus==='open'?'🟢 Terbuka':'⚪ Ditutup'):'Pilih percakapan';const del=get('ys-delete-chat');if(del)del.disabled=!active;if(btn){btn.disabled=!active;btn.textContent=activeStatus==='open'?'✓ Tutup Percakapan':'↻ Buka Kembali'}if(input)input.disabled=activeStatus!=='open';if(sendBtn)sendBtn.disabled=activeStatus!=='open'}
 async function toggleThread(){if(!active)return;const next=activeStatus==='open'?'closed':'open';try{await request('yanstore_chat_threads?id=eq.'+encodeURIComponent(active),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:next})});activeStatus=next;updateThreadControls();note(next==='closed'?'Percakapan ditutup. Bisa dibuka kembali.':'Percakapan dibuka kembali.');await load()}catch(e){note('Gagal mengubah status: '+e.message)}}
 async function messages(){
 if(!active||!get('ys-admin-messages'))return;
