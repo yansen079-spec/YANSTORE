@@ -286,7 +286,9 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <div class="v6msg" id="v6LoginMsg">Masukkan password khusus Admin Yanstore, lalu tekan LOGIN ADMIN.</div>
 </div>
 <div id="v6AdminPanel">
-<section class="ys-promo-admin" id="ysPromoAdmin"><h3>🎞️ Kelola Banner Promo</h3><p>Isi 3 slide promo. Upload gambar atau tempel URL gambar, lalu simpan agar tampil untuk semua pengunjung.</p><div id="ysPromoEditor"></div><button type="button" id="ysPromoSave">💾 SIMPAN BANNER PROMO</button><p id="ysPromoAdminMsg" role="status"></p></section>
+<section class="ys-promo-center"><h2>🎯 Pusat Promosi</h2><p>Kelola banner dan diskon di satu tempat. Buka hanya bagian yang ingin diedit.</p><div id="ysPromoCenter"><details class="ys-promo-fold" id="ysBannerFold"><summary>🎞️ Banner & Pengumuman</summary>
+<section class="ys-promo-admin" id="ysPromoAdmin"><h3>🎞️ Kelola Banner Promo</h3><p>Isi 3 slide promo. Upload gambar atau tempel URL gambar, lalu simpan agar tampil untuk semua pengunjung.</p><div id="ysPromoEditor"></div><button type="button" id="ysPromoSave">💾 SIMPAN BANNER PROMO</button><p id="ysPromoAdminMsg" role="status"></p></section></details></div></section>
+
 <a href="semi-auto-order/admin.html" target="_blank" rel="noopener" style="display:block;background:#0f766e;color:white;padding:14px;margin:12px 0;border-radius:10px;text-align:center;font-weight:700;text-decoration:none">📦 Kelola Pesanan QRIS Manual ↗</a>
 <a href="sales/index.html" target="_blank" rel="noopener" style="display:block;background:#166534;color:white;padding:14px;margin:12px 0;border-radius:10px;text-align:center;font-weight:700;text-decoration:none">📊 Dashboard Statistik Penjualan YanStore ↗</a>
 <div class="v6head">
@@ -1716,6 +1718,7 @@ img{max-width:100%}
 </script>
 
 
+<style id="ysPromoCenterStyle">.ys-promo-center{margin:18px 0;padding:18px;border:1px solid #39405e;border-radius:18px;background:#101522}.ys-promo-center h2{margin:0 0 5px}.ys-promo-center>p{color:#aab7d4;font-size:13px;margin:0 0 12px}.ys-promo-fold{border:1px solid #3a4260;border-radius:12px;margin:10px 0;overflow:hidden}.ys-promo-fold>summary{padding:16px;cursor:pointer;font-weight:800;background:#1a2032}.ys-promo-fold[open]>summary{border-bottom:1px solid #3a4260}.ys-promo-fold>.ys-promo-admin{margin:12px}.ys-promo-fold>#v69AdminPromo{margin:12px}#ysPromoCenter #v69AdminPromo{margin:0;padding:0;border:0;background:transparent}#ysPromoCenter .ys-flash-fold{border:1px solid #3a4260;border-radius:12px;margin:10px 0;overflow:hidden}#ysPromoCenter .ys-flash-fold>summary{padding:16px;cursor:pointer;font-weight:800;background:#1a2032}#ysPromoCenter .ys-flash-fold>#v69AdminPromo{padding:12px}</style>
 <style id="v69PromoStyle">
 /* V6.9 — Promo & Flash Sale Manager */
 #v69PromoSection{display:none;padding-top:16px}
@@ -1904,7 +1907,8 @@ img{max-width:100%}
       </div>
       <div id="v69PromoMsg"></div>
       <div id="v69PromoList"></div>`;
-    panel.appendChild(box);
+    const promoCenter=document.getElementById('ysPromoCenter');
+    if(promoCenter){let fold=document.getElementById('ysFlashFold');if(!fold){fold=document.createElement('details');fold.id='ysFlashFold';fold.className='ys-flash-fold';fold.innerHTML='<summary>⚡ Flash Sale & Diskon</summary>';promoCenter.appendChild(fold)}fold.appendChild(box)}else panel.appendChild(box);
   }
 
   window.v69ResetPromo=function(){
