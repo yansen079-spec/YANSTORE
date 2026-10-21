@@ -40,17 +40,19 @@ const controls=document.createElement('div');controls.style.cssText='display:fle
 const presence=document.createElement('p');presence.id='ys-admin-presence';presence.style.cssText='font-size:13px;color:#bbf7d0;margin:8px 0';presence.textContent='⚪ Status online belum terhubung · Jam layanan 09.00–21.00 WIB';el.querySelector('#ys-admin-refresh').before(presence);
 el.querySelector('#ys-admin-refresh').onclick=load;
 const search=document.createElement('input');search.id='ys-customer-search';search.type='search';search.placeholder='🔎 Cari nama atau ID pelanggan...';search.setAttribute('aria-label','Cari pelanggan');search.style.cssText='width:100%;padding:12px;border-radius:9px;border:1px solid #475569;background:#1e293b;color:white;font-size:14px';el.querySelector('#ys-admin-threads').before(search);search.addEventListener('input',filterThreads);
+const tabs=document.createElement('div');tabs.id='ys-archive-tabs';tabs.style.cssText='display:flex;gap:8px;margin:8px 0';tabs.innerHTML='<button type="button" id="ys-show-inbox">📥 Inbox</button><button type="button" id="ys-show-archive">📦 Arsip</button>';search.after(tabs);get('ys-show-inbox').onclick=()=>switchArchive('inbox');get('ys-show-archive').onclick=()=>switchArchive('archive');
 const rename=document.createElement('button');rename.type='button';rename.id='ys-rename-customer';rename.textContent='✏️ Ubah Nama';rename.onclick=()=>{const t=lastThreads.find(x=>x.id===active);if(t)renameCustomer(t)};el.querySelector('#ys-thread-toggle').before(rename);
 el.querySelector('#ys-admin-form').onsubmit=send;
 el.querySelector('#ys-thread-toggle').onclick=toggleThread;
 const del=document.createElement('button');del.type='button';del.id='ys-delete-chat';del.textContent='🗑️ Hapus Chat';del.style.cssText='background:#b91c1c;color:white';del.onclick=deleteChat;el.querySelector('#ys-thread-actions').appendChild(del);
+const archive=document.createElement('button');archive.type='button';archive.id='ys-archive-chat';archive.textContent='📦 Arsipkan';archive.onclick=toggleArchive;el.querySelector('#ys-thread-actions').appendChild(archive);
 syncNames().then(load);heartbeat();setInterval(heartbeat,30000);document.addEventListener('visibilitychange',heartbeat);
 }
 const get=id=>document.getElementById(id);
 const clock=v=>{try{return new Intl.DateTimeFormat('id-ID',{timeZone:'Asia/Jakarta',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(v))+' WIB'}catch{return ''}};
 const nickKey='yanstore_chat_nicknames';
 const names=(()=>{try{return JSON.parse(localStorage.getItem(nickKey)||'{}')}catch{return {}}})();
-let namesAvailable=false;let lastThreads=[];let previews=new Map();
+let namesAvailable=false;let lastThreads=[];let previews=new Map();let archivedIds=new Set(),archiveView='inbox',archiveReady=false;
 async function syncNames(){try{const rows=await request('yanstore_chat_customer_names?select=customer_id,nickname&limit=500');namesAvailable=true;for(const row of rows){if(!names[row.customer_id])names[row.customer_id]=row.nickname}for(const [id,nickname] of Object.entries(names)){if(!rows.some(r=>r.customer_id===id)&&nickname){await request('yanstore_chat_customer_names',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({customer_id:id,nickname})}).catch(()=>{})}}localStorage.setItem(nickKey,JSON.stringify(names))}catch(e){namesAvailable=false;console.warn('Customer nickname sync unavailable; using local names',e.message)}}
 const note=s=>{if(get('ys-admin-note'))get('ys-admin-note').textContent=s};
 const badge=()=>{const n=[...unread.values()].reduce((a,b)=>a+b,0);if(get('ys-unread-count'))get('ys-unread-count').textContent=n?'🔴 '+n+' pesan pelanggan baru':'Tidak ada pesan baru';if(window.YANSTORE_CHAT_STANDALONE)document.title=(n?'('+n+') ':'')+'YanStore | Dashboard Live Chat';};
@@ -69,9 +71,10 @@ function renderThreadButtons(){
   b.append(title,sub);b.classList.toggle('ys-selected',t.id===active);
  }
 }
+function switchArchive(view){archiveView=view;active=null;get('ys-admin-messages')?.replaceChildren();filterThreads();updateThreadControls();load()}
 function filterThreads(){
  const q=(get('ys-customer-search')?.value||'').trim().toLocaleLowerCase('id');
- for(const t of lastThreads){const b=[...get('ys-admin-threads').children].find(x=>x.dataset.thread===t.id);if(b)b.hidden=!!q&&!((displayName(t)+' '+t.customer_id+' '+(previews.get(t.id)||'')).toLocaleLowerCase('id').includes(q))}
+ for(const t of lastThreads){const b=[...get('ys-admin-threads').children].find(x=>x.dataset.thread===t.id);if(b)b.hidden=(archiveView==='archive'?!archivedIds.has(t.id):archivedIds.has(t.id))||!!q&&!((displayName(t)+' '+t.customer_id+' '+(previews.get(t.id)||'')).toLocaleLowerCase('id').includes(q))}
 }
 async function renameCustomer(t){
  const n=prompt('Nama pelanggan:',names[t.customer_id]||'');if(n===null)return;
@@ -92,11 +95,20 @@ async function loadPreviews(threads){
  renderThreadButtons();filterThreads();
  }catch(e){console.warn('Preview chat gagal dimuat',e)}
 }
+async function toggleArchive(){
+ if(!active||!archiveReady)return;
+ const archived=archivedIds.has(active);const t=lastThreads.find(x=>x.id===active);const label=t?displayName(t):'pelanggan';
+ if(!confirm((archived?'Kembalikan ':'Arsipkan ')+label+'? Riwayat pesan tidak akan dihapus.'))return;
+ const btn=get('ys-archive-chat');btn.disabled=true;
+ try{const ok=await request('rpc/yanstore_admin_set_chat_archive',{method:'POST',body:JSON.stringify({p_thread_id:active,p_archived:!archived})});if(ok!==true)throw Error('Percakapan tidak ditemukan');if(archived)archivedIds.delete(active);else archivedIds.add(active);active=null;get('ys-admin-messages')?.replaceChildren();note(archived?'Percakapan dikembalikan ke inbox.':'Percakapan berhasil diarsipkan.');await load()}
+ catch(e){note('Gagal mengubah arsip: '+e.message)}finally{btn.disabled=false}
+}
 async function load(){
 if(refreshing||!get('ys-admin-inbox')||!session()?.access_token)return;
 refreshing=true;
 try{
 const threads=await request('yanstore_chat_threads?select=id,customer_id,created_at,status&order=created_at.desc&limit=100');
+try{const archives=await request('yanstore_chat_archives?select=thread_id&limit=1000');archivedIds=new Set(archives.map(a=>a.thread_id));archiveReady=true}catch(e){archiveReady=false;archivedIds=new Set();if(archiveView==='archive')note('Fitur arsip belum aktif. Jalankan archive-chat.sql di Supabase.');}
 const wrap=get('ys-admin-threads');wrap.replaceChildren();
 lastThreads=threads;
 for(const t of threads){
@@ -109,7 +121,7 @@ for(const t of threads){
 }
 renderThreadButtons();filterThreads();
 if(!threads.length)note('Tidak ada percakapan yang dapat dibaca oleh akun ini. Jika pelanggan sudah mengirim pesan, periksa kebijakan RLS dan hak akses admin di Supabase.');
-else{note(threads.length+' percakapan ditemukan.');if(!active||!threads.some(t=>t.id===active))active=threads[0].id;activeStatus=threads.find(t=>t.id===active).status;for(const item of wrap.children)item.classList.toggle('ys-selected',item.dataset.thread===active);updateThreadControls();await messages()}
+else{const visible=threads.filter(t=>archiveView==='archive'?archivedIds.has(t.id):!archivedIds.has(t.id));note(visible.length+' percakapan '+(archiveView==='archive'?'diarsipkan.':'di inbox.'));if(!active||!visible.some(t=>t.id===active))active=visible[0]?.id||null;activeStatus=threads.find(t=>t.id===active)?.status||'open';for(const item of wrap.children)item.classList.toggle('ys-selected',item.dataset.thread===active);updateThreadControls();if(active)await messages();else get('ys-admin-messages')?.replaceChildren()}
 await checkIncoming(threads);await loadPreviews(threads);renderThreadButtons();filterThreads()
 }catch(e){note('Gagal memuat inbox: '+e.message+'. Periksa izin RLS admin di Supabase.')}
 finally{refreshing=false}
@@ -124,7 +136,7 @@ async function deleteChat(){
  catch(e){note('Gagal menghapus chat: '+e.message+'. Pastikan delete-chat.sql sudah dijalankan di Supabase.')}
  finally{btn.disabled=false}
 }
-function updateThreadControls(){const st=get('ys-thread-status'),btn=get('ys-thread-toggle'),input=get('ys-admin-input'),sendBtn=get('ys-admin-form')?.querySelector('button');if(st)st.textContent=active?'Status: '+(activeStatus==='open'?'🟢 Terbuka':'⚪ Ditutup'):'Pilih percakapan';const del=get('ys-delete-chat');if(del)del.disabled=!active;if(btn){btn.disabled=!active;btn.textContent=activeStatus==='open'?'✓ Tutup Percakapan':'↻ Buka Kembali'}if(input)input.disabled=activeStatus!=='open';if(sendBtn)sendBtn.disabled=activeStatus!=='open'}
+function updateThreadControls(){const st=get('ys-thread-status'),btn=get('ys-thread-toggle'),input=get('ys-admin-input'),sendBtn=get('ys-admin-form')?.querySelector('button');if(st)st.textContent=active?'Status: '+(activeStatus==='open'?'🟢 Terbuka':'⚪ Ditutup'):'Pilih percakapan';const del=get('ys-delete-chat');if(del)del.disabled=!active;const archive=get('ys-archive-chat');if(archive){archive.disabled=!active||!archiveReady;archive.textContent=archivedIds.has(active)?'📥 Kembalikan ke Inbox':'📦 Arsipkan'}const inboxTab=get('ys-show-inbox'),archiveTab=get('ys-show-archive');if(inboxTab)inboxTab.style.background=archiveView==='inbox'?'#166534':'#334155';if(archiveTab)archiveTab.style.background=archiveView==='archive'?'#166534':'#334155';if(btn){btn.disabled=!active;btn.textContent=activeStatus==='open'?'✓ Tutup Percakapan':'↻ Buka Kembali'}if(input)input.disabled=activeStatus!=='open';if(sendBtn)sendBtn.disabled=activeStatus!=='open'}
 async function toggleThread(){if(!active)return;const next=activeStatus==='open'?'closed':'open';try{await request('yanstore_chat_threads?id=eq.'+encodeURIComponent(active),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:next})});activeStatus=next;updateThreadControls();note(next==='closed'?'Percakapan ditutup. Bisa dibuka kembali.':'Percakapan dibuka kembali.');await load()}catch(e){note('Gagal mengubah status: '+e.message)}}
 async function messages(){
 if(!active||!get('ys-admin-messages'))return;
