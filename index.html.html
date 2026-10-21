@@ -1570,7 +1570,17 @@ img{max-width:100%}
   }
   function v68SetLogoField(url){
     const logo=document.getElementById('v6Logo');
-    if(logo)logo.value=url;
+    if(logo){
+      let option=Array.from(logo.options).find(o=>o.value===url);
+      if(!option){
+        option=document.createElement('option');
+        option.value=url;
+        option.textContent='Logo upload terbaru';
+        option.dataset.uploadedLogo='1';
+        logo.appendChild(option);
+      }
+      logo.value=url;
+    }
     const preview=document.getElementById('v68LogoPreview');if(preview)preview.src=url;
   }
 
@@ -4146,8 +4156,12 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
       // Previous Yanstore versions may rebuild the logo manager shortly after EDIT.
       // Re-apply the exact database value so an uploaded URL never becomes Netflix.
       const restore=()=>{
-        if(originalLogo) ensureLogoOption(originalLogo);
+        // Do not overwrite a newly selected file or successfully uploaded logo.
+        const file=document.getElementById('v68LogoFile')?.files?.[0];
         const url=document.getElementById('v68LogoUrl');
+        const currentUrl=String(url?.value||'').trim();
+        if(file || (isUrl(currentUrl) && currentUrl!==originalLogo))return;
+        if(originalLogo) ensureLogoOption(originalLogo);
         const preview=document.getElementById('v68LogoPreview');
         if(isUrl(originalLogo)){
           if(url) url.value=originalLogo;
