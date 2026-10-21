@@ -5094,10 +5094,11 @@ window.YANSTORE_CHAT_CONFIG = {
    const cat=document.getElementById('category')?.value||'all';
    const heading=(t)=>'<div class="ys-market-heading"><h3>'+t+'</h3></div>';
    if(!q&&cat==='all'&&records.length>6){
-     const recent=records.slice(-Math.min(6,records.length)).reverse();
-     const rest=records.filter(x=>!recent.includes(x));
+     const byName=(a,b)=>a.name.trim().localeCompare(b.name.trim(),'id',{sensitivity:'base',numeric:true});
+     const recent=records.slice(-Math.min(6,records.length)).sort(byName);
+     const rest=records.filter(x=>!recent.includes(x)).sort(byName);
      grid.innerHTML=heading('✨ Produk Pilihan')+recent.map(x=>x.html).join('')+heading('🛍️ Semua Produk')+rest.map(x=>x.html).join('');
-   }else grid.innerHTML=records.map(x=>x.html).join('');
+   }else grid.innerHTML=records.sort((a,b)=>a.name.trim().localeCompare(b.name.trim(),'id',{sensitivity:'base',numeric:true})).map(x=>x.html).join('');
  };
  window.renderProducts();
 })();
