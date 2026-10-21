@@ -84,7 +84,10 @@ async function loadPreviews(threads){
  try{const ids=threads.map(t=>t.id);const rows=await request('yanstore_chat_messages?select=thread_id,body,sender_id,created_at&thread_id=in.('+ids.join(',')+')&order=created_at.desc&limit=1000');
  previews=new Map();const latest=new Map();
  for(const m of rows){if(!latest.has(m.thread_id))latest.set(m.thread_id,m);if(!previews.has(m.thread_id))previews.set(m.thread_id,(m.body||'').replace(/\\s+/g,' ').slice(0,95))}
- for(const t of threads){const m=latest.get(t.id);t.needsReply=!!m&&m.sender_id===t.customer_id}
+ for(const t of threads){const m=latest.get(t.id);t.needsReply=!!m&&m.sender_id===t.customer_id;t.lastActivity=m?.created_at||t.created_at}
+ threads.sort((a,b)=>new Date(b.lastActivity).getTime()-new Date(a.lastActivity).getTime());
+ const wrap=get('ys-admin-threads');
+ for(const t of threads){const button=[...wrap.children].find(b=>b.dataset.thread===t.id);if(button)wrap.appendChild(button)}
  renderThreadButtons();filterThreads();
  }catch(e){console.warn('Preview chat gagal dimuat',e)}
 }
