@@ -5017,7 +5017,6 @@ window.YANSTORE_CHAT_CONFIG = {
 @media(max-width:1250px){#productGrid{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
 @media(max-width:900px){#productGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:640px){#produk{padding:13px!important;border-radius:14px}#productGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}.ys-market-body{padding:9px}.ys-market-price{font-size:15px}.ys-market-heading h3{font-size:16px!important}}
-.ys-category-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.ys-category-tile{border:1px solid #485576;border-radius:12px;background:#263450;color:white;padding:20px 6px;cursor:pointer}.ys-category-tile strong,.ys-category-tile small{display:block}.ys-category-tile strong{font-size:15px}.ys-category-tile small{color:#b4c4db;margin-top:5px}.ys-category-back{grid-column:1/-1;background:#364575;border:0;border-radius:8px;color:white;padding:12px;cursor:pointer}@media(max-width:640px){.ys-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 <div id="ysMarketDialog" role="dialog" aria-modal="true" aria-label="Detail produk"><div class="ys-dialog-inner"><button type="button" class="ys-dialog-close" onclick="ysCloseProduct()">✕</button><div id="ysMarketDialogContent"></div></div></div>
 <script id="ys-marketplace-script-20261021">
@@ -5057,26 +5056,6 @@ window.YANSTORE_CHAT_CONFIG = {
    const cat=document.getElementById('category')?.value||'all';
    const heading=(t)=>'<div class="ys-market-heading"><h3>'+t+'</h3></div>';
    if(!q&&cat==='all'&&records.length>6){
-     const groups=new Map();
-     const categoryName=(name)=>{
-       const v=name.toLowerCase();
-       for(const [key,label] of [['youtube','YouTube'],['netflix','Netflix'],['spotify','Spotify'],['canva','Canva'],['capcut','CapCut'],['bstation','BStation'],['apple music','Apple Music'],['alight motion','Alight Motion'],['zoom','Zoom'],['wink','Wink'],['meitu','Meitu'],['chatgpt','ChatGPT']])if(v.includes(key))return label;
-       return name.split(' ').slice(0,2).join(' ');
-     };
-     records.forEach(x=>{const k=categoryName(x.name);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(x)});
-     const all=[...groups.entries()];
-     const recent=all.slice(-6).reverse().map(x=>x[1][0]);
-     const featured=all.slice(0,6).map(x=>x[1][0]);
-     const tiles=all.map(([name,items])=>'<button class="ys-category-tile" type="button" data-group="'+encodeURIComponent(name)+'"><strong>'+name.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</strong><small>'+items.length+' produk</small></button>').join('');
-     grid.innerHTML=heading('✨ Produk Terbaru')+recent.map(x=>x.html).join('')+heading('▦ Kategori Produk')+'<div class="ys-category-grid">'+tiles+'</div>'+heading('✨ Rekomendasi Produk')+featured.map(x=>x.html).join('')+heading('🛍️ Semua Produk')+records.map(x=>x.html).join('');
-     grid.querySelectorAll('[data-group]').forEach(btn=>btn.addEventListener('click',()=>{
-       const group=decodeURIComponent(btn.dataset.group);
-       grid.innerHTML='<button class="ys-category-back" type="button">← Semua kategori</button>'+heading(group)+groups.get(group).map(x=>x.html).join('');
-       grid.querySelector('.ys-category-back').addEventListener('click',()=>window.renderProducts());
-     }));
-     return;
-   }
-   if(false){
      const recent=records.slice(-Math.min(6,records.length)).reverse();
      const rest=records.filter(x=>!recent.includes(x));
      grid.innerHTML=heading('✨ Produk Pilihan')+recent.map(x=>x.html).join('')+heading('🛍️ Semua Produk')+rest.map(x=>x.html).join('');
