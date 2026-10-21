@@ -18,7 +18,7 @@
 /* Fix clipped two-line customer rows */
 @media(min-width:761px){#ys-admin-threads button{height:auto!important;min-height:68px!important;max-height:none!important;flex:0 0 auto!important;overflow:hidden!important;justify-content:center;gap:6px!important;padding:12px 10px!important}#ys-admin-threads button strong,#ys-admin-threads button small{display:block!important;line-height:1.35!important;min-height:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;width:100%}}
 @media(max-width:760px){#ys-admin-threads button{height:auto!important;min-height:62px!important;max-height:none!important;overflow:hidden!important;gap:5px!important}#ys-admin-threads button strong,#ys-admin-threads button small{display:block!important;line-height:1.35!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;width:100%}}
-</style></head>
+#ys-admin-inbox #ys-delete-chat{background:#b91c1c!important;color:white!important}#ys-admin-inbox #ys-delete-chat:hover{background:#991b1b!important}</style></head>
 <body><header><strong>💬 YanStore — Dashboard Live Chat</strong><a href="../" target="_blank" rel="noopener">← Kembali ke Toko</a></header><main><p id="login-warning">Memeriksa sesi admin...</p><div id="v6AdminPanel"></div></main>
 <script>let v6Session=null;try{v6Session=JSON.parse(localStorage.getItem('yanstore_v6_session')||'null')}catch(e){}
 window.YANSTORE_CHAT_STANDALONE=true;
@@ -28,5 +28,5 @@ if(!v6Session?.access_token||!v6Session?.user?.id){warning.textContent='Silakan 
 else warning.textContent='Sesi admin terdeteksi. Memuat percakapan...';
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script defer src="admin-widget.js?v=20261021-recent-sort-1"></script>
+<script defer src="admin-widget.js?v=20261021-delete-chat-1"></script>
 </body></html>
