@@ -1,8 +1,8 @@
-/* YanStore cart variant button fix v2 */
+/* YanStore cart variant button fix v3 */
 (()=>{
 'use strict';
-if(window.__ysVariantCartFixV2)return;
-window.__ysVariantCartFixV2=true;
+if(window.__ysVariantCartFixV3)return;
+window.__ysVariantCartFixV3=true;
 
 function clean(s){return String(s||'').replace(/\s+/g,' ').trim()}
 function cfg(){
@@ -84,7 +84,14 @@ function bindCard(card){
     return t.includes('pesan paket')||t==='pesan'||t.includes('pesan sekarang');
   });
   if(!orderBtn)return;
-  let cartBtn=card.querySelector('.v6926-add');
+
+  const cartButtons=[...card.querySelectorAll('.v6926-add')];
+
+  // Keep only ONE cart button per variant card.
+  let cartBtn=cartButtons[0]||null;
+  cartButtons.slice(1).forEach(btn=>btn.remove());
+
+  // If old script has not created it yet, create exactly one.
   if(!cartBtn){
     cartBtn=document.createElement('button');
     cartBtn.type='button';
@@ -92,6 +99,8 @@ function bindCard(card){
     cartBtn.textContent='🛒 TAMBAH KE KERANJANG';
     orderBtn.insertAdjacentElement('afterend',cartBtn);
   }
+
+  // Rebind the surviving button once with the working handler.
   if(cartBtn.dataset.ysVariantBound==='1')return;
   cartBtn.dataset.ysVariantBound='1';
   cartBtn.addEventListener('click',e=>onCartClick(e,cartBtn,card),true);
@@ -102,6 +111,6 @@ function bindAll(){
 const obs=new MutationObserver(()=>requestAnimationFrame(bindAll));
 obs.observe(document.documentElement,{childList:true,subtree:true});
 document.addEventListener('click',()=>setTimeout(bindAll,30));
-setInterval(bindAll,1200);
+setInterval(bindAll,900);
 setTimeout(bindAll,100);
 })();
