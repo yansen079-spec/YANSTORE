@@ -156,3 +156,13 @@ setInterval(()=>{if(session()?.access_token){mount();if(get('ys-admin-inbox')&&p
 document.addEventListener('click',()=>setTimeout(mount,300));
 setTimeout(mount,1200);
 })();
+
+/* Load YanStore orders admin widget */
+(()=>{
+  if(document.querySelector('script[data-ys-orders-widget]'))return;
+  const s=document.createElement('script');
+  s.src='orders/admin-orders-widget.js?v=20261022-1';
+  s.defer=true;
+  s.dataset.ysOrdersWidget='1';
+  document.head.appendChild(s);
+})();
