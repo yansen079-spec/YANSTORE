@@ -166,3 +166,14 @@ setTimeout(mount,1200);
   s.dataset.ysOrdersWidget='1';
   document.head.appendChild(s);
 })();
+
+
+/* Load YanStore invite/manual stock manager */
+(()=>{
+  if(document.querySelector('script[data-ys-invite-stock]'))return;
+  const s=document.createElement('script');
+  s.src='orders/admin-invite-stock.js?v=20261022-1';
+  s.defer=true;
+  s.dataset.ysInviteStock='1';
+  document.head.appendChild(s);
+})();
