@@ -34,7 +34,7 @@ revoke all on public.ys_orders from anon, authenticated;
 -- Replace this email only if your YanStore admin account changes.
 create or replace function public.ys_is_admin() returns boolean language sql stable security definer set search_path = '' as $$
  select auth.uid() is not null and exists (
- select 1 from auth.users u where u.id=auth.uid() and lower(u.email)=lower('yansen079@gmail.com')
+ select 1 from auth.users u where u.id=auth.uid() and lower(u.email)=lower('yanstore2023@gmail.com')
  );
 $$;
 revoke all on function public.ys_is_admin() from public;
