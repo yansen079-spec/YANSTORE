@@ -41,8 +41,9 @@ function mount(){
 function render(){
   const host=document.getElementById('ys-orders-list'); if(!host)return;
   if(!rows.length){host.innerHTML='<div style="padding:16px;border:1px dashed #3b465f;border-radius:12px;color:#94a3b8">Belum ada pesanan.</div>';return}
-  host.innerHTML=rows.map(o=>'<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px;border:1px solid #303b55;border-radius:12px;background:#111827"><div><b>'+esc(o.checkout_code||'Tanpa kode')+'</b> • '+esc(o.product_name)+'<div style="font-size:11px;color:#aab4c8;margin-top:4px">'+esc(o.variant_label)+' • '+money(o.amount)+' • '+esc(o.buyer_contact)+' • '+esc(o.state==='approved'?'PAID / DIPROSES':o.state)+'</div></div>'+(o.state==='pending'?'<button type="button" data-ys-approve="'+esc(o.id)+'" style="border:0;border-radius:9px;padding:9px 12px;background:#16a34a;color:#fff;font-weight:900;cursor:pointer">✅ PEMBAYARAN DITERIMA</button>':'<span style="font-size:11px;color:#94a3b8;font-weight:800">'+esc(o.state==='approved'?'PAID / DIPROSES':String(o.state||'').toUpperCase())+'</span>')+'</div>').join('');
+  host.innerHTML=rows.map(o=>'<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px;border:1px solid #303b55;border-radius:12px;background:#111827"><div><b>'+esc(o.checkout_code||'Tanpa kode')+'</b> • '+esc(o.product_name)+'<div style="font-size:11px;color:#aab4c8;margin-top:4px">'+esc(o.variant_label)+' • '+money(o.amount)+' • '+esc(o.buyer_contact)+' • '+esc(o.state==='approved'?'PAID / DIPROSES':o.state)+'</div></div>'+(o.state==='pending'?'<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button type="button" data-ys-cancel="'+esc(o.id)+'" style="border:0;border-radius:9px;padding:9px 12px;background:#991b1b;color:#fff;font-weight:900;cursor:pointer">❌ BATALKAN</button><button type="button" data-ys-approve="'+esc(o.id)+'" style="border:0;border-radius:9px;padding:9px 12px;background:#16a34a;color:#fff;font-weight:900;cursor:pointer">✅ PEMBAYARAN DITERIMA</button></div>':'<span style="font-size:11px;color:#94a3b8;font-weight:800">'+esc(o.state==='approved'?'PAID / DIPROSES':String(o.state||'').toUpperCase())+'</span>')+'</div>').join('');
   host.querySelectorAll('[data-ys-approve]').forEach(b=>b.onclick=()=>approve(b.dataset.ysApprove,b));
+  host.querySelectorAll('[data-ys-cancel]').forEach(b=>b.onclick=()=>cancelOrder(b.dataset.ysCancel,b));
 }
 async function load(){
   if(busy||!session()?.access_token)return;
@@ -54,6 +55,17 @@ async function load(){
     note('✅ '+rows.length+' item dimuat.',true);
   }catch(e){note('Gagal memuat pesanan: '+e.message)}
   finally{busy=false}
+}
+async function cancelOrder(id,btn){
+  const row=rows.find(x=>x.id===id); if(!row)return;
+  if(!confirm('Batalkan pesanan '+(row.checkout_code||'')+'? Pesanan pending ini tidak akan bisa diproses lagi.'))return;
+  btn.disabled=true;note('Membatalkan pesanan...');
+  try{
+    await rpc('ys_admin_cancel_order',{p_order_id:id});
+    note('✅ Pesanan dibatalkan.',true);
+    await load();
+  }catch(e){note('Gagal membatalkan pesanan: '+e.message)}
+  finally{btn.disabled=false}
 }
 async function approve(id,btn){
   const row=rows.find(x=>x.id===id); if(!row)return;
