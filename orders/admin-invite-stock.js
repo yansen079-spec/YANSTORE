@@ -1,6 +1,6 @@
 (()=>{if(window.__ysInviteStockV1)return;window.__ysInviteStockV1=true;
 const cfg=window.YANSTORE_CHAT_CONFIG||{};
-const session=()=>{try{return typeof v6Session!=="undefined"?v6Session:null}catch{return null}};
+const session=()=>{try{if(typeof v6Session!=="undefined"&&v6Session?.access_token)return v6Session;const raw=localStorage.getItem("yanstore_v6_session");return raw?JSON.parse(raw):null}catch{return null}};
 const panel=()=>document.getElementById("v6AdminPanel")||document.getElementById("v6Admin");
 let products=[],variants=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
