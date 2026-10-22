@@ -5394,7 +5394,7 @@ load();resetTimer();
   status('Memuat kapasitas...');
   try{const data=await rpc('ys_pool_summary',{}),root=$('ysPoolRows');root.replaceChildren();
    if(!Array.isArray(data)||!data.length){status('Belum ada kelompok akun.');return}
-   data.forEach(x=>{const div=document.createElement('div');div.className='ys-pool-result';div.textContent=(x.product_name||'Produk')+' / '+x.variant_label+' — '+x.access_mode.toUpperCase()+' | Kapasitas: '+x.capacity+' | Terisi: '+x.allocated+' | Sisa teoritis: '+x.remaining+' | Status: '+x.state;root.appendChild(div)});
+   data.forEach(x=>{const div=document.createElement('div');div.className='ys-pool-result';const label=document.createElement('div');label.textContent=(x.product_name||'Produk')+' / '+x.variant_label+' — '+x.access_mode.toUpperCase()+' | Kapasitas: '+x.capacity+' | Terisi: '+x.allocated+' | Sisa teoritis: '+x.remaining+' | Status: '+x.state;div.appendChild(label);if(x.state!=='retired'){const actions=document.createElement('div');const make=(caption,target)=>{const b=document.createElement('button');b.type='button';b.textContent=caption;b.style.background=target==='retired'?'#d97706':'#64748b';b.style.color='white';b.addEventListener('click',async()=>{if(!confirm('Ubah status kelompok '+x.variant_label+' menjadi '+target+'?'))return;b.disabled=true;try{await rpc('ys_pool_set_state',{p_pool_id:x.pool_id,p_state:target});await refresh()}catch(e){status('❌ '+e.message);b.disabled=false}});actions.appendChild(b)};if(x.state!=='paused')make('JEDA KELOMPOK','paused');make('HENTIKAN PERMANEN','retired');div.appendChild(actions)}root.appendChild(div)});
    status('Data kelompok akun dimuat. Sisa kapasitas bukan stok siap jual.');
   }catch(e){status('❌ '+e.message)}
  }
