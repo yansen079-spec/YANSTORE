@@ -5299,73 +5299,53 @@ load();resetTimer();
 </style>
 <script id="ysStockAdminScript">
 (function(){
- const get=id=>document.getElementById(id);
- const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const $=id=>document.getElementById(id);
  function panel(){
-  if(get('ysStockAdmin')||!get('v6AdminPanel'))return;
-  const section=document.createElement('section');section.id='ysStockAdmin';
-  section.innerHTML='<h3>📦 YanStore Auto Stock & ACC</h3><p>Stok tersimpan privat di Supabase, bukan di halaman publik. Isi satu akun per stok. Fitur ini aktif setelah SQL fondasi dijalankan di Supabase. Jangan masukkan akun sebelum database siap.</p><div class="ys-stock-grid"><label>Produk<select id="ysStockProduct"><option value="">Pilih produk</option></select></label><label>Nama varian persis<input id="ysStockVariant" placeholder="Contoh: 1 Bulan Private"></label><label style="grid-column:1/-1">Data akun / instruksi pengiriman<textarea id="ysStockSecret" autocomplete="off" spellcheck="false" placeholder="Email: ...&#10;Password: ..."></textarea></label></div><div class="ys-stock-actions"><button type="button" id="ysStockAdd">+ TAMBAH 1 STOK</button><button type="button" class="secondary" id="ysStockRefresh">REFRESH PESANAN</button></div><div id="ysStockStatus" class="ys-stock-status">Belum terhubung. Jalankan SQL terlebih dahulu.</div><div id="ysStockOrders"></div>';
-  get('v6AdminPanel').appendChild(section);
-  get('ysStockAdd').addEventListener('click',addStock);
-  get('ysStockRefresh').addEventListener('click',loadOrders);
+  if($('ysStockAdmin')||!$('v6AdminPanel'))return;
+  const sec=document.createElement('section');sec.id='ysStockAdmin';
+  sec.innerHTML='<h3>📦 Panel Stok YanStore — Tahap 2</h3><p>Catat jumlah slot stok per produk dan varian. Slot baru berstatus belum dikonfigurasi (tidak dapat dijual). Jangan masukkan email atau password akun di sini.</p><div class="ys-stock-grid"><label>Produk<select id="ysStockProduct"><option value="">Pilih produk</option></select></label><label>Nama varian<input id="ysStockVariant" maxlength="160" placeholder="Contoh: 1 Bulan Private"></label><label>Jumlah slot (1–100)<input id="ysStockQty" type="number" min="1" max="100" value="1"></label></div><div class="ys-stock-actions"><button type="button" id="ysStockAdd">+ TAMBAH SLOT</button><button type="button" class="secondary" id="ysStockRefresh">LIHAT RINGKASAN STOK</button></div><div id="ysStockStatus" class="ys-stock-status">Masuk sebagai admin untuk mengelola stok.</div><div id="ysStockOrders"></div>';
+  $('v6AdminPanel').appendChild(sec);
+  $('ysStockAdd').addEventListener('click',addStock);
+  $('ysStockRefresh').addEventListener('click',summary);
   fillProducts();
  }
- function status(t){if(get('ysStockStatus'))get('ysStockStatus').textContent=t}
+ function status(t){if($('ysStockStatus'))$('ysStockStatus').textContent=t}
  function fillProducts(){
-  const select=get('ysStockProduct');if(!select)return;
+  const el=$('ysStockProduct');if(!el)return;
   const rows=Array.isArray(window.v62Rows)&&window.v62Rows.length?window.v62Rows:(typeof products!=='undefined'&&Array.isArray(products)?products:[]);
-  const value=select.value;
-  select.innerHTML='<option value="">Pilih produk</option>'+rows.filter(p=>p.id!=null).map(p=>'<option value="'+escapeHTML(p.id)+'">'+escapeHTML(p.name)+'</option>').join('');
-  if(value)select.value=value;
+  const selected=el.value;el.replaceChildren();
+  const first=document.createElement('option');first.value='';first.textContent='Pilih produk';el.appendChild(first);
+  rows.filter(p=>p.id!=null).forEach(p=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=p.name||'Produk';el.appendChild(o)});
+  if(selected)el.value=selected;
  }
  async function rpc(name,params){
-  if(!v6Session?.access_token)throw Error('Login Admin dulu.');
+  if(typeof v6Session==='undefined'||!v6Session?.access_token)throw Error('Silakan login sebagai admin.');
   const response=await fetch(V6_URL+'/rest/v1/rpc/'+name,{method:'POST',headers:v6Headers(),body:JSON.stringify(params)});
   const data=await response.json().catch(()=>null);
-  if(!response.ok)throw Error(data?.message||'RPC tidak tersedia. Jalankan SQL fondasi di Supabase.');
+  if(!response.ok)throw Error(data?.message||'Fungsi stok belum tersedia atau akses ditolak.');
   return data;
  }
  async function addStock(){
-  const id=Number(get('ysStockProduct')?.value),variant=get('ysStockVariant')?.value.trim()||'',secret=get('ysStockSecret')?.value.trim()||'';
-  if(!id||!secret){status('Pilih produk dan isi data stok terlebih dahulu.');return}
-  const button=get('ysStockAdd');button.disabled=true;
-  try{
-   await rpc('ys_add_stock',{p_product_id:id,p_variant:variant,p_delivery_text:secret});
-   get('ysStockSecret').value='';status('✅ Satu stok berhasil ditambahkan. Data akun tidak ditampilkan kembali demi keamanan.');
-  }catch(e){status('❌ '+e.message)}
-  finally{button.disabled=false}
+  const id=Number($('ysStockProduct').value),variant=$('ysStockVariant').value.trim(),qty=Number($('ysStockQty').value);
+  if(!Number.isSafeInteger(id)||id<1||!variant||!Number.isInteger(qty)||qty<1||qty>100){status('Pilih produk, isi nama varian, dan jumlah 1–100.');return}
+  if(!confirm('Tambahkan '+qty+' slot BELUM DIKONFIGURASI untuk varian '+variant+'? Slot ini belum dapat dijual.'))return;
+  const btn=$('ysStockAdd');btn.disabled=true;
+  try{const count=await rpc('ys_stock_add_slots',{p_product_id:id,p_variant:variant,p_quantity:qty});status('✅ '+count+' slot berhasil dibuat (belum dikonfigurasi).');await summary()}
+  catch(e){status('❌ '+e.message)}finally{btn.disabled=false}
  }
- async function loadOrders(){
-  status('Memuat daftar pesanan...');
+ async function summary(){
+  status('Memuat ringkasan stok...');
   try{
-   const orders=await rpc('ys_admin_orders',{});
-   const box=get('ysStockOrders');
-   box.replaceChildren();
-   if(!orders?.length){status('Belum ada pesanan masuk.');return}
-   for(const o of orders){
-    const row=document.createElement('div');row.className='ys-stock-row';
-    const info=document.createElement('span');
-    info.textContent=o.product_name+' / '+o.variant_label+' — Rp'+Number(o.amount).toLocaleString('id-ID')+' — '+o.state+' — '+o.buyer_contact;
-    row.appendChild(info);
-    if(o.state==='pending'){
-     const b=document.createElement('button');b.type='button';b.textContent='ACC DANA';
-     b.onclick=async()=>{
-      if(!confirm('Sudah cek mutasi DANA dan pembayaran ini benar-benar masuk?'))return;
-      b.disabled=true;
-      try{const result=await rpc('ys_approve_order',{p_order_id:o.id});status('Pesanan diproses: '+result+'. Pengiriman ke pembeli belum aktif.');await loadOrders()}
-      catch(e){status('❌ '+e.message);b.disabled=false}
-     };
-     row.appendChild(b);
-    }
-    box.appendChild(row);
-   }
-   status('Daftar pesanan berhasil dimuat. Konfirmasi uang masuk di DANA sebelum ACC.');
+   const rows=await rpc('ys_stock_summary',{});
+   const box=$('ysStockOrders');box.replaceChildren();
+   if(!Array.isArray(rows)||!rows.length){status('Belum ada slot stok.');return}
+   rows.forEach(x=>{const div=document.createElement('div');div.className='ys-stock-row';div.textContent=(x.product_name||'Produk')+' / '+(x.variant_label||'-')+' — Total: '+x.total+' | Belum dikonfigurasi: '+x.unconfigured+' | Tersedia: '+x.available+' | Terkirim: '+x.delivered;box.appendChild(div)});
+   status('Ringkasan berhasil dimuat. Slot belum dikonfigurasi tidak boleh dianggap stok siap jual.');
   }catch(e){status('❌ '+e.message)}
  }
  const originalShow=window.v6ShowPanel;
- if(typeof originalShow==='function')window.v6ShowPanel=async function(){const result=await originalShow.apply(this,arguments);panel();fillProducts();return result};
- function boot(){panel();fillProducts()}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+ if(typeof originalShow==='function')window.v6ShowPanel=async function(){const res=await originalShow.apply(this,arguments);panel();fillProducts();return res};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{panel();fillProducts()});else{panel();fillProducts()}
 })();
 </script>
 </body>
