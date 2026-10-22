@@ -99,3 +99,14 @@
     finally{btn.disabled=false;}
   });
 })();
+
+
+/* Load YanStore variant cart fix */
+(()=>{
+  if(document.querySelector('script[data-ys-variant-cart-fix]'))return;
+  const s=document.createElement('script');
+  s.src='cart/variant-cart-fix.js?v=20261022-1';
+  s.defer=true;
+  s.dataset.ysVariantCartFix='1';
+  document.head.appendChild(s);
+})();
