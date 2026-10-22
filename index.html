@@ -5280,5 +5280,93 @@ slides=clean;active=0;render();resetTimer();editor();msg('✅ Banner tersimpan o
 el('ysPromoSave')?.addEventListener('click',save);
 load();resetTimer();
 })();
-</script></body>
+</script><!-- YanStore Auto Stock Admin: requires supabase/yanstore-orders-inventory-foundation.sql -->
+<style id="ysStockAdminStyles">
+#ysStockAdmin{margin:18px 0;padding:16px;border:1px solid #315e56;border-radius:16px;background:#0d171c}
+#ysStockAdmin h3{margin:0 0 7px}#ysStockAdmin p{font-size:12px;color:#a8bac6;line-height:1.55}
+#ysStockAdmin .ys-stock-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#ysStockAdmin label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:750;color:#d6e3eb}
+#ysStockAdmin input,#ysStockAdmin select,#ysStockAdmin textarea{width:100%;min-width:0;border-radius:9px;padding:11px;background:#111c26;border:1px solid #36515a;color:white}
+#ysStockAdmin textarea{grid-column:1/-1;min-height:90px}
+#ysStockAdmin .ys-stock-actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+#ysStockAdmin button{border:0;border-radius:10px;padding:10px 13px;font-weight:800;background:#12b981;color:#041512;cursor:pointer}
+#ysStockAdmin button.secondary{background:#273646;color:#fff}
+#ysStockAdmin button:disabled{opacity:.5;cursor:wait}
+#ysStockAdmin .ys-stock-row{border-top:1px solid #29404b;padding:11px 0;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+#ysStockAdmin .ys-stock-row button{padding:8px}
+#ysStockAdmin .ys-stock-status{font-size:12px;color:#a7dcca;margin-top:8px;overflow-wrap:anywhere}
+@media(max-width:650px){#ysStockAdmin{padding:12px}#ysStockAdmin .ys-stock-grid{grid-template-columns:minmax(0,1fr)}}
+</style>
+<script id="ysStockAdminScript">
+(function(){
+ const get=id=>document.getElementById(id);
+ const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function panel(){
+  if(get('ysStockAdmin')||!get('v6AdminPanel'))return;
+  const section=document.createElement('section');section.id='ysStockAdmin';
+  section.innerHTML='<h3>📦 YanStore Auto Stock & ACC</h3><p>Stok tersimpan privat di Supabase, bukan di halaman publik. Isi satu akun per stok. Fitur ini aktif setelah SQL fondasi dijalankan di Supabase. Jangan masukkan akun sebelum database siap.</p><div class="ys-stock-grid"><label>Produk<select id="ysStockProduct"><option value="">Pilih produk</option></select></label><label>Nama varian persis<input id="ysStockVariant" placeholder="Contoh: 1 Bulan Private"></label><label style="grid-column:1/-1">Data akun / instruksi pengiriman<textarea id="ysStockSecret" autocomplete="off" spellcheck="false" placeholder="Email: ...&#10;Password: ..."></textarea></label></div><div class="ys-stock-actions"><button type="button" id="ysStockAdd">+ TAMBAH 1 STOK</button><button type="button" class="secondary" id="ysStockRefresh">REFRESH PESANAN</button></div><div id="ysStockStatus" class="ys-stock-status">Belum terhubung. Jalankan SQL terlebih dahulu.</div><div id="ysStockOrders"></div>';
+  get('v6AdminPanel').appendChild(section);
+  get('ysStockAdd').addEventListener('click',addStock);
+  get('ysStockRefresh').addEventListener('click',loadOrders);
+  fillProducts();
+ }
+ function status(t){if(get('ysStockStatus'))get('ysStockStatus').textContent=t}
+ function fillProducts(){
+  const select=get('ysStockProduct');if(!select)return;
+  const rows=Array.isArray(window.v62Rows)&&window.v62Rows.length?window.v62Rows:(typeof products!=='undefined'&&Array.isArray(products)?products:[]);
+  const value=select.value;
+  select.innerHTML='<option value="">Pilih produk</option>'+rows.filter(p=>p.id!=null).map(p=>'<option value="'+escapeHTML(p.id)+'">'+escapeHTML(p.name)+'</option>').join('');
+  if(value)select.value=value;
+ }
+ async function rpc(name,params){
+  if(!v6Session?.access_token)throw Error('Login Admin dulu.');
+  const response=await fetch(V6_URL+'/rest/v1/rpc/'+name,{method:'POST',headers:v6Headers(),body:JSON.stringify(params)});
+  const data=await response.json().catch(()=>null);
+  if(!response.ok)throw Error(data?.message||'RPC tidak tersedia. Jalankan SQL fondasi di Supabase.');
+  return data;
+ }
+ async function addStock(){
+  const id=Number(get('ysStockProduct')?.value),variant=get('ysStockVariant')?.value.trim()||'',secret=get('ysStockSecret')?.value.trim()||'';
+  if(!id||!secret){status('Pilih produk dan isi data stok terlebih dahulu.');return}
+  const button=get('ysStockAdd');button.disabled=true;
+  try{
+   await rpc('ys_add_stock',{p_product_id:id,p_variant:variant,p_delivery_text:secret});
+   get('ysStockSecret').value='';status('✅ Satu stok berhasil ditambahkan. Data akun tidak ditampilkan kembali demi keamanan.');
+  }catch(e){status('❌ '+e.message)}
+  finally{button.disabled=false}
+ }
+ async function loadOrders(){
+  status('Memuat daftar pesanan...');
+  try{
+   const orders=await rpc('ys_admin_orders',{});
+   const box=get('ysStockOrders');
+   box.replaceChildren();
+   if(!orders?.length){status('Belum ada pesanan masuk.');return}
+   for(const o of orders){
+    const row=document.createElement('div');row.className='ys-stock-row';
+    const info=document.createElement('span');
+    info.textContent=o.product_name+' / '+o.variant_label+' — Rp'+Number(o.amount).toLocaleString('id-ID')+' — '+o.state+' — '+o.buyer_contact;
+    row.appendChild(info);
+    if(o.state==='pending'){
+     const b=document.createElement('button');b.type='button';b.textContent='ACC DANA';
+     b.onclick=async()=>{
+      if(!confirm('Sudah cek mutasi DANA dan pembayaran ini benar-benar masuk?'))return;
+      b.disabled=true;
+      try{const result=await rpc('ys_approve_order',{p_order_id:o.id});status('Pesanan diproses: '+result+'. Pengiriman ke pembeli belum aktif.');await loadOrders()}
+      catch(e){status('❌ '+e.message);b.disabled=false}
+     };
+     row.appendChild(b);
+    }
+    box.appendChild(row);
+   }
+   status('Daftar pesanan berhasil dimuat. Konfirmasi uang masuk di DANA sebelum ACC.');
+  }catch(e){status('❌ '+e.message)}
+ }
+ const originalShow=window.v6ShowPanel;
+ if(typeof originalShow==='function')window.v6ShowPanel=async function(){const result=await originalShow.apply(this,arguments);panel();fillProducts();return result};
+ function boot(){panel();fillProducts()}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+</body>
 </html>
