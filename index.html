@@ -5348,5 +5348,59 @@ load();resetTimer();
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{panel();fillProducts()});else{panel();fillProducts()}
 })();
 </script>
+<style>
+#ysPoolAdmin{margin-top:18px;padding:16px;border:1px solid #39735f;border-radius:16px;background:#0d191b;color:#fff}
+#ysPoolAdmin h3{margin:0 0 8px;font-size:18px}#ysPoolAdmin p{font-size:12px;color:#a6c7c0}
+#ysPoolAdmin .ys-pool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+#ysPoolAdmin label{display:block;font-size:12px;font-weight:700}
+#ysPoolAdmin input,#ysPoolAdmin select{display:block;width:100%;margin-top:5px;background:#101d2a;border:1px solid #3d5262;border-radius:9px;color:white;padding:11px;box-sizing:border-box}
+#ysPoolAdmin button{padding:12px;border:0;border-radius:9px;background:#14b8a6;color:#051715;font-weight:800;cursor:pointer;margin-right:7px;margin-top:7px}
+#ysPoolAdmin .ys-pool-result{padding:10px;border-top:1px solid #33474b;font-size:12px;overflow-wrap:anywhere}
+#ysPoolAdmin #ysPoolStatus{margin:10px 0;font-size:12px;color:#a6e5d0}
+@media(max-width:650px){#ysPoolAdmin .ys-pool-grid{grid-template-columns:1fr}}
+</style>
+<script id="ysPoolAdminScript">
+(function(){
+ const $=id=>document.getElementById(id);
+ function mount(){
+  const parent=$('v6AdminPanel');if(!parent||$('ysPoolAdmin'))return;
+  const section=document.createElement('section');section.id='ysPoolAdmin';
+  section.innerHTML='<h3>👥 Akun Private & Sharing — Tahap 3B</h3><p>Buat kelompok akun tanpa email/password. Semua kelompok berstatus DRAFT, belum dapat dijual atau dikirim otomatis.</p><div class="ys-pool-grid"><label>Produk<select id="ysPoolProduct"><option value="">Pilih produk</option></select></label><label>Nama varian<input id="ysPoolVariant" maxlength="160" placeholder="Contoh: 1 Bulan Sharing"></label><label>Jenis akun<select id="ysPoolMode"><option value="private">Private (1 pengguna)</option><option value="sharing">Sharing</option></select></label><label>Kapasitas pembeli<input id="ysPoolCapacity" type="number" min="1" max="20" value="1"></label></div><button type="button" id="ysPoolCreate">+ BUAT KELOMPOK AKUN</button><button type="button" id="ysPoolRefresh">LIHAT KAPASITAS</button><div id="ysPoolStatus">Jalankan SQL Tahap 3B sebelum menggunakan tombol.</div><div id="ysPoolRows"></div>';
+  const stock=$('ysStockAdmin');if(stock)stock.insertAdjacentElement('afterend',section);else parent.appendChild(section);
+  $('ysPoolMode').addEventListener('change',()=>{$('ysPoolCapacity').value=$('ysPoolMode').value==='private'?'1':'2';$('ysPoolCapacity').min=$('ysPoolMode').value==='private'?'1':'2'});
+  $('ysPoolCreate').addEventListener('click',create);$('ysPoolRefresh').addEventListener('click',refresh);products();
+ }
+ function products(){
+  const el=$('ysPoolProduct');if(!el)return;
+  const rows=Array.isArray(window.v62Rows)&&window.v62Rows.length?window.v62Rows:(typeof products!=='undefined'&&Array.isArray(products)?products:[]);
+  const val=el.value;el.replaceChildren();const o=document.createElement('option');o.value='';o.textContent='Pilih produk';el.appendChild(o);
+  rows.filter(p=>p.id!=null).forEach(p=>{const x=document.createElement('option');x.value=String(p.id);x.textContent=p.name||'Produk';el.appendChild(x)});if(val)el.value=val;
+ }
+ function status(msg){$('ysPoolStatus').textContent=msg}
+ async function rpc(name,body){
+  if(typeof v6Session==='undefined'||!v6Session?.access_token)throw Error('Login admin Supabase diperlukan');
+  const r=await fetch(V6_URL+'/rest/v1/rpc/'+name,{method:'POST',headers:v6Headers(),body:JSON.stringify(body)});
+  const d=await r.json().catch(()=>null);if(!r.ok)throw Error(d?.message||'RPC tidak tersedia. Jalankan SQL Tahap 3B.');return d;
+ }
+ async function create(){
+  const id=Number($('ysPoolProduct').value),variant=$('ysPoolVariant').value.trim(),mode=$('ysPoolMode').value,capacity=Number($('ysPoolCapacity').value);
+  if(!Number.isSafeInteger(id)||id<1||!variant||!Number.isInteger(capacity)||capacity<1||capacity>20||(mode==='private'&&capacity!==1)||(mode==='sharing'&&capacity<2)){status('Periksa produk, varian, jenis, dan kapasitas.');return}
+  if(!confirm('Buat kelompok '+mode+' kapasitas '+capacity+' sebagai DRAFT (belum dijual)?'))return;
+  const btn=$('ysPoolCreate');btn.disabled=true;
+  try{await rpc('ys_pool_create',{p_product_id:id,p_variant_label:variant,p_access_mode:mode,p_capacity:capacity});status('✅ Kelompok DRAFT berhasil dibuat. Belum siap jual.');await refresh()}
+  catch(e){status('❌ '+e.message)}finally{btn.disabled=false}
+ }
+ async function refresh(){
+  status('Memuat kapasitas...');
+  try{const data=await rpc('ys_pool_summary',{}),root=$('ysPoolRows');root.replaceChildren();
+   if(!Array.isArray(data)||!data.length){status('Belum ada kelompok akun.');return}
+   data.forEach(x=>{const div=document.createElement('div');div.className='ys-pool-result';div.textContent=(x.product_name||'Produk')+' / '+x.variant_label+' — '+x.access_mode.toUpperCase()+' | Kapasitas: '+x.capacity+' | Terisi: '+x.allocated+' | Sisa teoritis: '+x.remaining+' | Status: '+x.state;root.appendChild(div)});
+   status('Data kelompok akun dimuat. Sisa kapasitas bukan stok siap jual.');
+  }catch(e){status('❌ '+e.message)}
+ }
+ const orig=window.v6ShowPanel;if(typeof orig==='function')window.v6ShowPanel=async function(){const res=await orig.apply(this,arguments);mount();products();return res};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();
+</script>
 </body>
 </html>
