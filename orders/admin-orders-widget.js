@@ -72,8 +72,8 @@ async function approve(id,btn){
   if(!confirm('Tandai pembayaran DITERIMA untuk '+row.product_name+' — '+row.variant_label+'? Pastikan pembayaran sudah benar-benar masuk.'))return;
   btn.disabled=true;note('Memproses pembayaran...');
   try{
-    await rpc('ys_approve_order',{p_order_id:id});
-    note('✅ Pembayaran diterima. Stok sudah dialokasikan dan pesanan masuk tahap proses.',true);
+    await rpc('ys_mark_payment_received',{p_order_id:id});
+    note('✅ Pembayaran diterima. Pesanan masuk tahap proses. Fulfillment akan mengambil stok dari HomeOffice.',true);
     await load();
   }catch(e){note('Gagal memproses pembayaran: '+e.message)}
   finally{btn.disabled=false}
