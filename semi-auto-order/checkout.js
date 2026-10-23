@@ -9,4 +9,27 @@ const payload='00020101021126570011ID.DANA.WWW0118936009153000885781020900088578
 if(window.QRCode){new QRCode(qr,{text:payload,width:260,height:260,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M})}else{qr.textContent='QRIS gagal dimuat. Refresh halaman atau hubungi admin.'}
 const steps=document.createElement('p');steps.style.cssText='line-height:1.6;text-align:left';steps.textContent='1. Scan QRIS.  2. Masukkan nominal '+money(total)+'.  3. Selesaikan pembayaran.  4. Kirim bukti ke admin.';
 const a=document.createElement('a');a.href='https://wa.me/6285783984748?text='+encodeURIComponent('Halo Admin YanStore, saya sudah bayar pesanan '+code+' sebesar '+money(total)+'. Saya akan kirim bukti pembayarannya di sini.');a.target='_blank';a.rel='noopener';a.style.cssText='display:block;text-align:center;background:#15803d;color:white;text-decoration:none;padding:13px;border-radius:9px;margin-top:14px;font-weight:700';a.textContent='✅ SAYA SUDAH BAYAR — KIRIM BUKTI';
-result.append(steps,a);sessionStorage.removeItem('yanstore_manual_checkout')}catch(err){$('message').textContent='Belum berhasil membuat pesanan: '+err.message+'. Pastikan SQL setup sudah dijalankan.'}finally{btn.disabled=false}}})();
+result.append(steps,a);
+const statusBox=document.createElement('div');statusBox.style.cssText='margin-top:14px;padding:12px;border:1px solid #334155;border-radius:10px;text-align:center;color:#cbd5e1';statusBox.textContent='Menunggu verifikasi pembayaran dari admin...';result.append(statusBox);
+let stopped=false;
+const showSuccess=state=>{
+  if(stopped)return;stopped=true;
+  pay.innerHTML='';
+  const ok=document.createElement('div');ok.style.cssText='padding:28px 10px;text-align:center';
+  const icon=document.createElement('div');icon.style.cssText='font-size:54px;margin-bottom:8px';icon.textContent='✅';
+  const t=document.createElement('h2');t.style.cssText='margin:0 0 8px;color:#86efac';t.textContent=state==='fulfilled'?'Pesanan Selesai':'Pembayaran Berhasil';
+  const d=document.createElement('p');d.style.cssText='margin:0;color:#cbd5e1';d.textContent=state==='fulfilled'?'Produk sudah diproses.':'Pembayaran sudah diverifikasi admin. Pesanan kamu sedang diproses.';
+  ok.append(icon,t,d);pay.append(ok);steps.remove();a.remove();statusBox.textContent='Status: '+(state==='fulfilled'?'SELESAI':'PAID / DIPROSES');statusBox.style.color='#86efac';statusBox.style.borderColor='#166534';
+};
+const checkStatus=async()=>{
+  if(stopped)return;
+  try{
+    const {data:sd,error:se}=await db.rpc('yanstore_customer_order_status',{p_checkout_code:code,p_contact:contact});
+    if(se)return;
+    const st=Array.isArray(sd)?sd[0]?.state:null;
+    if(st==='approved'||st==='fulfilled')showSuccess(st);
+    else if(st==='canceled'){stopped=true;pay.innerHTML='<div style="padding:26px 10px;text-align:center"><div style="font-size:48px">❌</div><h2 style="color:#fca5a5">Pesanan Dibatalkan</h2><p style="color:#cbd5e1">Hubungi admin jika kamu merasa sudah melakukan pembayaran.</p></div>';steps.remove();a.remove();statusBox.textContent='Status: DIBATALKAN';statusBox.style.color='#fca5a5';}
+  }catch{}
+};
+checkStatus();const poll=setInterval(()=>{if(stopped){clearInterval(poll);return}checkStatus()},4000);
+sessionStorage.removeItem('yanstore_manual_checkout')}catch(err){$('message').textContent='Belum berhasil membuat pesanan: '+err.message+'. Pastikan SQL setup sudah dijalankan.'}finally{btn.disabled=false}}})();
