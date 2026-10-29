@@ -5433,9 +5433,9 @@ load();resetTimer();
 .ys-digital-tiles button span{font-size:32px;line-height:1}.ys-digital-tiles button:hover,.ys-digital-tiles button:focus-visible{border-color:#8b75ff;background:#2a3654;transform:translateY(-2px);outline-offset:2px}
 .ys-digital-notice{margin:18px 0;padding:18px;border:1px solid #3a4565;border-radius:15px;background:#17243a;color:#dbe7ff;line-height:1.6}
 .ys-digital-back{display:flex;gap:15px;align-items:center;margin:22px 0 15px;flex-wrap:wrap}.ys-digital-back button{border:1px solid #7969ee;color:#fff;border-radius:10px;background:#312956;padding:10px 15px;cursor:pointer}
-#produk.ys-digital-home #productGrid{display:none!important}
+#produk.ys-digital-home #productGrid{display:grid}
 #produk.ys-digital-home #ysDigitalBack{display:none!important}
-#produk.ys-digital-products .ys-digital-tiles,#produk.ys-digital-products .ys-digital-heading{display:none!important}
+#produk.ys-digital-products .ys-digital-tiles,#produk.ys-digital-products .ys-digital-heading{display:grid}
 @media(max-width:900px){.ys-digital-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:580px){.ys-digital-tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.ys-digital-tiles button{min-height:100px;font-size:12px;padding:12px 5px}.ys-digital-tiles button span{font-size:27px}}
 </style>
@@ -5453,6 +5453,7 @@ load();resetTimer();
      section.classList.remove('ys-digital-home');section.classList.add('ys-digital-products');notice.hidden=true;back.hidden=false;
      const select=document.getElementById('category');if(select){select.value='all';select.dispatchEvent(new Event('change',{bubbles:true}));}
      const search=document.getElementById('search');if(search){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}));}
+     document.getElementById('productGrid')?.scrollIntoView({behavior:'smooth',block:'start'});
    }else{
      section.classList.add('ys-digital-home');section.classList.remove('ys-digital-products');back.hidden=true;
      notice.textContent=labels[key]+' belum tersedia untuk transaksi. Katalog aplikasi premium tetap dapat dibuka dari menu Streaming & Premium. Hubungi admin untuk pertanyaan.';
