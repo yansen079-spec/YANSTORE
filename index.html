@@ -5680,5 +5680,69 @@ load();resetTimer();
  });
 })();
 </script>
+
+<style id="ysPriceManagerStyle">
+#ysPriceManager{margin-top:24px;padding:20px;border:1px solid #67539d;border-radius:16px;background:#121b30;color:#f6f4ff}
+#ysPriceManager h3{margin:0 0 8px;color:#d1b5ff}#ysPriceManager .yp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#ysPriceManager label{font-size:12px;font-weight:750;color:#d4d8f5}#ysPriceManager input,#ysPriceManager select{width:100%;padding:10px;margin-top:5px;background:#0c1425;color:white;border:1px solid #475579;border-radius:9px;box-sizing:border-box}
+#ysPriceManager button{padding:10px 13px;border:0;border-radius:9px;color:white;background:#6346ba;cursor:pointer;font-weight:800}
+#ysPriceManager .yp-actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+#ysPriceManager .yp-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #35415c;padding:12px 0}
+#ysPriceManager .yp-row small{color:#b0bdd6}#ysPriceManager .yp-row button{margin:3px}
+#ysPriceManager #ypMessage{font-size:13px;margin:12px 0;color:#adf6c5}
+@media(max-width:700px){#ysPriceManager .yp-grid{grid-template-columns:1fr}#ysPriceManager .yp-row{align-items:flex-start;flex-direction:column}}
+</style>
+<script id="ysPriceManagerScript">
+(function(){
+ const services={pulsa:'Pulsa',data:'Paket Data',ewallet:'E-Wallet',pln:'Token PLN',games:'Top Up Game',voucher:'Voucher',tv:'TV',telepon:'SMS & Telepon',masaaktif:'Masa Aktif',gas:'Gas',perdana:'Aktivasi Perdana'};
+ let rows=[];
+ const rupiah=n=>'Rp '+new Intl.NumberFormat('id-ID').format(Number(n)||0);
+ const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&quot;',"'":'&#39;'}[c]));
+ const el=id=>document.getElementById(id);
+ function notice(t){if(el('ypMessage'))el('ypMessage').textContent=t;}
+ function mount(){
+  const panel=el('v6AdminPanel');if(!panel||el('ysPriceManager'))return;
+  const box=document.createElement('section');box.id='ysPriceManager';
+  box.innerHTML='<h3>💜 Kelola Harga Digital</h3><p>Harga jual tampil ke pelanggan. Harga modal hanya untuk admin. Jangan input data pelanggan di sini.</p><input id="ypId" type="hidden"><div class="yp-grid"><label>Layanan<select id="ypService"></select></label><label>Provider / operator<input id="ypProvider" maxlength="80" placeholder="Telkomsel, DANA, dll"></label><label>Nama paket / nominal<input id="ypItem" maxlength="120" placeholder="Pulsa 10000"></label><label>Harga modal (Rp)<input id="ypCost" type="number" min="0" step="1" value="0"></label><label>Harga jual (Rp)<input id="ypSale" type="number" min="0" step="1"></label><label>Status<select id="ypActive"><option value="true">READY / Aktif</option><option value="false">Nonaktif</option></select></label></div><div class="yp-actions"><button type="button" id="ypSave">Simpan Harga</button><button type="button" id="ypReset">Produk Baru</button><button type="button" id="ypReload">Muat Ulang</button></div><div id="ypProfit">Profit: Rp 0</div><div id="ypMessage" role="status"></div><div id="ypRows"></div>';
+  panel.appendChild(box);
+  el('ypService').innerHTML=Object.entries(services).map(([k,v])=>'<option value="'+k+'">'+v+'</option>').join('');
+  el('ypReset').onclick=reset;el('ypSave').onclick=save;el('ypReload').onclick=load;
+  ['ypCost','ypSale'].forEach(k=>el(k).addEventListener('input',()=>el('ypProfit').textContent='Profit: '+rupiah((+el('ypSale').value||0)-(+el('ypCost').value||0))));
+ }
+ function reset(){['ypId','ypProvider','ypItem','ypSale'].forEach(k=>el(k).value='');el('ypCost').value='0';el('ypActive').value='true';el('ypProfit').textContent='Profit: Rp 0';}
+ async function load(){
+  mount();if(!v6Session?.access_token)return;notice('Memuat daftar harga...');
+  try{
+   const r=await v62Fetch(V6_URL+'/rest/v1/digital_prices?select=*&order=service.asc,provider.asc,item_name.asc');
+   const data=await r.json();if(!r.ok)throw Error(data.message||('HTTP '+r.status));
+   rows=Array.isArray(data)?data:[];render();notice(rows.length+' harga dimuat dari database.');
+  }catch(e){notice('Belum bisa memuat harga: '+e.message+'. Jalankan migrasi digital_prices_v1.sql di Supabase dahulu.');}
+ }
+ function render(){
+  el('ypRows').innerHTML=rows.length?rows.map(p=>'<div class="yp-row"><div><strong>'+escape(services[p.service]||p.service)+' / '+escape(p.provider)+' — '+escape(p.item_name)+'</strong><br><small>Modal '+rupiah(p.cost)+' · Jual '+rupiah(p.sale_price)+' · Profit '+rupiah(p.sale_price-p.cost)+' · '+(p.active?'Aktif':'Nonaktif')+'</small></div><div><button type="button" data-edit="'+p.id+'">Edit</button><button type="button" data-delete="'+p.id+'">Hapus</button></div></div>').join(''):'<p>Belum ada daftar harga digital.</p>';
+  el('ypRows').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const p=rows.find(x=>String(x.id)===b.dataset.edit);if(!p)return;el('ypId').value=p.id;el('ypService').value=p.service;el('ypProvider').value=p.provider;el('ypItem').value=p.item_name;el('ypCost').value=p.cost;el('ypSale').value=p.sale_price;el('ypActive').value=String(p.active);el('ypProfit').textContent='Profit: '+rupiah(p.sale_price-p.cost);el('ysPriceManager').scrollIntoView({behavior:'smooth'});});
+  el('ypRows').querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>remove(b.dataset.delete));
+ }
+ async function save(){
+  const payload={service:el('ypService').value,provider:el('ypProvider').value.trim(),item_name:el('ypItem').value.trim(),cost:Number(el('ypCost').value),sale_price:Number(el('ypSale').value),active:el('ypActive').value==='true'};
+  if(!payload.item_name||!Number.isInteger(payload.cost)||!Number.isInteger(payload.sale_price)||payload.cost<0||payload.sale_price<0||!el('ypSale').value){notice('Isi nama paket dan harga bulat yang valid.');return;}
+  notice('Menyimpan harga...');
+  try{
+   const id=el('ypId').value;
+   const url=V6_URL+'/rest/v1/digital_prices'+(id?'?id=eq.'+encodeURIComponent(id):'');
+   const r=await v62Fetch(url,{method:id?'PATCH':'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(payload)});
+   const data=await r.json().catch(()=>({}));if(!r.ok)throw Error(data.message||('HTTP '+r.status));
+   reset();await load();notice('✅ Harga berhasil disimpan.');
+  }catch(e){notice('Gagal menyimpan: '+e.message);}
+ }
+ async function remove(id){
+  if(!confirm('Hapus harga ini?'))return;
+  try{const r=await v62Fetch(V6_URL+'/rest/v1/digital_prices?id=eq.'+encodeURIComponent(id),{method:'DELETE'});if(!r.ok)throw Error('HTTP '+r.status);await load();notice('Harga dihapus.');}catch(e){notice('Gagal menghapus: '+e.message);}
+ }
+ const original=window.v6ShowPanel;
+ if(typeof original==='function')window.v6ShowPanel=async function(){const v=await original.apply(this,arguments);mount();await load();return v;};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();
+</script>
 </body>
 </html>
