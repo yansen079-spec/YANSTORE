@@ -409,8 +409,11 @@ async function loadOnlineProducts(){
     }));
     renderProducts();renderAdmin();
   }catch(e){
-    products=structuredClone(defaultProducts).map(p=>({...p,stockStatus:'READY'}));
+    console.error('Yanstore: katalog Supabase tidak tersedia',e);
+    products=[];
     renderProducts();renderAdmin();
+    const grid=document.getElementById('productGrid');
+    if(grid)grid.innerHTML='<div class="muted" role="alert">Katalog sementara tidak tersedia. Silakan hubungi admin melalui WhatsApp.</div>';
   }
 }
 function saveProducts(){renderProducts();renderAdmin();alert('Admin online tahap berikutnya akan menyimpan langsung ke database. Saat ini katalog publik sudah membaca database online.');}
@@ -429,9 +432,10 @@ productForm.addEventListener('submit',e=>{e.preventDefault();const id=editId.val
 cancelEdit.onclick=()=>{productForm.reset();editId.value='';saveBtn.textContent='Simpan Produk'};
 resetProducts.onclick=()=>{if(confirm('Reset produk ke daftar awal?')){products=structuredClone(defaultProducts);saveProducts()}};
 search.addEventListener('input',renderProducts);category.addEventListener('change',renderProducts);
-const ADMIN_PASSWORD='yanstore123',loginModal=document.getElementById('loginModal'),adminModal=document.getElementById('adminModal');
-footerAdmin.onclick=()=>loginModal.classList.add('show');closeLogin.onclick=()=>loginModal.classList.remove('show');closeModal.onclick=()=>adminModal.classList.remove('show');
-loginForm.addEventListener('submit',e=>{e.preventDefault();if(adminPassword.value===ADMIN_PASSWORD){loginModal.classList.remove('show');adminModal.classList.add('show');loginError.style.display='none'}else loginError.style.display='block'});
+// Retired hard-coded legacy admin login. Admin uses Supabase Auth.
+const loginModal=document.getElementById('loginModal'),adminModal=document.getElementById('adminModal');
+footerAdmin.onclick=()=>document.getElementById('v6Admin')?.scrollIntoView({behavior:'smooth'});closeLogin.onclick=()=>loginModal.classList.remove('show');closeModal.onclick=()=>adminModal.classList.remove('show');
+loginForm.addEventListener('submit',e=>{e.preventDefault();loginModal.classList.remove('show');document.getElementById('v6Admin')?.scrollIntoView({behavior:'smooth'});});
 loadOnlineProducts();</script>
 <script>
 const V6_URL='https://ivnohbhlahevaihunmbp.supabase.co';
@@ -5183,6 +5187,7 @@ window.YANSTORE_CHAT_CONFIG = {
    const card=detailCards[i];
    if(!card)return;
    const el=document.createElement('div');el.innerHTML=card;
+   if((el.querySelector('.stock')?.textContent||'').trim().toUpperCase()==='HABIS'){alert('Stok produk sedang habis.');return;}
    const product=el.querySelector('h3')?.textContent?.trim()||'Produk YanStore';
    const price=el.querySelector('.price')?.textContent?.trim()||'Pilih paket di detail';
    if(typeof window.v6925Open==='function')window.v6925Open({product,package:'Pilih paket / konfirmasi ke admin',price});
@@ -5212,7 +5217,7 @@ window.YANSTORE_CHAT_CONFIG = {
      const src=img?.getAttribute('src')||'';
      const isUploaded=/^https?:\/\//i.test(src)&&/supabase\.co\/storage\//i.test(src);
      const thumb=img ? '<img loading="lazy" referrerpolicy="no-referrer" class="'+(isUploaded?'':'ys-logo-placeholder')+'" src="'+src.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" onerror="this.style.display=\'none\';this.insertAdjacentHTML(\'afterend\',\'<span class=ys-initial>📦</span>\')">' : '<span class="ys-initial">'+(fallback?.textContent||'📦')+'</span>';
-     return {i,name,html:'<article class="card ys-market-card"><div class="ys-market-thumb">'+thumb+'<span class="ys-market-tag">'+(status==='HABIS'?'HABIS':'READY')+'</span></div><div class="ys-market-body"><h3>'+name.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</h3><div class="ys-market-price">'+price.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><div class="ys-market-meta">'+(pack||'Lihat detail & pesan').replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><button class="ys-market-detail" type="button" onclick="ysOpenProduct('+i+')">LIHAT DETAIL</button><button class="ys-market-qr" type="button" onclick="ysPayProduct('+i+')">💳 BAYAR QRIS</button><button class="ys-market-share" type="button" onclick="ysShareProduct('+i+')">🔗 BAGIKAN PRODUK</button></div></article>'};
+     return {i,name,html:'<article class="card ys-market-card"><div class="ys-market-thumb">'+thumb+'<span class="ys-market-tag">'+(status==='HABIS'?'HABIS':status==='RESTOCK'?'RESTOCK':'READY')+'</span></div><div class="ys-market-body"><h3>'+name.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</h3><div class="ys-market-price">'+price.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><div class="ys-market-meta">'+(pack||'Lihat detail & pesan').replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><button class="ys-market-detail" type="button" onclick="ysOpenProduct('+i+')">LIHAT DETAIL</button><button class="ys-market-qr" type="button" '+(status==='HABIS'?'disabled title="Stok habis"':'onclick="ysPayProduct('+i+')"')+'>💳 BAYAR QRIS</button><button class="ys-market-share" type="button" onclick="ysShareProduct('+i+')">🔗 BAGIKAN PRODUK</button></div></article>'};
    });
    const q=(document.getElementById('search')?.value||'').trim();
    const cat=document.getElementById('category')?.value||'all';
