@@ -5603,5 +5603,82 @@ load();resetTimer();
 #ysPulsaOverlay .ys-pulsa-hint{color:#aab7d3!important}
 @media(max-width:720px){#ysPulsaOverlay{padding:12px!important}#ysPulsaOverlay .ys-pulsa-shell{margin:10px auto!important;padding:15px!important}#ysPulsaOverlay .ys-pulsa-nominals button{min-height:70px!important;padding:11px!important}#ysPulsaOverlay .ys-pulsa-top h2{font-size:20px!important}}
 </style>
+
+<style id="ysServicesV3Style">
+#ysServicesV3{display:none;position:fixed;inset:0;z-index:120002;overflow:auto;padding:24px 14px;background:rgba(3,5,14,.92);backdrop-filter:blur(12px);color:#f8faff}
+#ysServicesV3.open{display:block}
+#ysServicesV3 .ys3-shell{width:min(1030px,100%);margin:16px auto;background:linear-gradient(145deg,#12172a,#0b1020);border:1px solid #7456b5;box-shadow:0 32px 100px #000b,0 0 40px #8b5cf622;border-radius:23px;padding:23px;box-sizing:border-box}
+#ysServicesV3 .ys3-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+#ysServicesV3 .ys3-header h2{font-size:24px;margin:0;color:#f8f6ff}
+#ysServicesV3 .ys3-close{border:1px solid #495276;background:#242b43;color:#f5f4ff;border-radius:11px;padding:11px 15px;cursor:pointer;font-weight:800}
+#ysServicesV3 .ys3-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:18px}
+#ysServicesV3 .ys3-panel{background:linear-gradient(145deg,#192139,#121a2d);border:1px solid #303b5a;border-radius:17px;padding:20px;min-width:0}
+#ysServicesV3 .ys3-panel h3{font-size:17px;color:#d6c3ff;margin:0 0 15px}
+#ysServicesV3 .ys3-field{display:block;font-size:13px;color:#c8d4f1;font-weight:800;margin:14px 0}
+#ysServicesV3 .ys3-field input,#ysServicesV3 .ys3-field select,#ysServicesV3 .ys3-field textarea{display:block;width:100%;background:#10182b;border:1px solid #45557e;color:#fff;border-radius:11px;padding:12px;margin-top:8px;box-sizing:border-box;font:inherit;outline:none}
+#ysServicesV3 .ys3-field textarea{min-height:100px;resize:vertical}
+#ysServicesV3 .ys3-field input:focus,#ysServicesV3 .ys3-field textarea:focus,#ysServicesV3 .ys3-field select:focus{border-color:#a78bfa;box-shadow:0 0 0 3px #a78bfa33}
+#ysServicesV3 .ys3-field input::placeholder,#ysServicesV3 .ys3-field textarea::placeholder{color:#8492b0}
+#ysServicesV3 .ys3-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#ysServicesV3 .ys3-presets button{border:1px solid #334362;background:#151f35;color:#f3edff;border-radius:12px;padding:14px;min-height:58px;cursor:pointer;font-size:13px;font-weight:800}
+#ysServicesV3 .ys3-presets button.selected{background:linear-gradient(135deg,#312354,#222d50);border-color:#ae89ff;box-shadow:0 0 20px #8b5cf633;color:#ddc7ff}
+#ysServicesV3 .ys3-note{font-size:12px;line-height:1.65;color:#aab7d3}
+#ysServicesV3 .ys3-summary{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;border:1px solid #61568f;border-radius:14px;background:#1a223b;padding:18px;margin-top:17px}
+#ysServicesV3 .ys3-summary strong{display:block;color:#c9a7ff;font-size:23px;margin-top:4px}
+#ysServicesV3 .ys3-submit{border:0;border-radius:11px;background:linear-gradient(110deg,#16a765,#0fc179);color:#fff;padding:14px 19px;font-weight:900;cursor:pointer;box-shadow:0 9px 27px #0db36b33}
+@media(max-width:720px){#ysServicesV3{padding:9px}#ysServicesV3 .ys3-shell{padding:15px;margin:7px auto}#ysServicesV3 .ys3-layout{grid-template-columns:1fr}#ysServicesV3 .ys3-panel{padding:14px}#ysServicesV3 .ys3-header h2{font-size:20px}#ysServicesV3 .ys3-submit{width:100%}}
+</style>
+<div id="ysServicesV3" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="ys3Title">
+ <div class="ys3-shell">
+  <div class="ys3-header"><h2 id="ys3Title">Layanan Yanstore</h2><button type="button" class="ys3-close" id="ys3Close">✕ Tutup</button></div>
+  <div class="ys3-layout">
+   <div class="ys3-panel"><h3>Detail permintaan</h3><form id="ys3Form"><div id="ys3Fields"></div></form></div>
+   <div class="ys3-panel"><h3>Pilih produk / kebutuhan</h3><div id="ys3Presets" class="ys3-presets"></div><label class="ys3-field">Produk / nominal yang diinginkan<input id="ys3Item" form="ys3Form" maxlength="120" required placeholder="Tulis produk atau nominal"></label><p class="ys3-note">Pilihan ini adalah contoh permintaan, bukan daftar stok atau harga yang tersedia. Admin akan mengonfirmasi ketersediaan.</p></div>
+  </div>
+  <div class="ys3-summary"><div><small class="ys3-note">Ringkasan permintaan</small><strong id="ys3Summary">Belum dipilih</strong><small class="ys3-note">Harga akhir akan dikonfirmasi admin sebelum pembayaran.</small></div><button class="ys3-submit" type="submit" form="ys3Form">💬 TANYA & PESAN VIA WHATSAPP</button></div>
+  <p class="ys3-note">Layanan manual. Tidak ada pembayaran, pemotongan saldo, maupun pengiriman produk otomatis. Periksa kembali tujuan transaksi.</p>
+ </div>
+</div>
+<script id="ysServicesV3Script">
+(function(){
+ const cfg={
+ data:{name:'Paket Data',emoji:'📶',fields:[['Operator','select',['Telkomsel','Indosat','XL','AXIS','Tri','Smartfren']],['Nomor HP tujuan','tel','08xxxxxxxxxx']],presets:['1 GB','3 GB','5 GB','10 GB','Paket harian','Paket bulanan']},
+ ewallet:{name:'Top Up E-Wallet',emoji:'👛',fields:[['Dompet digital','select',['DANA','OVO','GoPay','ShopeePay','LinkAja']],['Nomor akun tujuan','tel','08xxxxxxxxxx']],presets:['Rp 10.000','Rp 20.000','Rp 50.000','Rp 100.000']},
+ pln:{name:'Token PLN',emoji:'💡',fields:[['Nomor meter / ID pelanggan','text','Masukkan ID pelanggan']],presets:['Rp 20.000','Rp 50.000','Rp 100.000','Rp 200.000']},
+ games:{name:'Top Up Game',emoji:'🎮',fields:[['Nama game','select',['Mobile Legends','Free Fire','PUBG Mobile','Genshin Impact','Game lainnya']],['User ID / Player ID','text','Masukkan ID pemain'],['Server / Zona (jika ada)','text','Contoh: 1234']],presets:['Paket kecil','Paket sedang','Paket besar','Nominal lain']},
+ voucher:{name:'Voucher',emoji:'🎟️',fields:[['Jenis voucher','text','Contoh: Voucher digital']],presets:['Voucher game','Voucher belanja','Voucher streaming','Voucher lainnya']},
+ tv:{name:'TV',emoji:'📺',fields:[['Provider / layanan TV','text','Nama provider'],['Nomor pelanggan','text','Nomor pelanggan']],presets:['Paket bulanan','Paket lainnya']},
+ telepon:{name:'SMS & Telepon',emoji:'☎️',fields:[['Operator','select',['Telkomsel','Indosat','XL','AXIS','Tri','Smartfren']],['Nomor HP tujuan','tel','08xxxxxxxxxx']],presets:['Paket telepon','Paket SMS','Paket kombinasi']},
+ masaaktif:{name:'Masa Aktif',emoji:'🗓️',fields:[['Operator','select',['Telkomsel','Indosat','XL','AXIS','Tri','Smartfren']],['Nomor HP tujuan','tel','08xxxxxxxxxx']],presets:['7 hari','30 hari','90 hari','Durasi lain']},
+ gas:{name:'Gas',emoji:'🔥',fields:[['Jenis layanan / wilayah','text','Tuliskan kebutuhan dan lokasi umum']],presets:['Isi ulang gas','Layanan lainnya']},
+ perdana:{name:'Aktivasi Perdana',emoji:'💳',fields:[['Operator','select',['Telkomsel','Indosat','XL','AXIS','Tri','Smartfren']],['Jenis kartu / kebutuhan','text','Kartu dan paket yang diinginkan']],presets:['Kartu perdana','Aktivasi kartu','Paket perdana']}
+ };
+ const overlay=document.getElementById('ysServicesV3'),fields=document.getElementById('ys3Fields'),presets=document.getElementById('ys3Presets'),item=document.getElementById('ys3Item'),summary=document.getElementById('ys3Summary'),form=document.getElementById('ys3Form');
+ if(!overlay||!form)return;
+ let key=null,prior=null;
+ function esc(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+ function close(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');prior?.focus();}
+ function open(k){
+  if(!cfg[k])return;key=k;prior=document.activeElement;form.reset();document.getElementById('ys3Title').textContent=cfg[k].emoji+' '+cfg[k].name;
+  fields.innerHTML=cfg[k].fields.map((f,i)=>'<label class="ys3-field">'+esc(f[0])+(f[1]==='select'?'<select name="field'+i+'" required>'+f[2].map(o=>'<option>'+esc(o)+'</option>').join('')+'</select>':'<input name="field'+i+'" type="'+(f[1]==='tel'?'tel':'text')+'" maxlength="100" '+(f[1]==='tel'?'inputmode="numeric" ':'')+'placeholder="'+esc(f[2])+'" '+(f[0].includes('jika ada')?'':'required')+'>')+'</label>').join('');
+  presets.innerHTML=cfg[k].presets.map((v,i)=>'<button type="button" data-preset="'+i+'">'+esc(v)+'</button>').join('');
+  item.value='';summary.textContent='Belum dipilih';overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
+  fields.querySelector('input,select')?.focus();
+ }
+ // Capture on document precedes legacy service dialog capture, so only one dialog opens.
+ document.addEventListener('click',e=>{const tile=e.target.closest('[data-ys-service]');const k=tile?.dataset.ysService;if(!cfg[k])return;e.preventDefault();e.stopImmediatePropagation();open(k);},true);
+ presets.addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(!b)return;item.value=cfg[key].presets[Number(b.dataset.preset)];summary.textContent=item.value;presets.querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x===b));});
+ item.addEventListener('input',()=>{summary.textContent=item.value.trim()||'Belum dipilih';presets.querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x.textContent===item.value));});
+ document.getElementById('ys3Close').addEventListener('click',close);
+ overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))close();});
+ form.addEventListener('submit',e=>{
+  e.preventDefault();if(!key||!form.reportValidity())return;
+  const values=cfg[key].fields.map((f,i)=>f[0]+': '+(fields.querySelector('[name="field'+i+'"]')?.value.trim()||'-'));
+  const msg=['Halo Yanstore, saya mau tanya ketersediaan '+cfg[key].name+'.',...values,'Produk / nominal: '+item.value.trim(),'Mohon konfirmasi harga dan ketersediaan sebelum pembayaran.'].join('\n');
+  window.open('https://wa.me/6285783984748?text='+encodeURIComponent(msg),'_blank','noopener,noreferrer');
+ });
+})();
+</script>
 </body>
 </html>
