@@ -5325,6 +5325,8 @@ load();resetTimer();
 (function(){
  const $=id=>document.getElementById(id);
  function panel(){
+  // Legacy stock panel retired: do not mount UI.
+  return;
   if($('ysStockAdmin')||!$('v6AdminPanel'))return;
   const sec=document.createElement('section');sec.id='ysStockAdmin';
   sec.innerHTML='<h3>📦 Panel Stok YanStore — Tahap 2</h3><p>Catat jumlah slot stok per produk dan varian. Slot baru berstatus belum dikonfigurasi (tidak dapat dijual). Jangan masukkan email atau password akun di sini.</p><div class="ys-stock-grid"><label>Produk<select id="ysStockProduct"><option value="">Pilih produk</option></select></label><label>Nama varian<input id="ysStockVariant" maxlength="160" placeholder="Contoh: 1 Bulan Private"></label><label>Jumlah slot (1–100)<input id="ysStockQty" type="number" min="1" max="100" value="1"></label></div><div class="ys-stock-actions"><button type="button" id="ysStockAdd">+ TAMBAH SLOT</button><button type="button" class="secondary" id="ysStockRefresh">LIHAT RINGKASAN STOK</button></div><div id="ysStockStatus" class="ys-stock-status">Masuk sebagai admin untuk mengelola stok.</div><div id="ysStockOrders"></div>';
@@ -5387,6 +5389,8 @@ load();resetTimer();
 (function(){
  const $=id=>document.getElementById(id);
  function mount(){
+  // Legacy account pool panel retired: do not mount UI.
+  return;
   const parent=$('v6AdminPanel');if(!parent||$('ysPoolAdmin'))return;
   const section=document.createElement('section');section.id='ysPoolAdmin';
   section.innerHTML='<h3>👥 Akun Private & Sharing — Tahap 3B</h3><p>Buat kelompok akun tanpa email/password. Semua kelompok berstatus DRAFT, belum dapat dijual atau dikirim otomatis.</p><div class="ys-pool-grid"><label>Produk<select id="ysPoolProduct"><option value="">Pilih produk</option></select></label><label>Nama varian<input id="ysPoolVariant" maxlength="160" placeholder="Contoh: 1 Bulan Sharing"></label><label>Jenis akun<select id="ysPoolMode"><option value="private">Private (1 pengguna)</option><option value="sharing">Sharing</option></select></label><label>Kapasitas pembeli<input id="ysPoolCapacity" type="number" min="1" max="20" value="1"></label></div><button type="button" id="ysPoolCreate">+ BUAT KELOMPOK AKUN</button><button type="button" id="ysPoolRefresh">LIHAT KAPASITAS</button><div id="ysPoolStatus">Jalankan SQL Tahap 3B sebelum menggunakan tombol.</div><div id="ysPoolRows"></div>';
