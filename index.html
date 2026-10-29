@@ -5465,5 +5465,56 @@ load();resetTimer();
  home();
 })();
 </script>
+
+<style id="ysServiceFormStyles">
+.ys-service-dialog{position:fixed;inset:0;z-index:110000;background:rgba(2,5,13,.85);display:none;align-items:center;justify-content:center;padding:16px}
+.ys-service-dialog.open{display:flex}.ys-service-panel{width:min(470px,100%);max-height:90vh;overflow:auto;background:#131d30;border:1px solid #465478;border-radius:19px;padding:23px;color:#f8faff;box-shadow:0 20px 80px #0009}
+.ys-service-header{display:flex;justify-content:space-between;gap:12px;align-items:center}.ys-service-header h3{margin:0;font-size:21px}.ys-service-close{background:#293753;color:#fff;border:1px solid #56617a;border-radius:9px;padding:8px 13px;cursor:pointer}
+.ys-service-panel p{font-size:13px;color:#bec8dd;line-height:1.6}.ys-service-field{display:block;margin:13px 0;font-size:13px;font-weight:700}.ys-service-field input,.ys-service-field textarea{display:block;margin-top:7px;width:100%;background:#0b1425;border:1px solid #4d5d7d;border-radius:10px;color:#fff;padding:12px;font:inherit;box-sizing:border-box}.ys-service-field textarea{min-height:78px;resize:vertical}
+.ys-service-send{display:block;width:100%;padding:13px;border:0;border-radius:10px;background:#19b969;color:white;font-weight:800;cursor:pointer}
+</style>
+<div id="ysServiceDialog" class="ys-service-dialog" role="dialog" aria-modal="true" aria-labelledby="ysServiceDialogTitle" aria-hidden="true">
+  <div class="ys-service-panel">
+    <div class="ys-service-header"><h3 id="ysServiceDialogTitle">Layanan Digital</h3><button class="ys-service-close" id="ysServiceClose" type="button" aria-label="Tutup">✕</button></div>
+    <p>Form permintaan manual. Produk, harga, dan ketersediaan perlu dikonfirmasi admin. Belum ada pembayaran atau top up otomatis.</p>
+    <form id="ysServiceRequestForm">
+      <label class="ys-service-field">Nomor tujuan / ID pelanggan / akun tujuan<input id="ysServiceDestination" maxlength="120" autocomplete="off" required placeholder="Masukkan nomor atau ID tujuan"></label>
+      <label class="ys-service-field">Produk atau nominal yang dibutuhkan<input id="ysServiceAmount" maxlength="120" required placeholder="Contoh: Pulsa 20.000"></label>
+      <label class="ys-service-field">Catatan (opsional)<textarea id="ysServiceNotes" maxlength="300" placeholder="Keterangan tambahan"></textarea></label>
+      <button class="ys-service-send" type="submit">💬 TANYA KETERSEDIAAN VIA WHATSAPP</button>
+    </form>
+  </div>
+</div>
+<script id="ysServiceFormScript">
+(function(){
+ const dialog=document.getElementById('ysServiceDialog');
+ const form=document.getElementById('ysServiceRequestForm');
+ if(!dialog||!form)return;
+ const labels={pulsa:'Pulsa',data:'Paket Data',ewallet:'E-Wallet',pln:'Token PLN',games:'Top Up Game',voucher:'Voucher',tv:'TV',telepon:'SMS & Telepon',masaaktif:'Masa Aktif',gas:'Gas',perdana:'Aktivasi Perdana'};
+ let current='';
+ let previousFocus=null;
+ function close(){dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');if(previousFocus)previousFocus.focus();}
+ function open(key){if(!labels[key])return;current=labels[key];previousFocus=document.activeElement;form.reset();document.getElementById('ysServiceDialogTitle').textContent='Permintaan '+current;dialog.classList.add('open');dialog.setAttribute('aria-hidden','false');document.getElementById('ysServiceDestination').focus();}
+ // Capture tile clicks before the old informational notice handler.
+ document.getElementById('ysDigitalServices')?.addEventListener('click',function(e){
+   const tile=e.target.closest('[data-ys-service]');
+   if(!tile||!labels[tile.dataset.ysService])return;
+   e.stopImmediatePropagation();
+   open(tile.dataset.ysService);
+ });
+ document.getElementById('ysServiceClose').addEventListener('click',close);
+ dialog.addEventListener('click',e=>{if(e.target===dialog)close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog.classList.contains('open'))close();});
+ form.addEventListener('submit',function(e){
+   e.preventDefault();
+   const destination=document.getElementById('ysServiceDestination').value.trim();
+   const amount=document.getElementById('ysServiceAmount').value.trim();
+   const notes=document.getElementById('ysServiceNotes').value.trim();
+   if(!destination||!amount)return;
+   const message=['Halo Yanstore, saya ingin menanyakan ketersediaan layanan '+current+'.','Tujuan / ID: '+destination,'Produk / nominal: '+amount,notes?'Catatan: '+notes:'','Mohon konfirmasi harga, stok dan cara pembayaran sebelum diproses.'].filter(Boolean).join('\n');
+   window.open('https://wa.me/6285783984748?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
+ });
+})();
+</script>
 </body>
 </html>
