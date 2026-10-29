@@ -5501,7 +5501,7 @@ load();resetTimer();
    if(!tile||!labels[tile.dataset.ysService])return;
    e.stopImmediatePropagation();
    open(tile.dataset.ysService);
- });
+ },true);
  document.getElementById('ysServiceClose').addEventListener('click',close);
  dialog.addEventListener('click',e=>{if(e.target===dialog)close();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog.classList.contains('open'))close();});
