@@ -5516,5 +5516,62 @@ load();resetTimer();
  });
 })();
 </script>
+
+<style id="ysPulsaManualStyle">
+.ys-pulsa-overlay{display:none;position:fixed;inset:0;z-index:120001;background:rgba(4,7,17,.89);overflow:auto;padding:24px 15px;color:#102f51}
+.ys-pulsa-overlay.open{display:block}
+.ys-pulsa-shell{max-width:1080px;margin:18px auto 32px;background:#fff;border:1px solid #d1e1ed;border-radius:22px;padding:24px;box-shadow:0 20px 70px #0008}
+.ys-pulsa-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.ys-pulsa-top h2{font-size:24px;color:#0b3f70;margin:0}.ys-pulsa-close{background:#eef5fa;border:1px solid #cddde9;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:800}
+.ys-pulsa-layout{display:grid;grid-template-columns:1fr 1.65fr;gap:22px}
+.ys-pulsa-box{background:#f4f7fb;border-radius:18px;padding:18px}.ys-pulsa-box h3{color:#113c60;margin:0 0 18px;font-size:17px}
+.ys-pulsa-box label{display:block;color:#153e5e;font-size:13px;font-weight:750;margin:14px 0 7px}
+.ys-pulsa-box select,.ys-pulsa-box input{width:100%;padding:13px;border:1px solid #c9dcea;background:white;color:#153e5e;border-radius:11px;font:inherit;box-sizing:border-box}
+.ys-pulsa-nominals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ys-pulsa-nominals button{background:white;color:#183b5d;text-align:left;padding:15px 13px;min-height:77px;border:1px solid #cbdce9;border-radius:12px;cursor:pointer;position:relative}
+.ys-pulsa-nominals button strong{display:block;font-size:15px}.ys-pulsa-nominals button small{color:#68809a;display:block;margin-top:6px}.ys-pulsa-nominals button.active{background:#e9f5ff;border-color:#2784ca;box-shadow:inset 0 0 0 1px #2784ca}
+.ys-pulsa-summary{margin-top:16px;padding:17px;border:1px solid #cbdce9;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ys-pulsa-summary small{color:#687f91}.ys-pulsa-summary strong{display:block;color:#0f3b60;font-size:23px;margin-top:4px}
+.ys-pulsa-send{background:#1c80bf;color:white;font-weight:900;border:0;border-radius:11px;padding:14px 20px;cursor:pointer}
+.ys-pulsa-hint{font-size:12px;color:#57718b;line-height:1.6;margin-top:12px}
+@media(max-width:720px){.ys-pulsa-shell{padding:16px}.ys-pulsa-layout{grid-template-columns:1fr}.ys-pulsa-nominals{grid-template-columns:repeat(2,minmax(0,1fr))}.ys-pulsa-summary{align-items:stretch}.ys-pulsa-send{width:100%}}
+</style>
+<div id="ysPulsaOverlay" class="ys-pulsa-overlay" role="dialog" aria-modal="true" aria-label="Pembelian pulsa manual" aria-hidden="true">
+ <div class="ys-pulsa-shell">
+  <div class="ys-pulsa-top"><h2>📱 Pembelian Pulsa</h2><button type="button" class="ys-pulsa-close" id="ysPulsaClose">✕ Tutup</button></div>
+  <div class="ys-pulsa-layout">
+   <section class="ys-pulsa-box"><h3>Detail pembelian pulsa</h3><label for="ysPulsaOperator">Pilih operator</label><select id="ysPulsaOperator"><option>Telkomsel</option><option>Indosat</option><option>XL</option><option>AXIS</option><option>Tri</option><option>Smartfren</option></select>
+   <label for="ysPulsaPhone">Nomor HP tujuan</label><input id="ysPulsaPhone" inputmode="numeric" autocomplete="tel" placeholder="08xxxxxxxxxx" maxlength="15" />
+   <p class="ys-pulsa-hint">Pastikan nomor tujuan benar sebelum menghubungi admin.</p></section>
+   <section class="ys-pulsa-box"><h3>Pilih nominal</h3><div id="ysPulsaNominals" class="ys-pulsa-nominals"></div></section>
+  </div>
+  <div class="ys-pulsa-summary"><div><small>Nominal pulsa dipilih (bukan harga akhir)</small><strong id="ysPulsaTotal">Rp 5.000</strong><small>Harga pembayaran dikonfirmasi admin sebelum transaksi.</small></div><button class="ys-pulsa-send" id="ysPulsaSend" type="button">💬 Tanya harga &amp; pesan via WhatsApp</button></div>
+  <p class="ys-pulsa-hint">Layanan manual: belum ada saldo terpotong, tagihan dibuat, atau pulsa terkirim otomatis. Jangan transfer sebelum admin mengonfirmasi harga dan ketersediaan.</p>
+ </div>
+</div>
+<script id="ysPulsaManualScript">
+(function(){
+ const overlay=document.getElementById('ysPulsaOverlay'), options=document.getElementById('ysPulsaNominals'), total=document.getElementById('ysPulsaTotal');
+ if(!overlay||!options||!total)return;
+ const amounts=[5000,10000,15000,20000,25000,50000,100000];let selected=5000,lastFocus;
+ const rupiah=n=>'Rp '+new Intl.NumberFormat('id-ID').format(n);
+ function render(){options.innerHTML=amounts.map(n=>'<button type="button" data-nominal="'+n+'" class="'+(selected===n?'active':'')+'" aria-pressed="'+(selected===n)+'"><strong>'+rupiah(n)+'</strong><small>Nominal pulsa</small></button>').join('');total.textContent=rupiah(selected);}
+ function close(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');lastFocus?.focus();}
+ function open(){lastFocus=document.activeElement;render();overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');document.getElementById('ysPulsaPhone').focus();}
+ // Document capture fires before the older service tile handler.
+ document.addEventListener('click',e=>{const tile=e.target.closest('[data-ys-service="pulsa"]');if(tile){e.preventDefault();e.stopPropagation();open();}},true);
+ options.addEventListener('click',e=>{const b=e.target.closest('[data-nominal]');if(!b)return;selected=Number(b.dataset.nominal);render();});
+ document.getElementById('ysPulsaClose').addEventListener('click',close);
+ overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))close();});
+ document.getElementById('ysPulsaSend').addEventListener('click',()=>{
+  const raw=document.getElementById('ysPulsaPhone').value.replace(/[\s-]/g,'');
+  if(!/^08[0-9]{8,11}$/.test(raw)){alert('Masukkan nomor HP Indonesia yang valid, diawali 08 (10-13 digit).');document.getElementById('ysPulsaPhone').focus();return;}
+  const op=document.getElementById('ysPulsaOperator').value;
+  const msg=['Halo Yanstore, saya mau tanya harga dan ketersediaan pulsa manual.','Operator: '+op,'Nomor tujuan: '+raw,'Nominal pulsa: '+rupiah(selected),'Mohon konfirmasi harga akhir sebelum saya bayar.'].join('\n');
+  window.open('https://wa.me/6285783984748?text='+encodeURIComponent(msg),'_blank','noopener,noreferrer');
+ });
+ render();
+})();
+</script>
 </body>
 </html>
