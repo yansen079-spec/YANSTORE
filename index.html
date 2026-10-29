@@ -5748,5 +5748,96 @@ load();resetTimer();
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
 })();
 </script>
+
+<style id="ysGameCatalogStyle">
+#ysGameCatalog{display:none;position:fixed;inset:0;z-index:120005;overflow:auto;background:rgba(3,5,14,.94);backdrop-filter:blur(12px);padding:16px;color:#f5f4ff}
+#ysGameCatalog.open{display:block}
+#ysGameCatalog .yg-shell{max-width:1050px;margin:15px auto;border:1px solid #7355ac;border-radius:22px;padding:24px;background:linear-gradient(145deg,#141c32,#0b1020);box-shadow:0 30px 90px #000c}
+#ysGameCatalog .yg-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#ysGameCatalog .yg-header h2{font-size:24px;margin:0}#ysGameCatalog .yg-muted{color:#a9b5d2;font-size:13px;line-height:1.6}
+#ysGameCatalog button{cursor:pointer}#ysGameCatalog .yg-close,#ysGameCatalog .yg-back{background:#25304a;border:1px solid #526084;border-radius:10px;color:white;padding:10px 14px;font-weight:800}
+#ysGameCatalog .yg-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:22px}
+#ysGameCatalog .yg-card{min-width:0;min-height:185px;border:1px solid #394769;border-radius:17px;background:linear-gradient(150deg,#202947,#131b31);padding:22px 12px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:.18s ease}
+#ysGameCatalog .yg-card:hover{border-color:#b38aff;transform:translateY(-3px);box-shadow:0 10px 28px #8b5cf62b}
+#ysGameCatalog .yg-art{width:92px;height:92px;border-radius:20px;display:grid;place-items:center;font-size:49px;background:linear-gradient(130deg,#35245d,#17436b);box-shadow:inset 0 0 0 1px #c2aaff44}
+#ysGameCatalog .yg-card strong{font-size:16px;text-align:center}
+#ysGameCatalog .yg-details{display:none;margin-top:23px}#ysGameCatalog .yg-details.active{display:block}
+#ysGameCatalog .yg-fields{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0}
+#ysGameCatalog .yg-panel{background:#182139;border:1px solid #354361;border-radius:16px;padding:18px}
+#ysGameCatalog .yg-panel h3{margin:0 0 15px;color:#d5bdff}
+#ysGameCatalog .yg-field{display:block;color:#cad4ec;font-size:13px;font-weight:800;margin:12px 0}
+#ysGameCatalog .yg-field input,#ysGameCatalog .yg-field select{display:block;background:#0d1629;border:1px solid #4a5a83;color:#fff;width:100%;padding:12px;box-sizing:border-box;border-radius:10px;margin-top:7px;font:inherit}
+#ysGameCatalog .yg-field input:focus,#ysGameCatalog .yg-field select:focus{outline:2px solid #aa84ff}
+#ysGameCatalog .yg-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#ysGameCatalog .yg-chip{min-height:57px;padding:10px;background:#152139;border:1px solid #415070;color:white;border-radius:10px;font-weight:750}
+#ysGameCatalog .yg-chip.active{border-color:#bc9bff;background:#302550;box-shadow:0 0 17px #8854cc44}
+#ysGameCatalog .yg-send{border:0;border-radius:11px;background:linear-gradient(100deg,#14a86e,#0fbe7d);color:#fff;padding:15px 22px;font-weight:900;width:100%;margin-top:12px}
+@media(max-width:700px){#ysGameCatalog{padding:8px}#ysGameCatalog .yg-shell{padding:15px;margin:5px auto}#ysGameCatalog .yg-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#ysGameCatalog .yg-card{min-height:143px;padding:12px}#ysGameCatalog .yg-art{width:72px;height:72px;font-size:38px}#ysGameCatalog .yg-fields{grid-template-columns:1fr}}
+</style>
+<div id="ysGameCatalog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="ygTitle">
+ <div class="yg-shell">
+  <div class="yg-header"><h2 id="ygTitle">🎮 Top Up Game Yanstore</h2><button id="ygClose" class="yg-close" type="button">✕ Tutup</button></div>
+  <p class="yg-muted">Pilih game, masukkan ID, lalu tanyakan ketersediaan paket kepada admin. Belum ada pembayaran otomatis.</p>
+  <div id="ygGrid" class="yg-grid"></div>
+  <div id="ygDetails" class="yg-details">
+   <button type="button" id="ygBack" class="yg-back">← Semua Game</button>
+   <h2 id="ygGameName"></h2>
+   <div class="yg-fields">
+    <div class="yg-panel"><h3>Detail Akun Game</h3><form id="ygForm"><div id="ygInputs"></div></form></div>
+    <div class="yg-panel"><h3>Pilih jenis top up</h3><div id="ygChips" class="yg-chips"></div>
+     <label class="yg-field">Paket / nominal yang diinginkan<input id="ygProduct" form="ygForm" maxlength="120" required placeholder="Pilih atau tulis paket"></label>
+     <p class="yg-muted">Contoh jenis produk, bukan harga atau stok yang dijamin tersedia. Harga dikonfirmasi admin.</p>
+    </div>
+   </div><button type="submit" form="ygForm" class="yg-send">💬 Tanyakan harga via WhatsApp</button>
+  </div>
+ </div>
+</div>
+<script id="ysGameCatalogScript">
+(function(){
+ const games=[
+ {id:'ml',name:'Mobile Legends',icon:'⚔️',fields:['User ID','Zone ID / Server'],products:['Diamond','Weekly Diamond Pass','Twilight Pass','Paket lainnya']},
+ {id:'ff',name:'Free Fire',icon:'🔥',fields:['Player ID'],products:['Diamond','Membership Mingguan','Membership Bulanan','Paket lainnya']},
+ {id:'pubg',name:'PUBG Mobile',icon:'🪖',fields:['Character ID'],products:['UC','Paket UC lainnya']},
+ {id:'genshin',name:'Genshin Impact',icon:'✨',fields:['UID','Server'],products:['Genesis Crystals','Blessing of the Welkin Moon']},
+ {id:'valorant',name:'Valorant',icon:'🎯',fields:['Riot ID (nama#tag)','Region'],products:['Valorant Points','Voucher resmi']},
+ {id:'hok',name:'Honor of Kings',icon:'👑',fields:['Player ID','Server (jika perlu)'],products:['Tokens','Pass / Paket lainnya']},
+ {id:'roblox',name:'Roblox',icon:'🧱',fields:['Username / ID akun'],products:['Gift Card','Robux (jika didukung supplier)']},
+ {id:'hsr',name:'Honkai Star Rail',icon:'🌌',fields:['UID','Server'],products:['Oneiric Shards','Express Supply Pass']},
+ {id:'fc',name:'FC Mobile',icon:'⚽',fields:['Player UID'],products:['FC Points','Paket lainnya']}
+ ];
+ const root=document.getElementById('ysGameCatalog'),grid=document.getElementById('ygGrid'),details=document.getElementById('ygDetails'),form=document.getElementById('ygForm');
+ if(!root||!grid||!form)return;
+ let current=null,focusBefore=null;
+ const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ grid.innerHTML=games.map(g=>'<button class="yg-card" type="button" data-game="'+g.id+'"><span class="yg-art" aria-hidden="true">'+g.icon+'</span><strong>'+esc(g.name)+'</strong></button>').join('');
+ function overview(){grid.style.display='grid';details.classList.remove('active');current=null;document.getElementById('ygTitle').textContent='🎮 Top Up Game Yanstore';}
+ function open(){focusBefore=document.activeElement;root.classList.add('open');root.setAttribute('aria-hidden','false');overview();document.getElementById('ygClose').focus();}
+ function close(){root.classList.remove('open');root.setAttribute('aria-hidden','true');focusBefore?.focus();}
+ function choose(id){
+  current=games.find(g=>g.id===id);if(!current)return;form.reset();grid.style.display='none';details.classList.add('active');
+  document.getElementById('ygGameName').textContent=current.icon+' '+current.name;
+  document.getElementById('ygTitle').textContent='🎮 Top Up '+current.name;
+  document.getElementById('ygInputs').innerHTML=current.fields.map((name,i)=>'<label class="yg-field">'+esc(name)+'<input name="id'+i+'" maxlength="100" '+(name.includes('jika perlu')?'':'required')+' placeholder="'+esc(name)+'" autocomplete="off"></label>').join('');
+  document.getElementById('ygProduct').value='';
+  document.getElementById('ygChips').innerHTML=current.products.map((v,i)=>'<button type="button" class="yg-chip" data-chip="'+i+'">'+esc(v)+'</button>').join('');
+  document.getElementById('ygInputs').querySelector('input')?.focus();
+ }
+ // Capturing the tile click avoids opening legacy generic forms.
+ document.addEventListener('click',e=>{const tile=e.target.closest('[data-ys-service="games"]');if(!tile)return;e.preventDefault();e.stopImmediatePropagation();open();},true);
+ grid.addEventListener('click',e=>{const button=e.target.closest('[data-game]');if(button)choose(button.dataset.game);});
+ document.getElementById('ygChips').addEventListener('click',e=>{const b=e.target.closest('[data-chip]');if(!b||!current)return;document.getElementById('ygProduct').value=current.products[Number(b.dataset.chip)];document.querySelectorAll('#ygChips button').forEach(x=>x.classList.toggle('active',x===b));});
+ document.getElementById('ygBack').addEventListener('click',overview);
+ document.getElementById('ygClose').addEventListener('click',close);
+ root.addEventListener('click',e=>{if(e.target===root)close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('open'))close();});
+ form.addEventListener('submit',e=>{
+  e.preventDefault();if(!current||!form.reportValidity())return;
+  const ids=current.fields.map((name,i)=>name+': '+(form.querySelector('[name="id'+i+'"]')?.value.trim()||'-'));
+  const product=document.getElementById('ygProduct').value.trim();if(!product)return;
+  const msg=['Halo admin Yanstore, saya mau tanya top up '+current.name+'.',...ids,'Paket: '+product,'Mohon konfirmasi ketersediaan, metode pengiriman dan harga akhir sebelum saya bayar.'].join('\n');
+  window.open('https://wa.me/6285783984748?text='+encodeURIComponent(msg),'_blank','noopener,noreferrer');
+ });
+})();
+</script>
 </body>
 </html>
