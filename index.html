@@ -5670,7 +5670,7 @@ load();resetTimer();
   fields.querySelector('input,select')?.focus();
  }
  // Capture on document precedes legacy service dialog capture, so only one dialog opens.
- document.addEventListener('click',e=>{const tile=e.target.closest('[data-ys-service]');const k=tile?.dataset.ysService;if(!cfg[k])return;e.preventDefault();e.stopImmediatePropagation();open(k);},true);
+ document.addEventListener('click',e=>{const tile=e.target.closest('[data-ys-service]');const k=tile?.dataset.ysService;if(k==='games')return;if(!cfg[k])return;e.preventDefault();e.stopImmediatePropagation();open(k);},true);
  presets.addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(!b)return;item.value=cfg[key].presets[Number(b.dataset.preset)];summary.textContent=item.value;presets.querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x===b));});
  item.addEventListener('input',()=>{summary.textContent=item.value.trim()||'Belum dipilih';presets.querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x.textContent===item.value));});
  document.getElementById('ys3Close').addEventListener('click',close);
