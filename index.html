@@ -5460,7 +5460,7 @@ load();resetTimer();
      notice.hidden=false;
    }
  }
- services.addEventListener('click',function(e){const tile=e.target.closest('[data-ys-service]');if(tile&&services.contains(tile))choose(tile.dataset.ysService);});
+ services.addEventListener('click',function(e){const tile=e.target.closest('[data-ys-service]');if(!tile||!services.contains(tile))return;if(tile.dataset.ysService==='pulsa'&&typeof window.ysOpenPulsaManual==='function'){window.ysOpenPulsaManual();return;}choose(tile.dataset.ysService);});
  document.getElementById('ysDigitalBackBtn')?.addEventListener('click',home);
  home();
 })();
@@ -5557,6 +5557,7 @@ load();resetTimer();
  function render(){options.innerHTML=amounts.map(n=>'<button type="button" data-nominal="'+n+'" class="'+(selected===n?'active':'')+'" aria-pressed="'+(selected===n)+'"><strong>'+rupiah(n)+'</strong><small>Nominal pulsa</small></button>').join('');total.textContent=rupiah(selected);}
  function close(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');lastFocus?.focus();}
  function open(){lastFocus=document.activeElement;render();overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');document.getElementById('ysPulsaPhone').focus();}
+ window.ysOpenPulsaManual=open;
  // Document capture fires before the older service tile handler.
  document.addEventListener('click',e=>{const tile=e.target.closest('[data-ys-service="pulsa"]');if(tile){e.preventDefault();e.stopPropagation();open();}},true);
  options.addEventListener('click',e=>{const b=e.target.closest('[data-nominal]');if(!b)return;selected=Number(b.dataset.nominal);render();});
