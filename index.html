@@ -5810,7 +5810,7 @@ load();resetTimer();
  if(!root||!grid||!form)return;
  let current=null,focusBefore=null;
  const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- grid.innerHTML=games.map(g=>'<button class="yg-card" type="button" data-game="'+g.id+'"><span class="yg-art" aria-hidden="true"><img class="yg-image" src="assets/games/'+g.id+'.webp" alt="" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="yg-emoji" hidden>'+g.icon+'</span></span><strong>'+esc(g.name)+'</strong></button>').join('');
+ grid.innerHTML=games.map(g=>'<button class="yg-card" type="button" data-game="'+g.id+'"><span class="yg-art" aria-hidden="true"><img class="yg-image" src="'+g.id+'.webp" alt="" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="yg-emoji" hidden>'+g.icon+'</span></span><strong>'+esc(g.name)+'</strong></button>').join('');
  function overview(){grid.style.display='grid';details.classList.remove('active');current=null;document.getElementById('ygTitle').textContent='🎮 Top Up Game Yanstore';}
  function open(){focusBefore=document.activeElement;root.classList.add('open');root.setAttribute('aria-hidden','false');overview();document.getElementById('ygClose').focus();}
  function close(){root.classList.remove('open');root.setAttribute('aria-hidden','true');focusBefore?.focus();}
