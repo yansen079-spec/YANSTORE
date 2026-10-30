@@ -5557,9 +5557,10 @@ load();resetTimer();
 (function(){
  const overlay=document.getElementById('ysPulsaOverlay'), options=document.getElementById('ysPulsaNominals'), total=document.getElementById('ysPulsaTotal');
  if(!overlay||!options||!total)return;
- const amounts=[5000,10000,15000,20000,25000,50000,100000];let selected=5000,lastFocus;
+ const amounts=[];let selected=0,lastFocus;
+ window.ysPulsaSetAmounts=function(list){amounts.splice(0,amounts.length,...list);if(!amounts.includes(selected))selected=amounts[0]||0;render();};
  const rupiah=n=>'Rp '+new Intl.NumberFormat('id-ID').format(n);
- function render(){options.innerHTML=amounts.map(n=>'<button type="button" data-nominal="'+n+'" class="'+(selected===n?'active':'')+'" aria-pressed="'+(selected===n)+'"><strong>'+rupiah(n)+'</strong><small>Nominal pulsa</small></button>').join('');total.textContent=rupiah(selected);}
+ function render(){options.innerHTML=amounts.length?amounts.map(n=>'<button type="button" data-nominal="'+n+'" class="'+(selected===n?'active':'')+'" aria-pressed="'+(selected===n)+'"><strong>'+rupiah(n)+'</strong><small>Nominal pulsa</small></button>').join(''):'<p class="ys-pulsa-hint">Belum ada harga aktif untuk operator ini.</p>';total.textContent=selected?rupiah(selected):'—';}
  function close(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');lastFocus?.focus();}
  function open(){lastFocus=document.activeElement;render();overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');document.getElementById('ysPulsaPhone').focus();}
  window.ysOpenPulsaManual=open;
@@ -5572,6 +5573,7 @@ load();resetTimer();
  document.getElementById('ysPulsaSend').addEventListener('click',()=>{
   const raw=document.getElementById('ysPulsaPhone').value.replace(/[\s-]/g,'');
   if(!/^08[0-9]{8,11}$/.test(raw)){alert('Masukkan nomor HP Indonesia yang valid, diawali 08 (10-13 digit).');document.getElementById('ysPulsaPhone').focus();return;}
+  if(!selected){alert('Belum ada harga pulsa aktif untuk operator ini.');return;}
   const op=document.getElementById('ysPulsaOperator').value;
   const msg=['Halo Yanstore, saya mau tanya harga dan ketersediaan pulsa manual.','Operator: '+op,'Nomor tujuan: '+raw,'Nominal pulsa: '+rupiah(selected),'Mohon konfirmasi harga akhir sebelum saya bayar.'].join('\n');
   window.open('https://wa.me/6285783984748?text='+encodeURIComponent(msg),'_blank','noopener,noreferrer');
