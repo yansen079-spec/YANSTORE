@@ -5713,7 +5713,7 @@ load();resetTimer();
   box.innerHTML='<h3>💜 Kelola Harga Digital</h3><p>Harga jual tampil ke pelanggan. Harga modal hanya untuk admin. Jangan input data pelanggan di sini.</p><input id="ypId" type="hidden"><div class="yp-grid"><label>Layanan<select id="ypService"></select></label><label>Provider / operator<input id="ypProvider" maxlength="80" placeholder="Telkomsel, DANA, dll"></label><label>Nama paket / nominal<input id="ypItem" maxlength="120" placeholder="Pulsa 10000"></label><label>Harga modal (Rp)<input id="ypCost" type="number" min="0" step="1" value="0"></label><label>Harga jual (Rp)<input id="ypSale" type="number" min="0" step="1"></label><label>Status<select id="ypActive"><option value="true">READY / Aktif</option><option value="false">Nonaktif</option></select></label></div><div class="yp-actions"><button type="button" id="ypSave">Simpan Harga</button><button type="button" id="ypReset">Produk Baru</button><button type="button" id="ypReload">Muat Ulang</button></div><div id="ypProfit">Profit: Rp 0</div><div id="ypMessage" role="status"></div><div id="ypRows"></div>';
   panel.appendChild(box);
   el('ypService').innerHTML=Object.entries(services).map(([k,v])=>'<option value="'+k+'">'+v+'</option>').join('');
-  el('ypReset').onclick=reset;el('ypSave').onclick=save;el('ypReload').onclick=load;
+  el('ypReset').onclick=reset;el('ypSave').onclick=save;el('ypReload').onclick=load;el('ypService').addEventListener('change',()=>{reset();render();});
   ['ypCost','ypSale'].forEach(k=>el(k).addEventListener('input',()=>el('ypProfit').textContent='Profit: '+rupiah((+el('ypSale').value||0)-(+el('ypCost').value||0))));
  }
  function reset(){['ypId','ypProvider','ypItem','ypSale'].forEach(k=>el(k).value='');el('ypCost').value='0';el('ypActive').value='true';el('ypProfit').textContent='Profit: Rp 0';}
@@ -5726,7 +5726,8 @@ load();resetTimer();
   }catch(e){notice('Belum bisa memuat harga: '+e.message+'. Jalankan migrasi digital_prices_v1.sql di Supabase dahulu.');}
  }
  function render(){
-  el('ypRows').innerHTML=rows.length?rows.map(p=>'<div class="yp-row"><div><strong>'+escape(services[p.service]||p.service)+' / '+escape(p.provider)+' — '+escape(p.item_name)+'</strong><br><small>Modal '+rupiah(p.cost)+' · Jual '+rupiah(p.sale_price)+' · Profit '+rupiah(p.sale_price-p.cost)+' · '+(p.active?'Aktif':'Nonaktif')+'</small></div><div><button type="button" data-edit="'+p.id+'">Edit</button><button type="button" data-delete="'+p.id+'">Hapus</button></div></div>').join(''):'<p>Belum ada daftar harga digital.</p>';
+  const visible=rows.filter(p=>p.service===el('ypService').value);
+  el('ypRows').innerHTML=visible.length?visible.map(p=>'<div class="yp-row"><div><strong>'+escape(services[p.service]||p.service)+' / '+escape(p.provider)+' — '+escape(p.item_name)+'</strong><br><small>Modal '+rupiah(p.cost)+' · Jual '+rupiah(p.sale_price)+' · Profit '+rupiah(p.sale_price-p.cost)+' · '+(p.active?'Aktif':'Nonaktif')+'</small></div><div><button type="button" data-edit="'+p.id+'">Edit</button><button type="button" data-delete="'+p.id+'">Hapus</button></div></div>').join(''):'<p>Belum ada daftar harga digital.</p>';
   el('ypRows').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const p=rows.find(x=>String(x.id)===b.dataset.edit);if(!p)return;el('ypId').value=p.id;el('ypService').value=p.service;el('ypProvider').value=p.provider;el('ypItem').value=p.item_name;el('ypCost').value=p.cost;el('ypSale').value=p.sale_price;el('ypActive').value=String(p.active);el('ypProfit').textContent='Profit: '+rupiah(p.sale_price-p.cost);el('ysPriceManager').scrollIntoView({behavior:'smooth'});});
   el('ypRows').querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>remove(b.dataset.delete));
  }
