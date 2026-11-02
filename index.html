@@ -846,7 +846,10 @@ v6Login = async function(){
 .v64-variant-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .v64-variant-card{border:1px solid #2f3651;background:#111624;border-radius:18px;padding:16px;display:flex;flex-direction:column;min-height:240px}
 .v64-variant-card h3{margin:8px 0}.v64-variant-card .v64-desc{font-size:13px;color:#aeb6ca;line-height:1.55;min-height:42px}
-.v64-variant-card .v64-price{font-size:26px;font-weight:900;margin-top:auto;padding-top:14px}.v64-variant-card .v64-period{font-size:12px;color:#9da7be;margin:4px 0 12px}
+.v64-variant-card .v64-price{font-size:26px;font-weight:900;margin-top:auto;padding-top:14px}.v64-variant-card .v64-period{font-size:12px;color:#9da7be;margin:4px 0 8px}
+.v64-qty{display:inline-flex;align-self:flex-start;align-items:center;gap:6px;margin:0 0 12px;padding:6px 10px;border:1px solid rgba(32,199,107,.28);border-radius:999px;background:rgba(32,199,107,.09);color:#86efac;font-size:12px;font-weight:800}
+.v64-qty.low{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.10);color:#ffd27a}
+.v64-qty.none{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.10);color:#ff9b9b}
 .v64-stock{display:inline-flex;align-self:flex-start;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.4px}.v64-stock.ready{background:rgba(32,199,107,.15);color:#75f0ab;border:1px solid rgba(32,199,107,.35)}.v64-stock.restock{background:rgba(245,158,11,.14);color:#ffd27a;border:1px solid rgba(245,158,11,.35)}.v64-stock.habis{background:rgba(239,68,68,.14);color:#ff9b9b;border:1px solid rgba(239,68,68,.35)}
 .v64-admin{margin-top:28px;padding-top:24px;border-top:1px solid #2b3150}.v64-admin h3{margin:0 0 6px}.v64-admin .v64-sub{color:#aab2c8;margin:0 0 16px;font-size:13px}
 .v64-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.v64-admin-grid .full{grid-column:1/-1}.v64-admin-grid input,.v64-admin-grid select,.v64-admin-grid textarea{width:100%;background:#0b0f19;border:1px solid #303852;color:#fff;border-radius:12px;padding:12px}.v64-admin-grid textarea{min-height:76px;resize:vertical}
@@ -875,6 +878,12 @@ function v64StatusOfVariants(rows){
   return 'HABIS';
 }
 function v64VariantsFor(productId){return v64Variants.filter(v=>Number(v.product_id)===Number(productId));}
+function v64StockView(v){
+  const qty=v?.stock_quantity;
+  if(qty===null||qty===undefined||qty==='')return {label:(v?.stock_status||'READY').toUpperCase(),cls:(v?.stock_status||'READY').toLowerCase(),canOrder:(v?.stock_status||'READY').toUpperCase()!=='HABIS',tracked:false};
+  const n=Math.max(0,Number(qty)||0);
+  return {label:n===0?'STOK HABIS':(n<=3?'SISA '+n+' SLOT':'TERSEDIA '+n+' SLOT'),cls:n===0?'habis':(n<=3?'restock':'ready'),canOrder:n>0,tracked:true};
+}
 
 async function v64LoadVariants(){
   try{
@@ -926,13 +935,15 @@ window.v64OpenVariants=function(productId){
   document.getElementById('v64VariantGrid').innerHTML=rows.map(v=>{
     const status=(v.stock_status||'READY').toUpperCase(), cls=status.toLowerCase();
     const wa=v.wa_text||`Halo Yanstore, saya mau order ${v.name}`;
+    const stock=v64StockView(v);
     return `<div class="v64-variant-card">
-      <span class="v64-stock ${cls}">${esc(status)}</span>
+      <span class="v64-stock ${stock.cls}">${esc(stock.label)}</span>
       <h3>${esc(v.name)}</h3>
       <div class="v64-desc">${esc(v.description||'')}</div>
       <div class="v64-price">${esc(v.price||'Tanya Admin')}</div>
       <div class="v64-period">${esc(v.period||'')}</div>
-      ${status==='HABIS'?'<span class="btn buy disabled">STOK HABIS</span>':`<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(wa)}">PESAN PAKET</a>`}
+      ${stock.tracked?`<div class="v64-qty ${stock.cls==='restock'?'low':(stock.cls==='habis'?'none':'')}">${stock.canOrder?'📦 ':'⛔ '}${esc(stock.label.toLowerCase())}</div>`:''}
+      ${!stock.canOrder?'<span class="btn buy disabled">STOK HABIS</span>':`<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(wa)}">PESAN PAKET</a>`}
     </div>`;
   }).join('');
   const modal=document.getElementById('v64VariantModal');modal.classList.add('show');modal.setAttribute('aria-hidden','false');
@@ -955,6 +966,7 @@ function v64EnsureAdminUI(){
       <input id="v64VarPrice" placeholder="Harga, contoh Rp15K">
       <input id="v64VarPeriod" placeholder="Durasi, contoh 1 Bulan">
       <select id="v64VarStock"><option value="READY">READY</option><option value="RESTOCK">RESTOCK</option><option value="HABIS">HABIS</option></select>
+      <input id="v64VarQty" type="number" min="0" step="1" inputmode="numeric" placeholder="Jumlah stok (contoh 5; kosong = belum diatur)">
       <input id="v64VarOrder" type="number" min="0" placeholder="Urutan paket, contoh 1">
       <textarea class="full" id="v64VarDesc" placeholder="Deskripsi paket"></textarea>
       <textarea class="full" id="v64VarWa" placeholder="Pesan WhatsApp otomatis"></textarea>
@@ -972,7 +984,7 @@ function v64PopulateProductSelect(){
 }
 function v64Msg(t){const el=document.getElementById('v64VarMsg');if(el)el.textContent=t||'';}
 window.v64ClearVariant=function(){
-  ['v64VarId','v64VarName','v64VarPrice','v64VarPeriod','v64VarDesc','v64VarWa'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['v64VarId','v64VarName','v64VarPrice','v64VarPeriod','v64VarQty','v64VarDesc','v64VarWa'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   const s=document.getElementById('v64VarStock');if(s)s.value='READY'; const o=document.getElementById('v64VarOrder');if(o)o.value='';v64Msg('');
 };
 async function v64LoadAdminVariants(){
@@ -986,16 +998,16 @@ async function v64LoadAdminVariants(){
   const box=document.getElementById('v64VarList');if(!box)return;
   box.innerHTML=v64AdminVariants.length?v64AdminVariants.map(v=>{
     const status=(v.stock_status||'READY').toUpperCase();
-    return `<div class="v64-varitem"><div class="v64-varmeta"><b>${esc(v.name)}</b> — ${esc(v.price)} <span class="v62badge ${status==='HABIS'?'v62-habis':(status==='RESTOCK'?'v62-restock':'v62-ready')}">${esc(status)}</span><br><small>${esc(productMap[Number(v.product_id)]||'Produk')} • ${esc(v.period||'')}</small></div><div class="v64-varbuttons"><button class="v6ghost" onclick="v64QuickVariantStock(${Number(v.id)},'READY')">READY</button><button class="v6ghost" onclick="v64QuickVariantStock(${Number(v.id)},'RESTOCK')">RESTOCK</button><button class="v6danger" onclick="v64QuickVariantStock(${Number(v.id)},'HABIS')">HABIS</button><button class="v6ghost" onclick="v64EditVariant(${Number(v.id)})">EDIT</button><button class="v6danger" onclick="v64DeleteVariant(${Number(v.id)})">HAPUS</button></div></div>`;
+    return `<div class="v64-varitem"><div class="v64-varmeta"><b>${esc(v.name)}</b> — ${esc(v.price)} <small>• ${v.stock_quantity===null||v.stock_quantity===undefined?'Stok belum diatur':'Stok: '+Number(v.stock_quantity)}</small> <span class="v62badge ${status==='HABIS'?'v62-habis':(status==='RESTOCK'?'v62-restock':'v62-ready')}">${esc(status)}</span><br><small>${esc(productMap[Number(v.product_id)]||'Produk')} • ${esc(v.period||'')}</small></div><div class="v64-varbuttons"><button class="v6ghost" onclick="v64QuickVariantStock(${Number(v.id)},'READY')">READY</button><button class="v6ghost" onclick="v64QuickVariantStock(${Number(v.id)},'RESTOCK')">RESTOCK</button><button class="v6danger" onclick="v64QuickVariantStock(${Number(v.id)},'HABIS')">HABIS</button><button class="v6ghost" onclick="v64EditVariant(${Number(v.id)})">EDIT</button><button class="v6danger" onclick="v64DeleteVariant(${Number(v.id)})">HAPUS</button></div></div>`;
   }).join(''):'<div class="v6item">Belum ada paket/varian.</div>';
 }
 window.v64EditVariant=function(id){
   const v=v64AdminVariants.find(x=>Number(x.id)===Number(id));if(!v)return;
-  document.getElementById('v64VarId').value=v.id;document.getElementById('v64Product').value=v.product_id;document.getElementById('v64VarName').value=v.name||'';document.getElementById('v64VarPrice').value=v.price||'';document.getElementById('v64VarPeriod').value=v.period||'';document.getElementById('v64VarStock').value=v.stock_status||'READY';document.getElementById('v64VarOrder').value=v.sort_order||0;document.getElementById('v64VarDesc').value=v.description||'';document.getElementById('v64VarWa').value=v.wa_text||'';document.getElementById('v64AdminVariants').scrollIntoView({behavior:'smooth'});
+  document.getElementById('v64VarId').value=v.id;document.getElementById('v64Product').value=v.product_id;document.getElementById('v64VarName').value=v.name||'';document.getElementById('v64VarPrice').value=v.price||'';document.getElementById('v64VarPeriod').value=v.period||'';document.getElementById('v64VarStock').value=v.stock_status||'READY';document.getElementById('v64VarQty').value=v.stock_quantity??'';document.getElementById('v64VarOrder').value=v.sort_order||0;document.getElementById('v64VarDesc').value=v.description||'';document.getElementById('v64VarWa').value=v.wa_text||'';document.getElementById('v64AdminVariants').scrollIntoView({behavior:'smooth'});
 };
 window.v64SaveVariant=async function(){
   const id=document.getElementById('v64VarId').value;
-  const payload={product_id:Number(document.getElementById('v64Product').value),name:document.getElementById('v64VarName').value.trim(),price:document.getElementById('v64VarPrice').value.trim()||'Tanya Admin',period:document.getElementById('v64VarPeriod').value.trim(),stock_status:document.getElementById('v64VarStock').value,sort_order:Number(document.getElementById('v64VarOrder').value)||0,description:document.getElementById('v64VarDesc').value.trim(),wa_text:document.getElementById('v64VarWa').value.trim(),active:true,updated_at:new Date().toISOString()};
+  const payload={product_id:Number(document.getElementById('v64Product').value),name:document.getElementById('v64VarName').value.trim(),price:document.getElementById('v64VarPrice').value.trim()||'Tanya Admin',period:document.getElementById('v64VarPeriod').value.trim(),stock_status:document.getElementById('v64VarStock').value,stock_quantity:document.getElementById('v64VarQty').value.trim()===''?null:Math.max(0,Math.floor(Number(document.getElementById('v64VarQty').value)||0)),sort_order:Number(document.getElementById('v64VarOrder').value)||0,description:document.getElementById('v64VarDesc').value.trim(),wa_text:document.getElementById('v64VarWa').value.trim(),active:true,updated_at:new Date().toISOString()};
   if(!payload.product_id||!payload.name){v64Msg('Nama produk induk dan nama paket wajib diisi.');return;}
   let url=V6_URL+'/rest/v1/product_variants',method='POST';if(id){url+='?id=eq.'+encodeURIComponent(id);method='PATCH';}
   v64Msg('Menyimpan paket...');
