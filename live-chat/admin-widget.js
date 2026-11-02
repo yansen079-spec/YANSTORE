@@ -172,7 +172,7 @@ setTimeout(mount,1200);
 (()=>{
   if(document.querySelector('script[data-ys-invite-stock]'))return;
   const s=document.createElement('script');
-  s.src='orders/admin-invite-stock.js?v=20261022-1';
+  s.src='orders/admin-invite-stock.js?v=20261102-safe-delete-2';
   s.defer=true;
   s.dataset.ysInviteStock='1';
   document.head.appendChild(s);
