@@ -1671,15 +1671,17 @@ img{max-width:100%}
     const preview=document.getElementById('v68LogoPreview');if(preview)preview.src=url;
   }
 
-  // Normalize PNG and shrink oversized uploads locally; keep alpha transparency.
-  async function v68NormalizePng(file){
-    if(file.type!=='image/png')return file;
+  // Convert static product logos to compact WebP and cap dimensions for catalog cards.
+  // Animated GIFs are preserved to avoid silently removing animation.
+  async function v68OptimizeImage(file){
+    if(file.type==='image/gif')return {blob:file,type:'image/gif',ext:'gif'};
     const bitmap=await createImageBitmap(file);
     try{
-      if(!bitmap.width||!bitmap.height)throw new Error('PNG tidak valid.');
-      const limit=2*1024*1024;
-      let scale=Math.min(1,Math.sqrt(16000000/(bitmap.width*bitmap.height)));
-      for(let attempt=0;attempt<9;attempt++){
+      if(!bitmap.width||!bitmap.height)throw new Error('Gambar tidak valid.');
+      const maxDim=640,limit=300*1024,hardLimit=2*1024*1024;
+      let scale=Math.min(1,maxDim/Math.max(bitmap.width,bitmap.height));
+      let quality=0.82,lastBlob=null;
+      for(let attempt=0;attempt<14;attempt++){
         const canvas=document.createElement('canvas');
         canvas.width=Math.max(1,Math.round(bitmap.width*scale));
         canvas.height=Math.max(1,Math.round(bitmap.height*scale));
@@ -1688,11 +1690,15 @@ img{max-width:100%}
         ctx.imageSmoothingEnabled=true;
         ctx.imageSmoothingQuality='high';
         ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
-        const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG gagal dikompresi.')),'image/png'));
-        if(blob.size<=limit)return blob;
-        scale*=0.78;
+        const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Gambar gagal dikompresi.')),'image/webp',quality));
+        if(blob.type!=='image/webp')throw new Error('Browser tidak mendukung konversi WebP. Gunakan browser terbaru.');
+        lastBlob=blob;
+        if(blob.size<=limit)return {blob,type:'image/webp',ext:'webp'};
+        if(quality>0.62)quality=Math.max(0.58,quality-0.08);
+        else{scale*=0.82;quality=0.82;}
       }
-      throw new Error('PNG masih terlalu besar setelah kompresi. Coba gambar dengan resolusi lebih kecil.');
+      if(lastBlob&&lastBlob.size<=hardLimit)return {blob:lastBlob,type:'image/webp',ext:'webp'};
+      throw new Error('Gambar masih terlalu besar setelah kompresi. Pilih gambar yang lebih kecil.');
     }finally{bitmap.close();}
   }
 
@@ -1714,15 +1720,15 @@ img{max-width:100%}
     if(!allowed.includes(file.type)){v68Msg('Format harus PNG, JPG, WebP, atau GIF.');return;}
     v68Msg(file.type==='image/png'?'Memproses dan mengompresi PNG otomatis...':'Memproses dan mengupload logo...');
     try{
-      const body=await v68NormalizePng(file);
+      const optimized=await v68OptimizeImage(file);
+      const body=optimized.blob;
       if(body.size>2*1024*1024)throw new Error('File hasil proses melebihi 2 MB. Gunakan gambar lebih kecil.');
-      v68Msg('Mengupload logo ('+(body.size/1024/1024).toFixed(2)+' MB)...');
-      const ext=file.type==='image/png'?'png':file.type==='image/jpeg'?'jpg':file.type==='image/webp'?'webp':'gif';
+      v68Msg('Mengupload logo WebP ('+(body.size/1024).toFixed(0)+' KB)...');
       const productId=v68CurrentProductId()||'new';
-      const path=`product-${productId}-${Date.now()}-${Math.random().toString(36).slice(2,9)}.${ext}`;
+      const path=`product-${productId}-${Date.now()}-${Math.random().toString(36).slice(2,9)}.${optimized.ext}`;
       const r=await fetch(V6_URL+'/storage/v1/object/'+V68_BUCKET+'/'+encodeURIComponent(path),{
         method:'POST',
-        headers:{apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token,'Content-Type':file.type,'x-upsert':'false'},
+        headers:{apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token,'Content-Type':optimized.type,'cache-control':'public, max-age=31536000, immutable','x-upsert':'false'},
         body
       });
       const data=await r.json().catch(()=>({}));
@@ -5284,12 +5290,12 @@ function resetTimer(){clearInterval(timer);timer=setInterval(()=>{if(!document.h
 const manifestUrl=base+'/storage/v1/object/public/'+bucket+'/'+manifest;
 async function encodeManifest(data){const bytes=new TextEncoder().encode(JSON.stringify(data));const width=256,height=Math.ceil((bytes.length+4)/(width*3));const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');const image=ctx.createImageData(width,height);const payload=new Uint8Array(4+bytes.length);new DataView(payload.buffer).setUint32(0,bytes.length);payload.set(bytes,4);for(let i=0;i<payload.length;i++){const p=Math.floor(i/3)*4+(i%3);image.data[p]=payload[i];}for(let i=3;i<image.data.length;i+=4)image.data[i]=255;ctx.putImageData(image,0,0);return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Gagal membuat konfigurasi banner')),'image/png'));}
 async function decodeManifest(blob){const bitmap=await createImageBitmap(blob);const canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(bitmap,0,0);bitmap.close?.();const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;const bytes=new Uint8Array(Math.floor(pixels.length/4)*3);for(let i=0;i<bytes.length;i++)bytes[i]=pixels[Math.floor(i/3)*4+(i%3)];const size=new DataView(bytes.buffer).getUint32(0);if(size<1||size>bytes.length-4)throw Error('Konfigurasi banner tidak valid');return JSON.parse(new TextDecoder().decode(bytes.slice(4,4+size)));}
-async function load(){try{const r=await fetch(manifestUrl+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const data=await decodeManifest(await r.blob());slides=normalize(data.slides);}}catch(e){console.warn('Promo defaults in use:',e);}render();editor();}
+async function load(){try{const r=await fetch(manifestUrl,{cache:'default'});if(r.ok){const data=await decodeManifest(await r.blob());slides=normalize(data.slides);}}catch(e){console.warn('Promo defaults in use:',e);}render();editor();}
 function editor(){const root=el('ysPromoEditor');if(!root)return;root.replaceChildren();slides.forEach((p,i)=>{const group=document.createElement('div');group.className='ys-promo-edit';const heading=document.createElement('strong');heading.textContent='Slide '+(i+1);heading.style.gridColumn='1/-1';group.append(heading);
 for(const [key,label] of [['title','Judul'],['subtitle','Keterangan'],['link','Link tujuan'],['image','URL gambar banner']]){const box=document.createElement('label');box.textContent=label;const input=document.createElement('input');input.value=p[key];input.dataset.index=i;input.dataset.key=key;box.append(input);group.append(box);}
 const label=document.createElement('label');label.textContent='Atau upload gambar PNG/JPG/WebP';const input=document.createElement('input');input.type='file';input.accept='image/png,image/jpeg,image/webp';input.dataset.index=i;input.className='ys-promo-file';label.append(input);group.append(label);root.append(group);});}
 function msg(t){if(el('ysPromoAdminMsg'))el('ysPromoAdminMsg').textContent=t;}
-async function upload(file,token,i){if(!['image/png','image/jpeg','image/webp'].includes(file.type))throw Error('Format banner harus PNG/JPG/WebP.');if(file.size>2*1024*1024)throw Error('Banner slide '+(i+1)+' lebih dari 2 MB. Kecilkan ukuran gambar dulu.');const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';const path='yanstore-promo-'+(i+1)+'-'+Date.now()+'.'+ext;const r=await fetch(base+'/storage/v1/object/'+bucket+'/'+path,{method:'POST',headers:{apikey:V6_KEY,Authorization:'Bearer '+token,'Content-Type':file.type},body:file});if(!r.ok){const d=await r.json().catch(()=>({}));throw Error(d.message||d.error||'Upload banner gagal');}return base+'/storage/v1/object/public/'+bucket+'/'+path;}
+async function upload(file,token,i){if(!['image/png','image/jpeg','image/webp'].includes(file.type))throw Error('Format banner harus PNG/JPG/WebP.');if(file.size>2*1024*1024)throw Error('Banner slide '+(i+1)+' lebih dari 2 MB. Kecilkan ukuran gambar dulu.');const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';const path='yanstore-promo-'+(i+1)+'-'+Date.now()+'.'+ext;const r=await fetch(base+'/storage/v1/object/'+bucket+'/'+path,{method:'POST',headers:{apikey:V6_KEY,Authorization:'Bearer '+token,'Content-Type':file.type,'cache-control':'public, max-age=31536000, immutable'},body:file});if(!r.ok){const d=await r.json().catch(()=>({}));throw Error(d.message||d.error||'Upload banner gagal');}return base+'/storage/v1/object/public/'+bucket+'/'+path;}
 async function save(){
 const btn=el('ysPromoSave');if(!v6Session?.access_token){msg('Login Admin terlebih dahulu.');return;}btn.disabled=true;msg('Menyimpan banner promo...');
 try{
@@ -5297,7 +5303,7 @@ const next=slides.map(x=>({...x}));el('ysPromoEditor').querySelectorAll('input[d
 for(const input of el('ysPromoEditor').querySelectorAll('.ys-promo-file')){const file=input.files?.[0];if(file){msg('Mengupload banner slide '+(Number(input.dataset.index)+1)+'...');next[Number(input.dataset.index)].image=await upload(file,v6Session.access_token,Number(input.dataset.index));}}
 const clean=normalize(next);
 const body=await encodeManifest({slides:clean,updatedAt:new Date().toISOString()});
-const r=await fetch(base+'/storage/v1/object/'+bucket+'/'+manifest,{method:'POST',headers:{apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token,'Content-Type':'image/png','x-upsert':'true'},body});
+const r=await fetch(base+'/storage/v1/object/'+bucket+'/'+manifest,{method:'POST',headers:{apikey:V6_KEY,Authorization:'Bearer '+v6Session.access_token,'Content-Type':'image/png','cache-control':'public, max-age=300','x-upsert':'true'},body});
 if(!r.ok){const d=await r.json().catch(()=>({}));throw Error((d.message||d.error||'Gagal menyimpan konfigurasi')+'. Periksa izin INSERT/UPDATE Storage bucket product-logos.');}
 slides=clean;active=0;render();resetTimer();editor();msg('✅ Banner tersimpan online dan tampil untuk semua pengunjung.');
 }catch(e){msg('❌ '+e.message);}finally{btn.disabled=false;}
