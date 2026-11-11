@@ -263,6 +263,10 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 #productGrid .v64-pack-count{display:inline-flex;align-items:center;gap:5px;width:max-content;max-width:100%;margin-top:8px;padding:7px 10px;border:1px solid rgba(168,85,247,.34);border-radius:10px;background:rgba(124,58,237,.12);color:#e7d5ff;font-size:11px;font-weight:900;letter-spacing:.02em}
 .v64-qty{font-weight:900}
 </style>
+<style id="v64-stock-quantity-modal-fix">
+.v64-qty.untracked{display:block;margin-top:9px;padding:7px 9px;border:1px dashed rgba(148,163,184,.38);border-radius:9px;color:#b8c1d5;font-size:11px;font-weight:800}
+.v64-qty.low,.v64-qty.none{display:block;margin-top:9px}
+</style>
 </head>
 <body>
 <nav class="nav">
@@ -951,7 +955,7 @@ window.v64OpenVariants=function(productId){
       <div class="v64-desc">${esc(v.description||'')}</div>
       <div class="v64-price">${esc(v.price||'Tanya Admin')}</div>
       <div class="v64-period">${esc(v.period||'')}</div>
-      ${stock.tracked?`<div class="v64-qty ${stock.cls==='restock'?'low':(stock.cls==='habis'?'none':'')}">${stock.canOrder?'📦 ':'⛔ '}${esc(stock.label.toLowerCase())}</div>`:''}
+      <div class="v64-qty ${stock.tracked?(stock.cls==='restock'?'low':(stock.cls==='habis'?'none':'')):'untracked'}">${stock.tracked?(stock.canOrder?'📦 ':'⛔ ')+esc(stock.label.toLowerCase()):'📦 jumlah stok belum diatur'}</div>
       ${!stock.canOrder?'<span class="btn buy disabled">STOK HABIS</span>':`<a class="btn primary buy" target="_blank" href="https://wa.me/${PHONE}?text=${encodeURIComponent(wa)}">PESAN PAKET</a>`}
     </div>`;
   }).join('');
