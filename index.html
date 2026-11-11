@@ -259,7 +259,11 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
  .heroCard .trust .item{padding:8px 5px;font-size:9px}
  .ys-promo-top{font-size:10px}
 }
-</style></head>
+</style><style id="v64-stock-quantity-visible">
+#productGrid .v64-pack-count{display:inline-flex;align-items:center;gap:5px;width:max-content;max-width:100%;margin-top:8px;padding:7px 10px;border:1px solid rgba(168,85,247,.34);border-radius:10px;background:rgba(124,58,237,.12);color:#e7d5ff;font-size:11px;font-weight:900;letter-spacing:.02em}
+.v64-qty{font-weight:900}
+</style>
+</head>
 <body>
 <nav class="nav">
 <div class="wrap navin">
@@ -871,19 +875,22 @@ v6Login = async function(){
 let v64Variants=[];
 let v64AdminVariants=[];
 
-function v64StatusOfVariants(rows){
-  if(!rows.length) return 'READY';
-  if(rows.some(v=>(v.stock_status||'READY').toUpperCase()==='READY')) return 'READY';
-  if(rows.some(v=>(v.stock_status||'READY').toUpperCase()==='RESTOCK')) return 'RESTOCK';
-  return 'HABIS';
-}
-function v64VariantsFor(productId){return v64Variants.filter(v=>Number(v.product_id)===Number(productId));}
 function v64StockView(v){
   const qty=v?.stock_quantity;
-  if(qty===null||qty===undefined||qty==='')return {label:(v?.stock_status||'READY').toUpperCase(),cls:(v?.stock_status||'READY').toLowerCase(),canOrder:(v?.stock_status||'READY').toUpperCase()!=='HABIS',tracked:false};
+  if(qty===null||qty===undefined||qty==='')return {label:(v?.stock_status||'READY').toUpperCase(),cls:(v?.stock_status||'READY').toLowerCase(),canOrder:(v?.stock_status||'READY').toUpperCase()!=='HABIS',tracked:false,quantity:null};
   const n=Math.max(0,Number(qty)||0);
-  return {label:n===0?'STOK HABIS':(n<=3?'SISA '+n+' SLOT':'TERSEDIA '+n+' SLOT'),cls:n===0?'habis':(n<=3?'restock':'ready'),canOrder:n>0,tracked:true};
+  return {label:n===0?'STOK HABIS':(n<=3?'SISA '+n+' SLOT':'TERSEDIA '+n+' SLOT'),cls:n===0?'habis':(n<=3?'restock':'ready'),canOrder:n>0,tracked:true,quantity:n};
 }
+function v64StockSummary(rows){
+  const views=rows.map(v64StockView);
+  const available=views.filter(x=>x.canOrder);
+  const tracked=views.filter(x=>x.tracked);
+  const knownQty=tracked.reduce((sum,x)=>sum+(x.quantity||0),0);
+  const status=available.length===0?'HABIS':(available.some(x=>x.cls==='restock')?'RESTOCK':'READY');
+  return {status,availableCount:available.length,trackedCount:tracked.length,knownQty};
+}
+function v64StatusOfVariants(rows){return v64StockSummary(rows).status;}
+function v64VariantsFor(productId){return v64Variants.filter(v=>Number(v.product_id)===Number(productId));}
 
 async function v64LoadVariants(){
   try{
@@ -907,18 +914,20 @@ renderProducts = function(){
  grid.innerHTML=list.map(p=>{
    const vars=v64VariantsFor(p.id);
    if(vars.length){
-     const status=v64StatusOfVariants(vars), cls=status.toLowerCase();
-     const usable=vars.filter(v=>(v.stock_status||'READY').toUpperCase()!=='HABIS').length;
+     const summary=v64StockSummary(vars), status=summary.status, cls=status.toLowerCase();
+     const stockText=summary.trackedCount
+       ? (summary.knownQty===0?'STOK HABIS':summary.knownQty+' SLOT TERCATAT')
+       : (summary.availableCount+' PAKET TERSEDIA');
      return `<article class="card">
        <img class="logo" referrerpolicy="no-referrer" src="${LOGO_DATA[p.logo] || LOGO_DATA.netflix}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
        <div class="logo-fallback">${esc((p.name||'APP').slice(0,3).toUpperCase())}</div>
        <h3>${esc(p.name)}</h3>
        <div class="desc">${esc(vars.length+' pilihan paket tersedia')}</div>
        <span class="stock ${cls}">${esc(status)}</span>
-       <div class="v64-pack-count">📦 ${vars.length} PAKET</div>
+       <div class="v64-pack-count">📦 ${esc(stockText)} · ${vars.length} PAKET</div>
        <div class="price">Mulai ${esc(p.price)}</div>
        <div class="period">Pilih paket sesuai kebutuhan</div>
-       ${usable===0?'<span class="btn buy disabled">SEMUA PAKET HABIS</span>':`<button class="btn primary buy v64-variant-btn" type="button" onclick="v64OpenVariants(${Number(p.id)})">LIHAT ${vars.length} PAKET</button>`}
+       ${summary.availableCount===0?'<span class="btn buy disabled">SEMUA PAKET HABIS</span>':`<button class="btn primary buy v64-variant-btn" type="button" onclick="v64OpenVariants(${Number(p.id)})">LIHAT ${vars.length} PAKET</button>`}
      </article>`;
    }
    const status=(p.stockStatus||'READY').toUpperCase();
