@@ -916,7 +916,7 @@ renderProducts = function(){
    if(vars.length){
      const summary=v64StockSummary(vars), status=summary.status, cls=status.toLowerCase();
      const stockText=summary.trackedCount
-       ? (summary.knownQty===0?'STOK HABIS':summary.knownQty+' SLOT TERCATAT')
+       ? (summary.availableCount===0?'STOK HABIS':(summary.knownQty>0?summary.knownQty+' SLOT TERCATAT':'STOK TERSEDIA'))
        : (summary.availableCount+' PAKET TERSEDIA');
      return `<article class="card">
        <img class="logo" referrerpolicy="no-referrer" src="${LOGO_DATA[p.logo] || LOGO_DATA.netflix}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
