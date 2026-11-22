@@ -34,7 +34,11 @@ function mount(){
   box.id='ys-orders-admin';
   box.style.cssText='margin:18px 0;padding:18px;border:1px solid #38435f;border-radius:16px;background:#0d1422;color:#fff';
   box.innerHTML='<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap"><div><h3 style="margin:0 0 5px">📦 Pesanan YanStore</h3><p style="margin:0;color:#9eabc3;font-size:12px">Klik PEMBAYARAN DITERIMA hanya setelah pembayaran sudah benar-benar diverifikasi.</p></div><button id="ys-orders-refresh" type="button">↻ REFRESH</button></div><div id="ys-orders-note" style="min-height:20px;margin:10px 0;font-size:12px"></div><div id="ys-orders-list" style="display:grid;gap:10px"></div>';
-  p.prepend(box);
+  // Orders belong to the Pesanan tab, after its shared heading, never above Lainnya.
+  box.dataset.ysCenterPage='orders';
+  const heading=document.getElementById('ysCenterHeading');
+  if(heading?.parentNode===p)p.insertBefore(box,heading.nextSibling);
+  else p.appendChild(box);
   document.getElementById('ys-orders-refresh').onclick=load;
   load();
 }

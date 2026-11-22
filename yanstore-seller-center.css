@@ -726,3 +726,211 @@ body.ys-admin-fullpage #v6AdminPanel :is(#v6914Msg,#v6916Msg,#v69PromoMsg,#ysPro
   body.ys-admin-fullpage #v6AdminPanel :is(.v6914-row,.v6916-row){align-items:flex-start;flex-direction:column;}
   body.ys-admin-fullpage #v6AdminPanel :is(.v6914-row,.v6916-row) .buttons{display:flex;flex-wrap:wrap;}
 }
+
+
+/* Seller Center — Lainnya / digital price manager and order card.
+   All saving, profit calculation, moderation and payment handlers are untouched. */
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager,
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin {
+  box-sizing:border-box;
+  width:100%;
+  max-width:1100px;
+  margin:0 0 18px!important;
+  padding:23px!important;
+  border:1px solid #dfebf7!important;
+  border-radius:17px!important;
+  background:#fff!important;
+  color:#253d5b!important;
+  box-shadow:0 4px 18px rgba(28,68,124,.035)!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager>h3,
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin h3 {
+  margin:0 0 7px!important;
+  color:#193759!important;
+  font-size:19px!important;
+  line-height:1.35;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager>p,
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin p {
+  color:#71859f!important;
+  margin:0 0 17px!important;
+  font-size:12px!important;
+  line-height:1.7;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager .yp-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:12px!important;
+  padding:17px!important;
+  background:#f8fbff!important;
+  border:1px solid #e3ecf7!important;
+  border-radius:13px!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager label{
+  display:block;
+  color:#415b7a!important;
+  font-size:12px!important;
+  font-weight:750!important;
+  line-height:1.5;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager :is(input:not([type=hidden]),select){
+  display:block;
+  min-height:43px;
+  width:100%!important;
+  min-width:0;
+  margin-top:7px!important;
+  padding:10px 12px!important;
+  border:1px solid #d4e2f2!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:#233d5d!important;
+  box-shadow:none!important;
+  font:inherit;
+  font-size:13px!important;
+  box-sizing:border-box;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager :is(input,select):focus-visible{
+  outline:2px solid #2775d7;
+  outline-offset:2px;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager .yp-actions{
+  display:flex!important;
+  flex-wrap:wrap;
+  gap:9px!important;
+  margin:16px 0!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager button,
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-refresh{
+  min-height:40px;
+  padding:10px 14px!important;
+  background:#f4f9ff!important;
+  color:#2066b5!important;
+  border:1px solid #d3e4f8!important;
+  border-radius:10px!important;
+  font:inherit;
+  font-size:12px!important;
+  font-weight:800!important;
+  box-shadow:none!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager #ypSave{
+  background:#176bd1!important;
+  color:#fff!important;
+  border-color:#176bd1!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager button:focus-visible,
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin button:focus-visible{
+  outline:2px solid #1c71d3;
+  outline-offset:2px;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager #ypProfit{
+  display:inline-flex;
+  align-items:center;
+  padding:10px 14px;
+  border-radius:10px;
+  background:#edf8f3!important;
+  color:#19784d!important;
+  font-size:13px!important;
+  font-weight:800!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager #ypMessage{
+  color:#506d8a!important;
+  margin:12px 0!important;
+  font-size:12px!important;
+  line-height:1.65;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager #ypRows{
+  display:grid;
+  gap:8px;
+  max-height:520px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  overscroll-behavior:contain;
+  margin-top:13px;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager .yp-row{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 15px!important;
+  border:1px solid #e1eaf6!important;
+  border-radius:12px;
+  background:#f9fcff!important;
+  color:#243e5e!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager .yp-row small{
+  color:#7589a3!important;
+  font-size:11px!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPriceManager .yp-row button{
+  margin:3px!important;
+  padding:8px 11px!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-note{
+  color:#436986!important;
+  font-size:12px!important;
+  line-height:1.55;
+}
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-list{
+  max-height:560px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  overscroll-behavior:contain;
+  display:grid;
+  gap:9px!important;
+  padding:1px;
+}
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-list>div{
+  min-width:0;
+  border:1px solid #dfebf7!important;
+  border-radius:12px!important;
+  background:#f9fcff!important;
+  color:#223a59!important;
+  padding:14px!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-list>div b{
+  color:#193756!important;
+  font-size:13px;
+}
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-list>div div[style*="font-size:11px"]{
+  color:#70859e!important;
+  line-height:1.65;
+  overflow-wrap:anywhere;
+}
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-list>div span{
+  color:#59738f!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-list button[data-ys-cancel]{
+  color:#b3344d!important;
+  border:1px solid #f1cdd6!important;
+  background:#fff3f5!important;
+  border-radius:9px!important;
+  padding:9px 13px!important;
+  font-size:12px!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-list button[data-ys-approve]{
+  color:#fff!important;
+  border:1px solid #14975b!important;
+  background:#15945a!important;
+  border-radius:9px!important;
+  padding:9px 13px!important;
+  font-size:12px!important;
+}
+@media(max-width:850px){
+  body.ys-admin-fullpage #v6AdminPanel #ysPriceManager .yp-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin #ys-orders-list>div{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}
+@media(max-width:590px){
+  body.ys-admin-fullpage #v6AdminPanel #ysPriceManager,
+  body.ys-admin-fullpage #v6AdminPanel #ys-orders-admin{padding:16px!important;}
+  body.ys-admin-fullpage #v6AdminPanel #ysPriceManager .yp-grid{
+    grid-template-columns:minmax(0,1fr)!important;padding:13px!important;
+  }
+  body.ys-admin-fullpage #v6AdminPanel #ysPriceManager .yp-row{
+    align-items:flex-start;flex-direction:column;
+  }
+}
