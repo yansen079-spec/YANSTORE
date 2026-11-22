@@ -3076,7 +3076,7 @@ body.ys-admin-fullpage #v6912AdminMount textarea{min-height:110px}
       <div class="v6913-wrap">
         <div class="v6913-head">
           <div>
-            <h2>❓ FAQ YANSTORE</h2>
+            <h2>FAQ YANSTORE</h2>
             <p>Pertanyaan yang sering ditanyakan sebelum order.</p>
           </div>
         </div>
@@ -3159,14 +3159,24 @@ body.ys-admin-fullpage #v6912AdminMount textarea{min-height:110px}
       document.body.appendChild(section);
     }
 
-    section.querySelectorAll('.v6913-q').forEach(btn=>{
+    section.querySelectorAll('.v6913-q').forEach((btn,index)=>{
+      const item=btn.closest('.v6913-item');
+      const answer=item.querySelector('.v6913-a');
+      if(answer){
+        answer.id='ys-faq-answer-'+(index+1);
+        btn.setAttribute('aria-controls',answer.id);
+      }
+      btn.setAttribute('aria-expanded','false');
       btn.addEventListener('click',()=>{
-        const item=btn.closest('.v6913-item');
         const list=item.parentElement;
         list.querySelectorAll('.v6913-item.open').forEach(other=>{
-          if(other!==item) other.classList.remove('open');
+          if(other!==item){
+            other.classList.remove('open');
+            other.querySelector('.v6913-q')?.setAttribute('aria-expanded','false');
+          }
         });
-        item.classList.toggle('open');
+        const opened=item.classList.toggle('open');
+        btn.setAttribute('aria-expanded',String(opened));
       });
     });
   }
@@ -5881,5 +5891,6 @@ load();resetTimer();
 <script defer src="/ewallet-live.js"></script>
 <script defer src="/paket-data-import.js"></script>
 <link rel="stylesheet" href="yanstore-testimonials-clean.css?v=1"/>
+<link rel="stylesheet" href="yanstore-faq-clean.css?v=1"/>
 </body>
 </html>
