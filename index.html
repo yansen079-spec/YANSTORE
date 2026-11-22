@@ -266,6 +266,8 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <!-- Minor wide-desktop hero alignment adjustment -->
 <link rel="stylesheet" href="yanstore-hero-align.css?v=1"/>
 <link rel="stylesheet" href="yanstore-navbar-menu.css?v=1"/>
+<link rel="stylesheet" href="yanstore-live-ticker.css?v=1"/>
+<script src="yanstore-live-ticker.js?v=1" defer></script>
 <!-- Floating hero showcase; legacy promo slider preserved -->
 <link rel="stylesheet" href="yanstore-floating-promo.css?v=1"/>
 <script src="yanstore-floating-promo.js?v=1" defer></script>
@@ -333,6 +335,10 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 </aside>
 </div>
 </header>
+<section id="ysLiveTicker" class="ys-ticker" aria-label="Produk digital tersedia sekarang" hidden>
+  <div class="ys-ticker-head"><span>Tersedia sekarang</span><button id="ysTickerToggle" class="ys-ticker-toggle" type="button" aria-label="Jeda animasi produk" aria-pressed="false">Ⅱ</button></div>
+  <div class="ys-ticker-viewport"><div id="ysTickerTrack" class="ys-ticker-track"></div></div>
+</section>
 <main class="wrap">
 <div class="banner"><div><h2>LAYANAN <span>STREAMING ONLINE</span></h2><div class="muted">Daftar sekarang &amp; nikmati konten terbaik!</div></div><div style="font-size:44px">🚀</div></div>
 <section id="produk">

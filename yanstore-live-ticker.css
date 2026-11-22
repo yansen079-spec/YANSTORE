@@ -1,0 +1,31 @@
+/* YANSTORE 2.0 — live product marquee, isolated from catalog and checkout */
+.ys-ticker {background:#fff;border-top:1px solid #e7edf6;border-bottom:1px solid #e1e9f3;padding:15px 0 19px;overflow:hidden;}
+.ys-ticker-head {display:flex;align-items:center;justify-content:space-between;gap:12px;width:min(1180px,92%);margin:0 auto 14px;color:#576a86;font-size:13px;}
+.ys-ticker-head span {font-weight:700;}
+.ys-ticker-toggle {width:38px;height:36px;border:1px solid #dbe6f3;background:#fff;color:#324866;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:16px;}
+.ys-ticker-toggle:hover,.ys-ticker-toggle:focus-visible {background:#eef5ff;outline-offset:2px;}
+.ys-ticker-viewport {width:100%;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);}
+.ys-ticker-track {display:flex;width:max-content;align-items:center;animation:ysTickerSlide 46s linear infinite;will-change:transform;}
+.ys-ticker-group {display:flex;align-items:stretch;gap:12px;padding-right:12px;flex:0 0 auto;}
+.ys-ticker:hover .ys-ticker-track,.ys-ticker:focus-within .ys-ticker-track,.ys-ticker.is-paused .ys-ticker-track {animation-play-state:paused;}
+.ys-ticker-card {width:232px;min-height:65px;display:flex;align-items:center;gap:12px;padding:8px 11px;flex:0 0 auto;background:#fff;border:1px solid #dce6f2;border-radius:16px;text-align:left;color:#182841;cursor:pointer;box-shadow:0 3px 10px rgba(29,54,90,.03);}
+.ys-ticker-card:hover,.ys-ticker-card:focus-visible {border-color:#8bbcff;background:#f6faff;box-shadow:0 7px 20px rgba(32,91,164,.11);outline-offset:2px;}
+.ys-ticker-thumb {width:66px;height:45px;flex:none;display:grid;place-items:center;border-radius:11px;overflow:hidden;background:linear-gradient(135deg,#e8f0ff,#f9efff);font-size:11px;font-weight:850;color:#284f97;}
+.ys-ticker-thumb img {width:100%;height:100%;object-fit:contain;padding:6px;box-sizing:border-box;}
+.ys-ticker-copy {display:flex;flex-direction:column;gap:4px;min-width:0;flex:1;}
+.ys-ticker-title {font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ys-ticker-price {color:#1769d9;font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ys-ticker-empty {width:min(1180px,92%);margin:0 auto;color:#657690;font-size:13px;}
+@keyframes ysTickerSlide {to {transform:translateX(-50%);}}
+@media(max-width:650px) {
+ .ys-ticker {padding:10px 0 14px;}
+ .ys-ticker-head {margin-bottom:9px;font-size:12px;}
+ .ys-ticker-card {width:190px;min-height:59px;gap:9px;padding:7px 9px;}
+ .ys-ticker-thumb {width:54px;height:42px;}
+ .ys-ticker-track {animation-duration:56s;}
+}
+@media(prefers-reduced-motion:reduce) {
+ .ys-ticker-track {animation:none!important;will-change:auto;}
+ .ys-ticker-viewport {overflow-x:auto;mask-image:none;scrollbar-width:thin;}
+ .ys-ticker-group[aria-hidden="true"] {display:none;}
+}
