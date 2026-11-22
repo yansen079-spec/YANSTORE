@@ -63,7 +63,7 @@
     const name=normalize(p.name||'Produk Digital');
     panel.dataset.brand=['capcut','canva','netflix','chatgpt'].find(x=>name.toLowerCase().includes(x))||'other';
     const picture=safeImage(p.image_url||p.image||p.banner_url||p.logo_url||'')
-      ||safeImage(p.logo)||fallbackLogo[p.logo]||'';
+      ||fallbackLogo[p.logo]||safeImage(p.logo)||'';
     fallback.textContent=name;
     if(picture){
       img.onload=()=>{img.hidden=false;fallback.hidden=true;};
