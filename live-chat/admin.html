@@ -189,6 +189,46 @@ header a:focus-visible{outline:2px solid #2776d0;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){
  #ys-admin-inbox button{transition:none!important}
 }
+
+/* Mobile Live Chat: readable full-width controls; no message or auth changes. */
+@media(max-width:760px){
+ header{min-height:60px;gap:8px!important;padding:11px 12px!important}
+ header strong{font-size:14px!important;line-height:1.35;min-width:0}
+ header a{padding:9px 11px!important;font-size:11px!important;white-space:nowrap}
+ main{width:calc(100% - 16px)!important;margin:9px auto!important}
+ #ys-admin-inbox{display:flex!important;flex-direction:column!important;gap:10px!important;padding:13px!important}
+ #ys-admin-inbox>h3{margin:0!important}
+ #ys-admin-inbox>p{margin:0!important}
+ #ys-admin-presence{margin:3px 0!important}
+ #ys-admin-refresh{align-self:flex-start}
+ #ys-admin-note{padding:0!important}
+ #ys-customer-search{width:100%!important;min-height:45px!important;font-size:16px!important;margin:0!important}
+ #ys-archive-tabs{margin:0!important}
+ #ys-admin-threads{
+   width:100%;max-height:180px;min-height:0!important;
+   display:flex!important;flex-direction:row!important;
+   flex-wrap:nowrap!important;overflow:auto!important;
+   margin:0!important;gap:8px!important;padding:8px!important;
+ }
+ #ys-admin-threads button{min-width:170px;max-width:220px;min-height:66px!important;flex:0 0 190px!important}
+ #ys-thread-actions{
+   display:flex!important;align-items:center!important;
+   justify-content:flex-start!important;gap:7px!important;
+   padding:12px!important;margin:0!important;
+ }
+ #ys-thread-actions>span{flex:1 0 100%;min-width:0}
+ #ys-thread-actions button{min-height:42px!important}
+ #ys-admin-messages{
+   width:100%;height:43dvh!important;min-height:260px!important;
+   max-height:560px!important;margin:0!important;
+ }
+ #ys-admin-form{
+   width:100%;display:flex!important;flex-wrap:nowrap!important;
+   align-items:center;gap:8px!important;margin:0!important;padding:8px!important;
+ }
+ #ys-admin-input{flex:1 1 auto!important;width:0;min-width:0!important;font-size:16px!important}
+ #ys-admin-form button{flex:0 0 auto;min-width:76px!important}
+}
 </style></head>
 <body><header><strong>💬 YanStore — Dashboard Live Chat</strong><a href="../" target="_blank" rel="noopener">← Kembali ke Toko</a></header><main><p id="login-warning">Memeriksa sesi admin...</p><div id="v6AdminPanel"></div></main>
 <script>let v6Session=null;try{v6Session=JSON.parse(localStorage.getItem('yanstore_v6_session')||'null')}catch(e){}
