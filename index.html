@@ -3830,7 +3830,7 @@ body.ys-admin-fullpage #v6912AdminMount textarea{min-height:110px}
       <div class="v6915-wrap">
         <div class="v6915-head">
           <div>
-            <h2>⭐ TESTIMONI CUSTOMER</h2>
+            <h2>Testimoni Pelanggan</h2>
             <p>Beberapa pengalaman customer setelah order di Yanstore.</p>
           </div>
         </div>
@@ -4176,7 +4176,7 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
     const section=document.getElementById('yanstore-testimonials'); if(!section||document.getElementById('v6918CustomerBox'))return;
     const wrap=section.querySelector('.v6915-wrap')||section;
     const box=document.createElement('div'); box.id='v6918CustomerBox';
-    box.innerHTML=`<h3>💬 Tulis Testimoni Kamu</h3><div class="v6918-note">Pilih rating 1–5 bintang dan ceritakan pengalamanmu. Testimoni akan ditinjau Admin terlebih dahulu sebelum tampil di website.</div>
+    box.innerHTML=`<h3>Tulis Testimoni Kamu</h3><div class="v6918-note">Pilih rating 1–5 bintang dan ceritakan pengalamanmu. Testimoni akan ditinjau Admin terlebih dahulu sebelum tampil di website.</div>
       <div class="v6918-form"><input id="v6918Name" maxlength="50" placeholder="Nama / nama samaran" autocomplete="name"><div class="v6918-stars" aria-label="Rating 1 sampai 5"><button type="button" class="v6918-star" onclick="v6918Rate(1)">★</button><button type="button" class="v6918-star" onclick="v6918Rate(2)">★</button><button type="button" class="v6918-star" onclick="v6918Rate(3)">★</button><button type="button" class="v6918-star" onclick="v6918Rate(4)">★</button><button type="button" class="v6918-star" onclick="v6918Rate(5)">★</button><strong id="v6918RatingText" style="margin-left:auto;font-size:12px">5 / 5</strong></div><textarea id="v6918Message" maxlength="500" placeholder="Tulis pengalaman order di Yanstore..."></textarea></div>
       <button id="v6918Submit" class="v6918-submit" type="button" onclick="v6918Submit()">KIRIM TESTIMONI</button><div id="v6918CustomerMsg"></div>`;
     wrap.appendChild(box); paint();
@@ -5880,5 +5880,6 @@ load();resetTimer();
 <script defer src="/paket-data-v2.js"></script>
 <script defer src="/ewallet-live.js"></script>
 <script defer src="/paket-data-import.js"></script>
+<link rel="stylesheet" href="yanstore-testimonials-clean.css?v=1"/>
 </body>
 </html>
