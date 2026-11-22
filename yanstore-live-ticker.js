@@ -24,13 +24,20 @@
     button.setAttribute('aria-label','Lihat produk '+String(product.name||'')+' di katalog');
     if(clone)button.tabIndex=-1;
     const thumb=document.createElement('span');thumb.className='ys-ticker-thumb';
-    const src=logoUrl(product.logo);
+    // Uploaded product banners are full HTTPS URLs. Keep built-in icons as
+    // legacy fallbacks, but never replace a missing image with another brand.
+    const value=String(product.logo||'').trim();
+    const isBanner=/^https:\/\//i.test(value);
+    const src=isBanner?value:logoUrl(value);
+    const initials=String(product.name||'P').trim().slice(0,2).toUpperCase();
     if(src) {
       const img=document.createElement('img');
-      img.src=src;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';
-      img.onerror=()=>{img.remove();thumb.textContent=String(product.name||'P').slice(0,2).toUpperCase();};
+      img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
+      if(isBanner)thumb.classList.add('ys-ticker-thumb-banner');
+      img.onerror=()=>{img.remove();thumb.classList.remove('ys-ticker-thumb-banner');thumb.textContent=initials;};
+      img.src=src;
       thumb.appendChild(img);
-    } else thumb.textContent=String(product.name||'P').slice(0,2).toUpperCase();
+    } else thumb.textContent=initials;
     const copy=document.createElement('span');copy.className='ys-ticker-copy';
     const title=document.createElement('span');title.className='ys-ticker-title';title.textContent=String(product.name||'');
     const price=document.createElement('span');price.className='ys-ticker-price';price.textContent=String(product.price||'Lihat harga');
