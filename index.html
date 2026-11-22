@@ -265,6 +265,7 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <link rel="stylesheet" href="yanstore-light-phase2.css?v=1"/>
 <!-- Minor wide-desktop hero alignment adjustment -->
 <link rel="stylesheet" href="yanstore-hero-align.css?v=1"/>
+<link rel="stylesheet" href="yanstore-navbar-menu.css?v=1"/>
 <!-- Floating hero showcase; legacy promo slider preserved -->
 <link rel="stylesheet" href="yanstore-floating-promo.css?v=1"/>
 <script src="yanstore-floating-promo.js?v=1" defer></script>
@@ -274,11 +275,24 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <nav class="nav">
 <div class="wrap navin">
 <div class="brand">YAN<b>STORE</b></div>
-<div class="navlinks"><a href="#produk">Produk</a><a href="#cara-order">Cara Order</a><a href="#kategori">Kategori</a><a href="#bantuan">Bantuan</a></div>
+<div class="navlinks ys-full-nav" aria-label="Navigasi utama">
+<a href="#beranda">Home</a>
+<a href="#produk">Pricelist</a>
+<a href="#yanstore-cara-order">Cara Order</a>
+<a href="#yanstore-testimonials">Testimoni</a>
+<a href="#yanstore-faq">FAQ</a>
+<a href="#yanstore-blog">Blog</a>
+<a href="#yanstore-tentang">Tentang</a>
+<details class="ys-nav-more"><summary>Layanan Lainnya</summary><div class="ys-nav-dropdown">
+<a href="#ysDigitalServices">Semua Layanan Digital</a>
+<a href="#kategori">Kategori Produk</a>
+<a href="#bantuan">Bantuan &amp; Kontak</a>
+</div></details>
+</div>
 <div class="navbtns"><a class="btn ghost" href="#produk">🛒 Katalog</a><a class="btn wa" href="https://wa.me/6285783984748" target="_blank">WhatsApp</a></div>
 </div>
 </nav>
-<header class="hero">
+<header class="hero" id="beranda">
 <div class="wrap ys-hero-layout">
 <div class="heroCard">
 <div class="eyebrow">⚡ Premium apps • fast order • friendly price</div>
@@ -361,6 +375,14 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <a class="btn wa" href="https://wa.me/6285783984748" target="_blank">💬 PESAN SEKARANG</a>
 </section>
 </main>
+<section class="ys-nav-info" id="yanstore-blog" aria-labelledby="ysBlogTitle">
+<h2 id="ysBlogTitle">Tips &amp; Informasi Digital</h2>
+<p>Kenali jenis paket sebelum membeli, periksa masa aktif dan ketentuan garansi, serta pastikan produk sesuai kebutuhan perangkatmu. Untuk informasi produk terkini, <a href="#produk">lihat katalog YANSTORE</a>.</p>
+</section>
+<section class="ys-nav-info" id="yanstore-tentang" aria-labelledby="ysAboutTitle">
+<h2 id="ysAboutTitle">Tentang YANSTORE</h2>
+<p>YANSTORE menyediakan berbagai pilihan produk digital, aplikasi premium, dan layanan online. Pelanggan dapat memeriksa pilihan paket di katalog dan menghubungi admin untuk proses pemesanan. <a href="#bantuan">Hubungi YANSTORE</a> jika memerlukan bantuan.</p>
+</section>
 <section id="v6Admin">
 <div class="v6box">
 <div id="v6AdminLogin">
