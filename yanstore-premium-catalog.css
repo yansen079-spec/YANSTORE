@@ -195,3 +195,34 @@
   #produk #productGrid > article.ys-market-card {transition:none !important;}
   #produk #productGrid > article.ys-market-card:hover {transform:none;}
 }
+
+/* Warranty information directly beneath the price/package, before CTA.
+   Green indicates terms exist; neutral text prompts admin confirmation. */
+#produk #productGrid .ys-market-card .ys-catalog-warranty {
+  order:6;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-height:21px;
+  color:#078347;
+  font-size:11px;
+  font-weight:650;
+  line-height:1.45;
+}
+#produk #productGrid .ys-market-card .ys-warranty-icon {
+  width:14px;
+  height:14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:none;
+  border:1.5px solid currentColor;
+  border-radius:5px;
+  font-size:11px;
+  line-height:1;
+}
+#produk #productGrid .ys-market-card .ys-catalog-warranty.ys-warranty-unconfirmed {
+  color:#61738d;
+}
+#produk #productGrid .ys-market-card .ys-catalog-whatsapp { order:7; }
+#produk #productGrid .ys-market-card .ys-catalog-tools { order:8; }
