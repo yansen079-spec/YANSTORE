@@ -18,7 +18,178 @@
 /* Fix clipped two-line customer rows */
 @media(min-width:761px){#ys-admin-threads button{height:auto!important;min-height:68px!important;max-height:none!important;flex:0 0 auto!important;overflow:hidden!important;justify-content:center;gap:6px!important;padding:12px 10px!important}#ys-admin-threads button strong,#ys-admin-threads button small{display:block!important;line-height:1.35!important;min-height:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;width:100%}}
 @media(max-width:760px){#ys-admin-threads button{height:auto!important;min-height:62px!important;max-height:none!important;overflow:hidden!important;gap:5px!important}#ys-admin-threads button strong,#ys-admin-threads button small{display:block!important;line-height:1.35!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;width:100%}}
-#ys-admin-inbox #ys-delete-chat{background:#b91c1c!important;color:white!important}#ys-admin-inbox #ys-delete-chat:hover{background:#991b1b!important}</style></head>
+#ys-admin-inbox #ys-delete-chat{background:#b91c1c!important;color:white!important}#ys-admin-inbox #ys-delete-chat:hover{background:#991b1b!important}
+/* Live Chat Seller Center — light workspace. Presentation only:
+   all Supabase, notification, reply, archive and delete handlers unchanged. */
+:root{color-scheme:light}
+body{background:#f3f7fd!important;color:#213851!important;font:14px system-ui,Arial,sans-serif}
+header{
+  position:sticky;top:0;z-index:30;min-height:68px;
+  padding:15px clamp(18px,3vw,50px)!important;
+  background:#fff!important;border-bottom:1px solid #e0e9f5!important;
+  box-shadow:0 2px 12px rgba(29,72,121,.03);
+}
+header strong{font-size:17px;letter-spacing:-.01em;color:#18395b}
+header a{color:#1d65b9!important;background:#f4f9ff;padding:10px 14px;border:1px solid #dce8f7;border-radius:10px;font-size:12px;font-weight:750}
+header a:hover{background:#eaf3ff}
+main{width:min(1480px,calc(100% - 40px))!important;margin:25px auto!important}
+#login-warning{font-size:12px;color:#687f99;margin:0 0 13px}
+#ys-admin-inbox{
+  background:#fff!important;color:#1e3754!important;
+  border:1px solid #dfebf7!important;border-radius:19px!important;
+  box-shadow:0 10px 38px rgba(26,64,113,.045)!important;
+  padding:24px!important;
+}
+#ys-admin-inbox>h3{font-size:23px!important;color:#16375e!important;letter-spacing:-.025em}
+#ys-admin-inbox>p:not(#ys-admin-presence){color:#72869e!important;font-size:12px!important;line-height:1.7;margin-top:0}
+#ys-admin-presence{color:#218358!important;font-size:12px!important}
+#ys-admin-inbox button{
+  background:#f3f8ff!important;color:#2064b0!important;
+  border:1px solid #d6e5f6!important;
+  border-radius:10px!important;
+  min-height:40px;
+  padding:10px 13px!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  box-shadow:none!important;
+  transition:background .16s ease;
+}
+#ys-admin-inbox button:hover:not(:disabled){background:#e9f3ff!important}
+#ys-admin-inbox button:focus-visible,
+#ys-admin-inbox input:focus-visible,
+header a:focus-visible{outline:2px solid #2776d0;outline-offset:2px}
+#ys-admin-inbox #ys-admin-refresh,
+#ys-admin-inbox #ys-notify-enable{background:#eaf3ff!important;color:#1764b8!important}
+#ys-unread-count{color:#617a97!important;font-size:12px}
+#ys-admin-note{padding:6px 0!important;color:#65809d!important;font-size:12px!important;line-height:1.6}
+#ys-customer-search{
+  min-height:44px;
+  border:1px solid #d6e3f3!important;border-radius:11px!important;
+  background:#fff!important;color:#28425f!important;
+  font-size:13px!important;box-shadow:none!important;
+}
+#ys-customer-search::placeholder,#ys-admin-input::placeholder{color:#90a0b4}
+#ys-archive-tabs{gap:8px!important}
+#ys-admin-inbox #ys-archive-tabs button{
+  min-height:37px;background:#fff!important;color:#516d8f!important;
+}
+#ys-admin-inbox #ys-archive-tabs button[style*="background: rgb(22, 101, 52)"],
+#ys-admin-inbox #ys-archive-tabs button[style*="background: #166534"]{
+  background:#e8f2ff!important;color:#175da9!important;border-color:#b9d6fa!important;
+}
+#ys-admin-threads{
+  background:#f8fbff!important;border:1px solid #e1eaf6!important;
+  border-radius:13px!important;
+  scrollbar-color:#c4d7eb transparent;
+}
+#ys-admin-inbox #ys-admin-threads button{
+  background:#fff!important;color:#29445f!important;
+  border:1px solid #e2eaf5!important;
+  border-radius:11px!important;
+  padding:12px!important;
+  line-height:1.4!important;
+}
+#ys-admin-inbox #ys-admin-threads button strong{
+  color:#1f3b59!important;
+  font-size:12px!important;
+}
+#ys-admin-inbox #ys-admin-threads button small{
+  color:#7389a3!important;
+  font-size:11px!important;
+}
+#ys-admin-inbox #ys-admin-threads button.ys-selected{
+  background:#eaf4ff!important;
+  border:1px solid #82b7f2!important;
+  box-shadow:inset 3px 0 0 #2c79d5!important;
+}
+#ys-admin-inbox #ys-admin-threads button.ys-selected strong{
+  color:#11549b!important;
+}
+#ys-thread-actions{
+  background:#f8fbff!important;
+  border:1px solid #dfebf7!important;
+  border-radius:13px!important;
+  padding:11px 14px!important;
+  gap:8px!important;
+  color:#526c88!important;
+}
+#ys-thread-status{font-size:12px!important;color:#446887!important;font-weight:700}
+#ys-admin-inbox #ys-thread-toggle{background:#e9f7f0!important;color:#168353!important;border-color:#c4e7d5!important}
+#ys-admin-inbox #ys-archive-chat{background:#f6f8fd!important;color:#536b89!important}
+#ys-admin-inbox #ys-delete-chat{
+  background:#fff1f3!important;color:#ba344c!important;
+  border:1px solid #efcbd4!important;
+}
+#ys-admin-inbox #ys-delete-chat:hover:not(:disabled){background:#ffe5e9!important}
+#ys-admin-messages{
+  background:#f8fbff!important;color:#526c8b!important;
+  border:1px solid #e2eaf5!important;border-radius:13px!important;
+  padding:16px!important;
+  scrollbar-color:#c7d8eb transparent;
+}
+#ys-admin-messages:empty:before{color:#7890aa!important;font-size:13px;padding:70px 12px!important}
+#ys-admin-messages>div[style*="margin-left: auto"],
+#ys-admin-messages>div[style*="margin-left:auto"]{
+  background:#186dd0!important;color:#fff!important;
+  border-radius:13px 13px 5px 13px!important;
+}
+#ys-admin-messages>div[style*="margin-right: auto"],
+#ys-admin-messages>div[style*="margin-right:auto"]{
+  background:#fff!important;color:#253f5e!important;
+  border:1px solid #dae6f4;
+  border-radius:13px 13px 13px 5px!important;
+}
+#ys-admin-form{
+  background:#f8fbff!important;border:1px solid #e1eaf6!important;
+  border-radius:13px!important;padding:10px!important;
+  display:flex!important;gap:10px!important;
+}
+#ys-admin-form input{
+  min-width:0;min-height:44px;
+  border:1px solid #d7e4f4!important;border-radius:10px!important;
+  background:#fff!important;color:#223a58!important;
+  padding:11px 13px!important;font:inherit;font-size:13px!important;
+}
+#ys-admin-inbox #ys-admin-form button{
+  background:#176bd1!important;color:#fff!important;border-color:#176bd1!important;
+  min-width:83px;
+}
+#ys-admin-inbox #ys-admin-form button:hover:not(:disabled){background:#1259b1!important}
+@media(min-width:761px){
+ #ys-admin-inbox{
+   grid-template-columns:minmax(250px,310px) minmax(0,1fr)!important;
+   grid-template-areas:
+     'title title' 'intro intro' 'presence presence'
+     'refresh refresh' 'notify notify' 'note note'
+     'search actions' 'tabs actions' 'threads messages' 'threads composer'!important;
+   grid-template-rows:auto auto auto auto auto auto auto auto minmax(400px,1fr) auto!important;
+   gap:9px 18px!important;
+   min-height:78vh!important;
+ }
+ #ys-admin-threads{max-height:63vh!important}
+ #ys-admin-messages{min-height:380px!important;max-height:63vh!important}
+ #ys-thread-actions{align-content:center}
+}
+@media(max-width:760px){
+ main{width:calc(100% - 20px)!important;margin:12px auto!important}
+ #ys-admin-inbox{padding:14px!important;border-radius:15px!important}
+ #ys-admin-inbox>h3{font-size:19px!important}
+ #ys-admin-threads{padding:8px!important}
+ #ys-admin-inbox #ys-admin-threads button{min-width:175px;max-width:230px}
+ #ys-thread-actions{margin:10px 0!important}
+ #ys-admin-messages{min-height:280px!important;height:45dvh!important}
+ #ys-admin-form{flex-wrap:nowrap!important}
+ #ys-admin-form button{min-width:72px!important}
+}
+@media(max-width:420px){
+ #ys-thread-actions button{flex:1 1 auto}
+ #ys-admin-form input{width:0;flex:1 1 auto}
+ header strong{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+ #ys-admin-inbox button{transition:none!important}
+}
+</style></head>
 <body><header><strong>💬 YanStore — Dashboard Live Chat</strong><a href="../" target="_blank" rel="noopener">← Kembali ke Toko</a></header><main><p id="login-warning">Memeriksa sesi admin...</p><div id="v6AdminPanel"></div></main>
 <script>let v6Session=null;try{v6Session=JSON.parse(localStorage.getItem('yanstore_v6_session')||'null')}catch(e){}
 window.YANSTORE_CHAT_STANDALONE=true;
