@@ -80,7 +80,8 @@
   left:auto;right:10px;background:#fff !important;color:#243149 !important;border-color:#d8e2ef !important;
 }
 #produk #productGrid .ys-market-card[data-ys-stock="HABIS"] .ys-market-thumb {
-  filter:grayscale(.85);
+  /* Stock status belongs on the badge/CTA, not on the product artwork. */
+  filter:none !important;
 }
 #produk #productGrid .ys-market-card[data-ys-stock="RESTOCK"] .ys-market-tag {
   color:#9b6307 !important;background:#fff5d8 !important;border-color:#f6da91 !important;
