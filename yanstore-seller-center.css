@@ -573,3 +573,156 @@ body.ys-admin-fullpage #v64AdminVariants .v64-varbuttons button:focus-visible{
     min-height:36px;
   }
 }
+
+
+/* Seller Center Promosi — scoped CSS only. Original banner, flash sale,
+   announcement, and badge save/update handlers remain untouched. */
+body.ys-admin-fullpage #v6AdminPanel .ys-promo-center,
+body.ys-admin-fullpage #v6AdminPanel #v6914AdminBox,
+body.ys-admin-fullpage #v6AdminPanel #v6916Admin{
+  width:100%;max-width:1100px;box-sizing:border-box;
+  margin:0 0 16px!important;padding:22px!important;
+  border:1px solid #dfe9f5!important;border-radius:17px!important;
+  background:#fff!important;color:#233852!important;
+  box-shadow:0 3px 16px rgba(26,64,112,.035)!important;
+}
+body.ys-admin-fullpage #v6AdminPanel .ys-promo-center h2,
+body.ys-admin-fullpage #v6AdminPanel #v6914AdminBox h3,
+body.ys-admin-fullpage #v6AdminPanel #v6916Admin h3{
+  margin:0 0 7px!important;font-size:18px!important;
+  line-height:1.4;color:#1b3456!important;
+}
+body.ys-admin-fullpage #v6AdminPanel .ys-promo-center>p,
+body.ys-admin-fullpage #v6AdminPanel #v6914AdminBox .note,
+body.ys-admin-fullpage #v6AdminPanel #v6916Admin .v6916-note{
+  margin:0 0 15px!important;color:#71839b!important;
+  font-size:12px!important;line-height:1.65;
+}
+/* Accordions: no dark strip and readable text on both states. */
+body.ys-admin-fullpage #v6AdminPanel #ysPromoCenter :is(.ys-promo-fold,.ys-flash-fold){
+  margin:9px 0!important;border:1px solid #e0e8f5!important;
+  border-radius:12px!important;background:#fff!important;
+  overflow:hidden;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPromoCenter :is(.ys-promo-fold,.ys-flash-fold)>summary{
+  padding:15px 17px!important;background:#f5f9ff!important;
+  color:#1d3d61!important;border-color:#e0e8f5!important;
+  font-size:13px!important;font-weight:800!important;
+  cursor:pointer;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPromoCenter :is(.ys-promo-fold,.ys-flash-fold)>summary:hover{
+  background:#edf5ff!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPromoCenter :is(.ys-promo-fold,.ys-flash-fold)>summary:focus-visible{
+  outline:2px solid #2778dc;outline-offset:-3px;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPromoCenter :is(.ys-promo-fold,.ys-flash-fold)[open]>summary{
+  border-bottom:1px solid #dfebf8!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPromoAdmin,
+body.ys-admin-fullpage #v6AdminPanel #v69AdminPromo{
+  box-sizing:border-box;min-width:0;color:#23415e!important;
+  background:#fff!important;border:0!important;
+  box-shadow:none!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPromoCenter :is(.ys-promo-admin,#v69AdminPromo) h3,
+body.ys-admin-fullpage #v6AdminPanel #ysPromoCenter :is(.ys-promo-admin,#v69AdminPromo) h4{
+  color:#1c385b!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #ysPromoCenter :is(.ys-promo-admin,#v69AdminPromo) p{
+  color:#6d819a!important;font-size:12px;line-height:1.65;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6914AdminBox .v6914-grid{
+  display:grid;grid-template-columns:110px minmax(0,1fr) 140px;gap:10px;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6916Admin .v6916-grid{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,210px);gap:10px;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914AdminBox,#v6916Admin,#ysPromoCenter) :is(input:not([type=checkbox]),select,textarea){
+  min-width:0;box-sizing:border-box;min-height:43px;
+  border:1px solid #d9e5f3!important;border-radius:10px!important;
+  background:#fff!important;color:#203958!important;
+  padding:10px 12px!important;font-size:13px!important;
+  box-shadow:none!important;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914AdminBox,#v6916Admin,#ysPromoCenter) :is(input,select,textarea):focus-visible{
+  outline:2px solid #3b86e3;outline-offset:2px;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914AdminBox,#v6916Admin,#ysPromoCenter) :is(input,textarea)::placeholder{
+  color:#8497af!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6914AdminBox .v6914-check,
+body.ys-admin-fullpage #v6AdminPanel #v6916Admin .v6916-check,
+body.ys-admin-fullpage #v6AdminPanel #ysPromoCenter .v69-check{
+  color:#536b87!important;font-size:12px!important;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914AdminBox,#v6916Admin,#ysPromoCenter) button{
+  min-height:38px;padding:9px 13px!important;
+  border:1px solid #d4e4f6!important;border-radius:10px!important;
+  background:#f4f9ff!important;color:#2063b4!important;
+  font-size:12px!important;font-weight:800!important;
+  line-height:1.3;box-shadow:none!important;cursor:pointer;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914AdminBox,#v6916Admin,#ysPromoCenter) button.primary,
+body.ys-admin-fullpage #v6AdminPanel #ysPromoSave{
+  border-color:#176bd1!important;background:#176bd1!important;
+  color:#fff!important;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914AdminBox,#v6916Admin,#ysPromoCenter) button.danger{
+  border-color:#f2cdd5!important;background:#fff3f5!important;color:#b73550!important;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914AdminBox,#v6916Admin,#ysPromoCenter) button:hover:not(:disabled){
+  filter:brightness(.97);
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914AdminBox,#v6916Admin,#ysPromoCenter) button:focus-visible{
+  outline:2px solid #2175db;outline-offset:2px;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914List,#v6916List,#v69PromoList){
+  display:grid;gap:9px;margin-top:13px;
+  max-height:470px;overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(.v6914-row,.v6916-row){
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 15px!important;border:1px solid #e0e9f5!important;
+  border-radius:12px!important;background:#fafdff!important;color:#203956!important;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(.v6914-row,.v6916-row) strong{
+  color:#1e3858!important;font-size:13px;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(.v6914-row,.v6916-row) small{
+  color:#7288a2!important;font-size:11px;line-height:1.5;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6920QuickBadge{
+  box-sizing:border-box;margin:14px 0!important;padding:15px!important;
+  border:1px solid #dfebfa!important;border-radius:13px!important;
+  background:#f6faff!important;color:#203b5d!important;
+  box-shadow:none!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6920QuickBadge .v6920-title{
+  color:#1b395d!important;font-size:13px!important;font-weight:800;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6920QuickBadge .v6920-note{
+  color:#70849e!important;font-size:11px!important;line-height:1.6;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6920QuickBadge .v6920-buttons{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6920QuickBadge .v6920-buttons button{
+  background:#fff!important;color:#2364b0!important;border-color:#d6e4f5!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6920QuickBadge .v6920-buttons button.off{
+  background:#fff3f5!important;color:#b43f54!important;border-color:#f2d5da!important;
+}
+body.ys-admin-fullpage #v6AdminPanel :is(#v6914Msg,#v6916Msg,#v69PromoMsg,#ysPromoAdminMsg){
+  color:#56738f!important;font-size:12px;line-height:1.6;
+}
+@media(max-width:750px){
+  body.ys-admin-fullpage #v6AdminPanel :is(.ys-promo-center,#v6914AdminBox,#v6916Admin){padding:17px!important;}
+  body.ys-admin-fullpage #v6AdminPanel #v6914AdminBox .v6914-grid,
+  body.ys-admin-fullpage #v6AdminPanel #v6916Admin .v6916-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  body.ys-admin-fullpage #v6AdminPanel :is(.v6914-row,.v6916-row){align-items:flex-start;flex-direction:column;}
+  body.ys-admin-fullpage #v6AdminPanel :is(.v6914-row,.v6916-row) .buttons{display:flex;flex-wrap:wrap;}
+}
