@@ -1,0 +1,189 @@
+/* YANSTORE Seller Center 1.0 — scoped frontend presentation, no API writes. */
+body.ys-admin-fullpage{background:#f3f7fd!important;color:#172a47!important}
+body.ys-admin-fullpage #v6912AdminModal{background:#f3f7fd!important}
+body.ys-admin-fullpage #v6912AdminCard{max-width:none!important;padding:0!important;overflow:auto!important;background:#f3f7fd!important;color:#1b2c47!important}
+body.ys-admin-fullpage .v6912AdminHead{
+  position:sticky;top:0;z-index:25;margin:0!important;
+  padding:13px clamp(16px,3vw,42px);background:#fff;
+  border-bottom:1px solid #e2eaf5;box-shadow:0 2px 12px rgba(29,58,97,.025)
+}
+body.ys-admin-fullpage .v6912AdminHead h3{font-size:19px!important;color:#172e55}
+body.ys-admin-fullpage .v6912AdminHead div[style]{color:#788aa0!important}
+body.ys-admin-fullpage #v6912AdminClose{color:#4c6382;background:#f6f9fd;border:1px solid #dfe8f3}
+body.ys-admin-fullpage #v6912AdminMount{max-width:none!important;padding:0!important}
+body.ys-admin-fullpage #v6912AdminMount #v6Admin{
+  max-width:none!important;width:100%!important;padding:0!important;margin:0!important;
+}
+body.ys-admin-fullpage #v6912AdminMount .v6box{
+  max-width:none!important;margin:0!important;padding:0!important;
+  border:0!important;background:transparent!important;box-shadow:none!important;
+}
+body.ys-admin-fullpage #v6AdminLogin{
+  width:min(480px,calc(100% - 36px));margin:clamp(25px,9vh,90px) auto!important;
+  padding:25px!important;background:white!important;border:1px solid #dfe8f4;border-radius:18px;
+  box-shadow:0 14px 45px rgba(31,62,102,.07);color:#203653;
+}
+body.ys-admin-fullpage #v6AdminLogin h2{color:#172a49}
+body.ys-admin-fullpage #v6AdminLogin p,body.ys-admin-fullpage #v6AdminLogin .v6msg{color:#667a96!important}
+body.ys-admin-fullpage #v6AdminPanel{
+  width:100%!important;max-width:none!important;
+  position:relative;padding:28px clamp(16px,3vw,45px) 50px 286px!important;
+  box-sizing:border-box;min-height:calc(100vh - 68px);
+  background:#f3f7fd!important;color:#203550!important;
+}
+body.ys-admin-fullpage #v6AdminPanel.ys-center-ready>[data-ys-center-page]:not(.ys-center-visible){display:none!important}
+body.ys-admin-fullpage #v6AdminPanel.ys-center-ready .ys-center-side{
+  position:fixed;top:67px;bottom:0;left:0;width:242px;z-index:19;
+  background:#fff;border-right:1px solid #e0e9f5;
+  display:flex;flex-direction:column;box-sizing:border-box;padding:22px 12px;overflow-y:auto;
+}
+.ys-center-brand{padding:0 13px 20px;color:#183459}
+.ys-center-brand strong{display:block;font-size:17px;letter-spacing:.025em}
+.ys-center-brand small{display:block;font-size:11px;margin-top:4px;color:#8293a9}
+.ys-center-nav{display:grid;gap:5px}
+.ys-center-tab{
+  width:100%;display:flex;align-items:center;gap:11px;
+  padding:12px 13px;border:0;border-radius:11px;
+  background:transparent;color:#59718e;font:inherit;font-size:13px;font-weight:700;
+  text-align:left;cursor:pointer;transition:background .16s,color .16s;
+}
+.ys-center-tab:hover{background:#f2f7fe;color:#155db7}
+.ys-center-tab[aria-current=page]{background:#eaf3ff;color:#1469c9;font-weight:850}
+.ys-center-tab:focus-visible{outline:2px solid #1673d3;outline-offset:2px}
+.ys-center-tab-icon{font-size:18px;width:22px;text-align:center;flex:none}
+.ys-center-aside-foot{margin-top:auto;border-top:1px solid #e8edf5;padding:17px 12px 3px;color:#8596a9;font-size:11px;line-height:1.6}
+#ysCenterHeading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+#ysCenterHeading h1{font-size:clamp(23px,2.4vw,30px);color:#162c4c;line-height:1.25;margin:0!important}
+#ysCenterHeading p{color:#74869e;font-size:13px;margin:6px 0 0}
+#ysCenterHeading .ys-center-return{font:inherit;font-size:12px;text-decoration:none;color:#2465b1;border:1px solid #d9e5f3;border-radius:10px;padding:10px 13px;background:white}
+.ys-center-summary{display:grid;gap:18px}
+.ys-center-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.ys-center-metric,.ys-center-card{background:white;border:1px solid #e0e9f5;border-radius:17px;padding:21px;box-sizing:border-box}
+.ys-center-metric small{display:block;color:#768ba3;font-size:12px}
+.ys-center-metric strong{display:block;color:#17385f;font-size:30px;line-height:1.5}
+.ys-center-metric em{font-size:11px;font-style:normal;color:#8497ab}
+.ys-center-card h2{margin:0 0 8px;color:#1c3454;font-size:18px}
+.ys-center-card p{margin:0 0 17px;color:#6a7f96;font-size:13px;line-height:1.7}
+.ys-center-shortcuts{display:flex;gap:10px;flex-wrap:wrap}
+.ys-center-shortcut{
+  border:1px solid #d8e8fa;border-radius:11px;background:#f4f9ff;
+  color:#176bc6;padding:11px 14px;font:inherit;font-size:12px;font-weight:800;cursor:pointer
+}
+.ys-center-shortcut:hover{background:#e9f3ff}
+.ys-center-shortcut:focus-visible{outline:2px solid #216bd0;outline-offset:2px}
+.ys-center-filterbar{display:flex;align-items:center;gap:10px;padding:13px 16px;border:1px solid #dfe9f6;border-radius:13px;background:#fff;margin:0 0 16px}
+.ys-center-filterbar input{width:100%;min-width:0;border:0!important;box-shadow:none!important;background:transparent!important;color:#193653!important;padding:5px!important;font-size:13px}
+.ys-center-muted{color:#7589a3;font-size:12px}
+body.ys-admin-fullpage #v6AdminPanel>[data-ys-center-page]:not(.ys-center-summary):not(.ys-center-filterbar){
+  max-width:1100px;
+}
+body.ys-admin-fullpage #v6AdminPanel .v6head,
+body.ys-admin-fullpage #v6AdminPanel .ys-promo-center,
+body.ys-admin-fullpage #v6AdminPanel #v6915AdminBox,
+body.ys-admin-fullpage #v6AdminPanel #v6914AdminBox,
+body.ys-admin-fullpage #v6AdminPanel #v6916Admin,
+body.ys-admin-fullpage #v6AdminPanel #v64Admin,
+body.ys-admin-fullpage #v6AdminPanel #v6918CustomerBox,
+body.ys-admin-fullpage #v6AdminPanel #v6915List,
+body.ys-admin-fullpage #v6AdminPanel #v6List,
+body.ys-admin-fullpage #v6AdminPanel .v6grid,
+body.ys-admin-fullpage #v6AdminPanel .v6actions,
+body.ys-admin-fullpage #v6AdminPanel .v6msg{
+  border-color:#e0e8f4!important;
+}
+body.ys-admin-fullpage #v6AdminPanel .ys-promo-center,
+body.ys-admin-fullpage #v6AdminPanel #v6915AdminBox,
+body.ys-admin-fullpage #v6AdminPanel #v6914AdminBox,
+body.ys-admin-fullpage #v6AdminPanel #v6916Admin,
+body.ys-admin-fullpage #v6AdminPanel .v6item,
+body.ys-admin-fullpage #v6AdminPanel .v6915-row,
+body.ys-admin-fullpage #v6AdminPanel .v6914-row,
+body.ys-admin-fullpage #v6AdminPanel .v6916-row{
+  background:#fff!important;color:#243955!important;border-color:#e0e8f4!important;
+  box-shadow:none!important
+}
+body.ys-admin-fullpage #v6AdminPanel h2,
+body.ys-admin-fullpage #v6AdminPanel h3{color:#203650!important}
+body.ys-admin-fullpage #v6AdminPanel p,
+body.ys-admin-fullpage #v6AdminPanel small,
+body.ys-admin-fullpage #v6AdminPanel .note,
+body.ys-admin-fullpage #v6AdminPanel .v6916-note{color:#657c99!important}
+body.ys-admin-fullpage #v6AdminPanel input:not([type=checkbox]):not([type=radio]):not([type=hidden]),
+body.ys-admin-fullpage #v6AdminPanel textarea,
+body.ys-admin-fullpage #v6AdminPanel select{
+  background:#fff!important;color:#1c3552!important;border:1px solid #d7e3f0!important;
+  border-radius:10px!important;box-sizing:border-box;min-width:0
+}
+body.ys-admin-fullpage #v6AdminPanel input::placeholder,
+body.ys-admin-fullpage #v6AdminPanel textarea::placeholder{color:#8d9db0!important}
+body.ys-admin-fullpage #v6AdminPanel button:not(.ys-center-tab):not(.ys-center-shortcut){
+  border-radius:10px;color:#225caa;border:1px solid #d8e6f5;background:#f5f9ff;
+  font-weight:750
+}
+body.ys-admin-fullpage #v6AdminPanel button.v6primary,
+body.ys-admin-fullpage #v6AdminPanel button.primary{
+  color:white!important;background:#176bd1!important;border-color:#176bd1!important
+}
+body.ys-admin-fullpage #v6AdminPanel button.v6danger,
+body.ys-admin-fullpage #v6AdminPanel button.danger{
+  color:#b33449!important;background:#fff3f4!important;border-color:#f2cdd2!important
+}
+body.ys-admin-fullpage #v6AdminPanel .v6head{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px}
+body.ys-admin-fullpage #v6AdminPanel .v6head button{display:none}
+body.ys-admin-fullpage #v6AdminPanel .v6grid{
+  padding:17px;border:1px solid #e0e8f4;background:#fff;border-radius:14px;
+  gap:12px;margin-bottom:12px
+}
+body.ys-admin-fullpage #v6AdminPanel .v6actions{padding:11px 15px;background:#fff;border-radius:12px}
+body.ys-admin-fullpage #v6AdminPanel .v6list{display:grid;gap:8px;margin-top:13px}
+body.ys-admin-fullpage #v6AdminPanel .v6item{border:1px solid #e3ebf5;border-radius:11px;padding:13px}
+body.ys-admin-fullpage #v6AdminPanel a[data-ys-center-page]{
+  display:block;padding:19px 22px;margin:0 0 12px;border-radius:14px!important;
+  text-align:left!important;background:#fff!important;color:#235b9d!important;
+  border:1px solid #dfe8f4;font-size:14px
+}
+body.ys-admin-fullpage #v6AdminPanel .ys-promo-fold{border-color:#e0e8f4}
+body.ys-admin-fullpage #v6AdminPanel .ys-promo-fold>summary{background:#f5f9ff;color:#1b3b62}
+body.ys-admin-fullpage #v6AdminPanel .v6915-admin-grid input,
+body.ys-admin-fullpage #v6AdminPanel .v6915-admin-grid textarea,
+body.ys-admin-fullpage #v6AdminPanel .v6915-admin-grid select{color:#1d3653!important;background:#fff!important}
+body.ys-admin-fullpage #v6AdminPanel .ys-center-hidden{display:none!important}
+@media(max-width:880px){
+  body.ys-admin-fullpage #v6AdminPanel{padding:25px 18px 42px 90px!important}
+  body.ys-admin-fullpage #v6AdminPanel .ys-center-side{width:72px;padding:16px 8px}
+  .ys-center-brand{padding:0 3px 16px;text-align:center}
+  .ys-center-brand strong{font-size:11px}
+  .ys-center-brand small,.ys-center-tab-label,.ys-center-aside-foot{display:none}
+  .ys-center-tab{justify-content:center;padding:13px 7px}
+  .ys-center-tab-icon{font-size:21px;width:auto}
+}
+@media(max-width:590px){
+  body.ys-admin-fullpage #v6AdminPanel{padding:25px 13px 88px!important}
+  body.ys-admin-fullpage #v6AdminPanel .ys-center-side{
+    width:100%;height:64px;top:auto;bottom:0;left:0;
+    padding:6px 8px;border-right:0;border-top:1px solid #e1e9f5;
+    overflow-x:auto;overflow-y:hidden;flex-direction:row;align-items:center
+  }
+  .ys-center-brand,.ys-center-aside-foot{display:none}
+  .ys-center-nav{display:flex;flex:1;gap:3px;width:max-content}
+  .ys-center-tab{display:flex;flex-direction:column;gap:1px;padding:6px 10px;min-width:65px;font-size:10px}
+  .ys-center-tab-icon{font-size:17px}
+  .ys-center-tab-label{display:block;font-size:10px;white-space:nowrap}
+  #ysCenterHeading{align-items:start}
+  #ysCenterHeading .ys-center-return{display:none}
+  .ys-center-metrics{grid-template-columns:1fr}
+  #ysCenterHeading h1{font-size:23px}
+  body.ys-admin-fullpage #v6AdminPanel .v6grid{grid-template-columns:1fr!important}
+  body.ys-admin-fullpage #v6AdminPanel .ys-promo-center{padding:14px}
+}
+
+.ys-center-logout {
+  display:block;width:100%;margin-top:22px;padding:12px;border-radius:10px;
+  border:1px solid #e2eaf4;background:#fff;color:#ad3954;
+  font:inherit;font-size:12px;font-weight:750;cursor:pointer;text-align:center
+}
+.ys-center-logout:hover{background:#fff4f5;border-color:#f0cfd5}
+.ys-center-logout:focus-visible{outline:2px solid #e24b5a;outline-offset:2px}
+@media(max-width:590px){
+  .ys-center-logout{width:auto;min-width:65px;margin:0 0 0 4px;padding:7px;color:#af4355;font-size:10px}
+}
