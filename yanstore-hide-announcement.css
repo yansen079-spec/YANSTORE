@@ -1,0 +1,7 @@
+/* YANSTORE 2.0: hide the old purple public announcement strip.
+   Announcement data/admin controls stay intact. The separate
+   "Tersedia sekarang" product marquee remains visible. */
+#v6914AnnouncementBar,
+#v6914AnnouncementBar.show {
+  display:none !important;
+}
