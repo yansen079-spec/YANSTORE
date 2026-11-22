@@ -4354,20 +4354,83 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
 
 <!-- YANSTORE V6.9.21 - Kenapa Pilih YANSTORE -->
 <style id="v6921WhyStyle">
-#yanstore-why{padding:42px 18px 22px;position:relative}
-#yanstore-why .v6921-wrap{max-width:1180px;margin:0 auto}
-#yanstore-why .v6921-head{text-align:center;margin-bottom:20px}
-#yanstore-why .v6921-kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid rgba(168,85,247,.34);background:rgba(168,85,247,.08);color:#d8b4fe;font-size:12px;font-weight:900;letter-spacing:.05em}
-#yanstore-why h2{margin:12px 0 7px;font-size:clamp(24px,4vw,34px);letter-spacing:-.03em}
-#yanstore-why .v6921-sub{max-width:650px;margin:0 auto;color:var(--muted);font-size:14px;line-height:1.65}
-#yanstore-why .v6921-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-#yanstore-why .v6921-card{padding:20px 17px;border:1px solid rgba(255,255,255,.09);border-radius:18px;background:linear-gradient(180deg,rgba(17,20,32,.96),rgba(10,12,20,.94));box-shadow:0 12px 28px rgba(0,0,0,.18);min-height:155px}
-#yanstore-why .v6921-icon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;margin-bottom:14px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.24);font-size:22px}
-#yanstore-why h3{margin:0 0 7px;font-size:16px}
-#yanstore-why p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
-#yanstore-why .v6921-note{margin-top:15px;text-align:center;color:#7f899f;font-size:11px}
-@media(max-width:900px){#yanstore-why .v6921-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){#yanstore-why{padding:34px 14px 18px}#yanstore-why .v6921-grid{grid-template-columns:1fr;gap:10px}#yanstore-why .v6921-card{min-height:auto;padding:17px}#yanstore-why .v6921-head{margin-bottom:16px}}
+/* YANSTORE: harmonized with the minimal blue-white catalog and blog style. */
+#yanstore-why{
+  position:relative;
+  width:min(1180px,calc(100% - 40px));
+  margin:26px auto 30px;
+  padding:28px 26px;
+  box-sizing:border-box;
+  border:1px solid #dce8f7;
+  border-radius:21px;
+  background:#fff;
+  color:#182a49;
+}
+#yanstore-why .v6921-wrap{max-width:100%;margin:0 auto}
+#yanstore-why .v6921-head{text-align:left;margin:0 0 20px}
+#yanstore-why .v6921-kicker{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 10px;border:1px solid #dbeafe;border-radius:999px;
+  background:#f3f8ff;color:#2770c6;
+  font-size:10px;font-weight:800;letter-spacing:.07em;
+}
+#yanstore-why .v6921-head h2{
+  display:block !important;
+  margin:10px 0 6px !important;
+  font-size:clamp(21px,2.25vw,27px) !important;
+  line-height:1.3;
+  letter-spacing:-.025em;
+  color:#182a49 !important;
+  opacity:1 !important;
+  visibility:visible !important;
+}
+#yanstore-why .v6921-sub{
+  max-width:670px;margin:0 !important;
+  color:#617690 !important;font-size:13px;line-height:1.65;
+}
+#yanstore-why .v6921-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
+}
+#yanstore-why .v6921-card{
+  min-width:0;min-height:168px;box-sizing:border-box;
+  padding:18px 16px;
+  border:1px solid #e0eaf6;
+  border-radius:16px;
+  background:#fff !important;
+  box-shadow:0 4px 16px rgba(26,64,112,.035);
+  color:#1c2f4c;
+}
+#yanstore-why .v6921-icon{
+  display:grid;place-items:center;
+  width:38px;height:38px;
+  margin-bottom:12px;
+  border:0;border-radius:12px;
+  background:#edf5ff;color:#206dbe;font-size:19px;
+}
+#yanstore-why .v6921-card:nth-child(2) .v6921-icon{background:#e8f8f4;color:#148e78}
+#yanstore-why .v6921-card:nth-child(3) .v6921-icon{background:#fff5e8;color:#c28128}
+#yanstore-why .v6921-card:nth-child(4) .v6921-icon{background:#f2efff;color:#7860c4}
+#yanstore-why .v6921-card h3{
+  margin:0 0 7px;
+  font-size:14px;font-weight:800;line-height:1.45;
+  color:#1c2f4c !important;
+}
+#yanstore-why .v6921-card p{
+  margin:0;
+  color:#64778f !important;
+  font-size:12px;line-height:1.7;
+}
+#yanstore-why .v6921-note{display:none}
+@media(max-width:950px){
+  #yanstore-why .v6921-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #yanstore-why .v6921-card{min-height:150px}
+}
+@media(max-width:600px){
+  #yanstore-why{width:calc(100% - 24px);padding:20px 17px;border-radius:17px}
+  #yanstore-why .v6921-grid{grid-template-columns:1fr;gap:10px}
+  #yanstore-why .v6921-card{min-height:0;padding:15px}
+  #yanstore-why .v6921-head{margin-bottom:17px}
+}
 </style>
 <script id="v6921WhyScript">
 (function(){
@@ -4378,9 +4441,9 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boo
     sec.innerHTML=`
       <div class="v6921-wrap">
         <div class="v6921-head">
-          <div class="v6921-kicker">✨ KENAPA PILIH YANSTORE?</div>
+          <div class="v6921-kicker">KENAPA YANSTORE?</div>
           <h2>Order Lebih Nyaman, Nggak Ribet</h2>
-          <p class="v6921-sub">Kami berusaha bikin proses order aplikasi premium tetap sederhana, jelas, dan mudah dibantu dari awal sampai selesai.</p>
+          <p class="v6921-sub">Pilih paket dengan mudah, cek harga di katalog, dan hubungi admin saat butuh bantuan.</p>
         </div>
         <div class="v6921-grid">
           <article class="v6921-card"><div class="v6921-icon">⚡</div><h3>Proses Cepat</h3><p>Pilih produk dan paket yang kamu butuhkan, lalu lanjut chat Admin untuk proses pesanan.</p></article>
