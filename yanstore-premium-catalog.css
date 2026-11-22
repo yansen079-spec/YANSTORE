@@ -1,0 +1,197 @@
+/* YANSTORE 2.0 — Premium catalog layout (visual layer only)
+   All existing product detail, variant, stock, cart, QRIS and share handlers remain intact. */
+#produk #productGrid {
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:20px 16px !important;
+  align-items:stretch;
+}
+#produk #productGrid > .ys-market-heading {
+  margin:16px 0 0 !important;
+  padding:0 1px 10px;
+  border-bottom:1px solid #e3ebf5;
+}
+#produk #productGrid > .ys-market-heading h3 {
+  font-size:19px !important;
+  font-weight:850 !important;
+  color:#172744 !important;
+}
+#produk #productGrid > article.ys-market-card {
+  min-height:495px !important;
+  padding:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden;
+  background:#fff !important;
+  border:1px solid #dae5f1 !important;
+  border-radius:18px !important;
+  box-shadow:0 9px 25px rgba(25,60,110,.055) !important;
+  color:#172744 !important;
+  transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+#produk #productGrid > article.ys-market-card:hover {
+  border-color:#a9cbf4 !important;
+  transform:translateY(-3px);
+  box-shadow:0 17px 38px rgba(24,64,118,.12) !important;
+}
+#produk #productGrid .ys-market-card .ys-market-thumb {
+  position:relative;
+  aspect-ratio:16 / 9 !important;
+  width:100%;
+  min-height:0 !important;
+  flex:none;
+  background:linear-gradient(125deg,#122747,#2459a0 55%,#35c4d8) !important;
+  border-radius:0;
+}
+#produk #productGrid .ys-market-card[data-ys-brand="capcut"] .ys-market-thumb {background:linear-gradient(120deg,#250d23,#7d1935 55%,#111a36) !important;}
+#produk #productGrid .ys-market-card[data-ys-brand="canva"] .ys-market-thumb {background:linear-gradient(115deg,#00c5c4,#3375e6 50%,#841add) !important;}
+#produk #productGrid .ys-market-card[data-ys-brand="netflix"] .ys-market-thumb {background:linear-gradient(115deg,#470b1a,#0a1534 65%,#c5102f) !important;}
+#produk #productGrid .ys-market-card[data-ys-brand="chatgpt"] .ys-market-thumb {background:linear-gradient(115deg,#043f39,#147d68 65%,#0e2239) !important;}
+#produk #productGrid .ys-market-card .ys-market-thumb img:not(.ys-logo-placeholder) {
+  width:100% !important;height:100% !important;object-fit:cover !important;
+  padding:0 !important;border:0 !important;max-width:none !important;
+}
+#produk #productGrid .ys-market-card .ys-market-thumb img.ys-logo-placeholder {
+  width:42% !important;
+  height:52% !important;
+  max-width:155px !important;
+  object-fit:contain !important;
+  background:rgba(255,255,255,.94) !important;
+  border-radius:16px !important;
+  padding:12px !important;
+  box-shadow:0 10px 22px rgba(0,0,0,.12);
+}
+#produk #productGrid .ys-market-card .ys-market-thumb .ys-initial {
+  color:#fff !important;font-size:32px !important;
+  text-shadow:0 2px 15px #0003;
+}
+#produk #productGrid .ys-market-card .ys-market-tag {
+  position:absolute;top:10px;left:10px;
+  border:1px solid #cdebdc !important;
+  border-radius:999px !important;
+  background:#e9f9f0 !important;
+  color:#08754a !important;
+  padding:5px 9px !important;
+  font-size:10px !important;
+  font-weight:900;
+  z-index:2;
+}
+#produk #productGrid .ys-market-card[data-ys-stock="HABIS"] .ys-market-tag {
+  left:auto;right:10px;background:#fff !important;color:#243149 !important;border-color:#d8e2ef !important;
+}
+#produk #productGrid .ys-market-card[data-ys-stock="HABIS"] .ys-market-thumb {
+  filter:grayscale(.85);
+}
+#produk #productGrid .ys-market-card[data-ys-stock="RESTOCK"] .ys-market-tag {
+  color:#9b6307 !important;background:#fff5d8 !important;border-color:#f6da91 !important;
+}
+#produk #productGrid .ys-market-card .ys-market-body {
+  padding:15px !important;
+  gap:9px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1;
+  align-content:initial !important;
+}
+#produk #productGrid .ys-market-card .ys-market-body > h3 {
+  font-size:14px !important;
+  font-weight:850 !important;
+  line-height:1.4 !important;
+  min-height:40px !important;
+  max-height:60px !important;
+  margin:0 !important;
+  color:#14213c !important;
+  overflow:hidden;
+}
+#produk #productGrid .ys-market-card .ys-catalog-desc {
+  font-size:12px;
+  line-height:1.65;
+  color:#64748b;
+  min-height:59px;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+#produk #productGrid .ys-market-card .ys-market-detail {
+  order:3;
+  display:inline-flex !important;align-items:center;justify-content:flex-start;
+  width:max-content !important;max-width:100%;
+  height:auto !important;min-height:28px !important;
+  padding:2px 0 !important;margin:0 0 2px !important;
+  border:0 !important;background:transparent !important;color:#1769d9 !important;
+  font-size:12px !important;font-weight:800 !important;
+  box-shadow:none !important;text-align:left;
+}
+#produk #productGrid .ys-market-card .ys-market-detail:hover {text-decoration:underline;}
+#produk #productGrid .ys-market-card .ys-market-detail::after {content:" →";}
+#produk #productGrid .ys-market-card .ys-market-price {
+  order:4;
+  margin-top:auto;
+  color:#15243d !important;
+  font-size:21px !important;
+  font-weight:900 !important;
+  line-height:1.25 !important;
+  white-space:normal !important;overflow-wrap:anywhere;
+}
+#produk #productGrid .ys-market-card .ys-market-meta {
+  order:5;
+  color:#667994 !important;
+  font-size:11px !important;
+  line-height:1.5;
+  min-height:17px !important;
+  white-space:normal !important;overflow:visible !important;
+}
+#produk #productGrid .ys-market-card .ys-catalog-whatsapp {
+  order:6;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;min-height:44px;
+  padding:10px 12px;
+  background:#078b43;color:#fff;
+  border:1px solid #078b43;border-radius:999px;
+  text-decoration:none;font-size:13px;font-weight:850;
+  box-shadow:0 3px 10px rgba(7,139,67,.12);
+}
+#produk #productGrid .ys-market-card .ys-catalog-whatsapp:hover,
+#produk #productGrid .ys-market-card .ys-catalog-whatsapp:focus-visible {
+  background:#06733a;border-color:#06733a;color:#fff;outline-offset:2px;
+}
+#produk #productGrid .ys-market-card .ys-catalog-whatsapp[aria-disabled="true"] {
+  pointer-events:none;background:#dce4ee;color:#66758c;border-color:#dce4ee;box-shadow:none;
+}
+#produk #productGrid .ys-market-card .ys-catalog-tools {
+  order:7;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+  margin-top:1px;
+}
+#produk #productGrid .ys-market-card .ys-catalog-tools > button {
+  width:100% !important;height:auto !important;
+  min-height:37px !important;margin:0 !important;padding:7px 5px !important;
+  border-radius:9px !important;font-size:10px !important;
+  font-weight:750 !important;
+}
+#produk #productGrid .ys-market-card .ys-market-qr {
+  background:#edf7ff !important;color:#1266a8 !important;border:1px solid #cce3f7 !important;
+}
+#produk #productGrid .ys-market-card .ys-market-share {
+  background:#f3f5fb !important;color:#475879 !important;border:1px solid #dce4f2 !important;
+}
+#produk #productGrid .ys-market-card button:disabled {opacity:.5;cursor:not-allowed;}
+@media(max-width:1050px) {
+  #produk #productGrid {grid-template-columns:repeat(3,minmax(0,1fr)) !important;}
+}
+@media(max-width:760px) {
+  #produk #productGrid {grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:12px !important;}
+  #produk #productGrid .ys-market-card .ys-market-body {padding:11px !important;gap:7px !important;}
+  #produk #productGrid .ys-market-card .ys-market-price {font-size:18px !important;}
+  #produk #productGrid .ys-market-card .ys-catalog-desc {min-height:56px;font-size:11px;}
+  #produk #productGrid .ys-market-card .ys-catalog-tools {grid-template-columns:1fr;}
+}
+@media(max-width:410px) {
+  #produk #productGrid {grid-template-columns:1fr !important;}
+  #produk #productGrid .ys-market-card .ys-catalog-tools {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(prefers-reduced-motion:reduce) {
+  #produk #productGrid > article.ys-market-card {transition:none !important;}
+  #produk #productGrid > article.ys-market-card:hover {transform:none;}
+}
