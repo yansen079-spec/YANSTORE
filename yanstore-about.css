@@ -1,0 +1,42 @@
+/* Minimal YANSTORE profile; does not alter business logic. */
+#yanstore-tentang.ys-about {
+  width:min(1180px,calc(100% - 40px));max-width:1180px;
+  margin:24px auto 32px;padding:26px 30px;box-sizing:border-box;
+  border:1px solid #deebf8;border-radius:20px;background:#fff;
+  display:grid;grid-template-columns:minmax(0,1.6fr) minmax(190px,.7fr);
+  gap:30px;align-items:center;scroll-margin-top:85px;
+}
+#yanstore-tentang .ys-about-eyebrow {font-size:10px;font-weight:800;letter-spacing:.11em;color:#226fd0;}
+#yanstore-tentang h2 {margin:7px 0 12px;color:#182846;font-size:clamp(22px,2.3vw,28px);line-height:1.3;}
+#yanstore-tentang .ys-about-content>p {margin:0;color:#64768f;font-size:13px;line-height:1.85;max-width:710px;}
+#yanstore-tentang .ys-about-features {display:flex;gap:9px;flex-wrap:wrap;margin-top:17px;}
+#yanstore-tentang .ys-about-features span {border:1px solid #e1ebf7;border-radius:999px;background:#f8fbff;color:#34567f;font-size:11px;font-weight:650;padding:7px 10px;}
+#yanstore-tentang .ys-about-actions {display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:20px;}
+#yanstore-tentang .ys-about-actions a {border-radius:11px;padding:11px 14px;font-size:12px;font-weight:750;text-decoration:none;display:inline-flex;gap:9px;align-items:center;}
+#yanstore-tentang .ys-about-primary {background:#176bd5;color:#fff;}
+#yanstore-tentang .ys-about-primary:hover {background:#1056b2;}
+#yanstore-tentang .ys-about-secondary {background:#fff;color:#225eab;border:1px solid #d6e5f6;}
+#yanstore-tentang .ys-about-secondary:hover {background:#f4f9ff;}
+#yanstore-tentang .ys-about-actions a:focus-visible {outline:2px solid #176bd5;outline-offset:3px;}
+#yanstore-tentang .ys-about-brand {
+  min-height:192px;padding:18px;border-radius:17px;
+  background:linear-gradient(145deg,#e8f3ff,#f6faff 58%,#f1ecff);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;text-align:center;color:#173962;
+}
+#yanstore-tentang .ys-about-logo {
+  width:58px;height:58px;display:grid;place-items:center;
+  border-radius:17px;color:#fff;font-weight:900;font-size:23px;
+  background:linear-gradient(145deg,#136bd1,#35abd8);
+  box-shadow:0 8px 22px rgba(39,111,207,.18);
+}
+#yanstore-tentang .ys-about-brand strong {font-size:23px;letter-spacing:.035em;}
+#yanstore-tentang .ys-about-brand strong span {color:#1e76d6;}
+#yanstore-tentang .ys-about-brand small {font-size:11px;color:#6b7f9d;}
+@media(max-width:720px) {
+  #yanstore-tentang.ys-about {grid-template-columns:1fr;padding:20px;gap:18px;}
+  #yanstore-tentang .ys-about-brand {min-height:130px;}
+}
+@media(max-width:460px) {
+  #yanstore-tentang.ys-about {width:calc(100% - 24px);padding:17px;border-radius:16px;}
+}
