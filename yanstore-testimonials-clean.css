@@ -1,0 +1,148 @@
+/* YANSTORE light testimonial redesign — presentation only.
+   Database moderation, public rendering, rating, submission, and admin controls stay unchanged. */
+#yanstore-testimonials {
+  padding:24px 0 30px;
+  color:#182a49;
+  scroll-margin-top:90px;
+}
+#yanstore-testimonials .v6915-wrap{
+  width:min(1180px,calc(100% - 40px));
+  padding:25px;
+  box-sizing:border-box;
+  background:#fff;
+  border:1px solid #dfe9f6;
+  border-radius:21px;
+}
+#yanstore-testimonials .v6915-head{margin-bottom:20px;align-items:start;}
+#yanstore-testimonials .v6915-head h2{
+  display:block!important;
+  margin:0!important;
+  font-size:clamp(21px,2.2vw,27px)!important;
+  line-height:1.3;
+  letter-spacing:-.025em;
+  color:#172a48!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#yanstore-testimonials .v6915-head p {
+  color:#657891!important;font-size:13px;line-height:1.6;margin:6px 0 0;
+}
+#yanstore-testimonials .v6915-viewport {
+  border-radius:16px;
+  overflow:hidden;
+}
+#yanstore-testimonials .v6915-track{
+  gap:12px;
+  animation-duration:42s;
+}
+#yanstore-testimonials .v6915-viewport:focus-within .v6915-track {
+  animation-play-state:paused;
+}
+#yanstore-testimonials .v6915-card {
+  box-sizing:border-box;
+  display:flex;flex-direction:column;
+  width:315px;flex-basis:315px;
+  min-height:198px;
+  padding:17px 18px;
+  border:1px solid #e0e9f5!important;
+  border-radius:16px;
+  background:#fff!important;
+  color:#253b59;
+  box-shadow:0 4px 15px rgba(26,68,121,.04);
+}
+#yanstore-testimonials .v6915-stars{font-size:15px;color:#f4af24;margin-bottom:10px;letter-spacing:2px;}
+#yanstore-testimonials .v6915-msg{
+  min-height:0;flex:1;
+  color:#435672!important;
+  font-size:13px;line-height:1.65;
+  overflow-wrap:anywhere;
+}
+#yanstore-testimonials .v6915-person{margin-top:16px;}
+#yanstore-testimonials .v6915-avatar{
+  width:35px;height:35px;
+  background:#eaf3ff;color:#1768c8;
+  font-size:13px;border:1px solid #d6e8fa;
+}
+#yanstore-testimonials .v6915-person strong{color:#1a2c49;font-size:13px;}
+#yanstore-testimonials .v6915-person small{color:#7386a0;font-size:11px;}
+#yanstore-testimonials .v6915-empty{
+  background:#f8fbff;color:#64778e;
+  border:1px dashed #cbd9ec;
+}
+#yanstore-testimonials #v6918CustomerBox{
+  margin-top:20px;padding:22px;
+  border:1px solid #e0e9f5!important;
+  border-radius:17px;
+  background:#f8fbff!important;
+}
+#yanstore-testimonials #v6918CustomerBox h3 {
+  display:block!important;
+  margin:0 0 5px;
+  color:#1c2f4b!important;
+  font-size:16px;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#yanstore-testimonials .v6918-note {
+  margin-bottom:15px;
+  color:#697c95!important;
+  font-size:12px;line-height:1.65;
+}
+#yanstore-testimonials .v6918-form{
+  grid-template-columns:minmax(0,1fr) 210px;
+  gap:10px;
+}
+#yanstore-testimonials .v6918-form input,
+#yanstore-testimonials .v6918-form textarea{
+  color:#233653!important;
+  background:#fff!important;
+  border:1px solid #d6e2f1!important;
+  border-radius:11px;
+  padding:12px 13px;
+  font:inherit;font-size:13px;
+  outline:none;
+}
+#yanstore-testimonials .v6918-form input::placeholder,
+#yanstore-testimonials .v6918-form textarea::placeholder{color:#8292a6;opacity:1;}
+#yanstore-testimonials .v6918-form input:focus,
+#yanstore-testimonials .v6918-form textarea:focus{
+  border-color:#559cf0!important;
+  box-shadow:0 0 0 3px rgba(45,122,222,.12);
+}
+#yanstore-testimonials .v6918-form textarea{min-height:105px;}
+#yanstore-testimonials .v6918-stars{
+  background:#fff!important;
+  border:1px solid #d6e2f1!important;
+  color:#233653;
+  padding:8px 10px;
+  gap:3px;
+}
+#yanstore-testimonials .v6918-star{color:#b7c5d7!important;font-size:23px!important;}
+#yanstore-testimonials .v6918-star.on{color:#f3b32d!important;}
+#yanstore-testimonials .v6918-star:focus-visible{outline:2px solid #236cdb;outline-offset:1px;border-radius:4px;}
+#yanstore-testimonials #v6918RatingText{color:#52667f;font-weight:750;white-space:nowrap;}
+#yanstore-testimonials .v6918-submit{
+  margin-top:13px;
+  padding:12px 18px;
+  background:#176bd5!important;
+  color:white;
+  border-radius:11px;
+  box-shadow:none;
+  font-size:12px;letter-spacing:.025em;
+}
+#yanstore-testimonials .v6918-submit:hover:not(:disabled){background:#1159b4!important;}
+#yanstore-testimonials .v6918-submit:focus-visible{outline:2px solid #176bd5;outline-offset:3px;}
+#yanstore-testimonials #v6918CustomerMsg{color:#61758d;font-size:12px;}
+#yanstore-testimonials #v6918CustomerMsg.v6918-ok{color:#15803d!important;}
+#yanstore-testimonials #v6918CustomerMsg.v6918-err{color:#c93636!important;}
+@media(max-width:700px){
+  #yanstore-testimonials .v6915-wrap{width:calc(100% - 24px);padding:17px;border-radius:17px;}
+  #yanstore-testimonials .v6915-card{width:274px;flex-basis:274px;min-height:185px;padding:15px;}
+  #yanstore-testimonials #v6918CustomerBox{padding:16px;margin-top:17px;}
+  #yanstore-testimonials .v6918-form{grid-template-columns:1fr;}
+  #yanstore-testimonials .v6918-stars{justify-content:flex-start;}
+}
+@media(prefers-reduced-motion:reduce){
+  #yanstore-testimonials .v6915-track{animation:none!important;will-change:auto;}
+  #yanstore-testimonials .v6915-viewport{overflow-x:auto;scrollbar-width:thin;}
+}
