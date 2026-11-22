@@ -29,7 +29,7 @@
     const durations=new Set();
     for(const raw of sources){
       const t=String(raw||'');
-      const re=/\\bgaransi\\s*(?:[:=–-]\\s*)?(\\d{1,3})\\s*(hari|bulan|tahun)\\b|\\b(\\d{1,3})\\s*(hari|bulan|tahun)\\s*garansi\\b/gi;
+      const re=/\bgaransi\s*(?:[:=–-]\s*)?(\d{1,3})\s*(hari|bulan|tahun)\b|\b(\d{1,3})\s*(hari|bulan|tahun)\s*garansi\b/gi;
       let match;
       while((match=re.exec(t))){
         const n=Number(match[1]||match[3]),unit=(match[2]||match[4]||'').toLowerCase();
@@ -38,7 +38,7 @@
     }
     if(durations.size===1)return 'Garansi '+[...durations][0];
     if(durations.size>1)return 'Garansi sesuai pilihan paket';
-    if(sources.some(v=>/\\bgaransi\\b/i.test(String(v||''))))return 'Garansi sesuai ketentuan';
+    if(sources.some(v=>/\bgaransi\b/i.test(String(v||''))))return 'Garansi sesuai ketentuan';
     return 'Info garansi: tanya admin';
   }
   function decorate(){
