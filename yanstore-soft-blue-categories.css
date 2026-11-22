@@ -1,0 +1,50 @@
+/* YANSTORE 2.0 — Soft Blue + White Premium digital service tiles.
+   Presentation-only override. Existing service actions, data, and admin stay untouched. */
+#produk #ysDigitalServices .ys-digital-heading h3 {
+  color:#1b2e4c !important;
+  text-shadow:none !important;
+}
+#produk #ysDigitalServices .ys-digital-heading p {
+  color:#5d6f8a !important;
+}
+#produk #ysDigitalServices .ys-digital-tiles button {
+  background:#eaf3ff !important;
+  color:#1b2e4c !important;
+  border:1px solid #d7e6f8 !important;
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(47,111,228,.06) !important;
+  transition:background-color .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+#produk #ysDigitalServices .ys-digital-tiles button:nth-child(even) {
+  background:#fff !important;
+}
+#produk #ysDigitalServices .ys-digital-tiles button:hover,
+#produk #ysDigitalServices .ys-digital-tiles button:focus-visible {
+  background:#dceeff !important;
+  color:#1b2e4c !important;
+  border-color:#9dc6ff !important;
+  box-shadow:0 12px 24px rgba(47,111,228,.13) !important;
+  transform:translateY(-3px);
+  outline:2px solid #8eb8ff;
+  outline-offset:2px;
+}
+#produk #ysDigitalServices .ys-digital-tiles button[aria-selected="true"],
+#produk #ysDigitalServices .ys-digital-tiles button[aria-pressed="true"],
+#produk #ysDigitalServices .ys-digital-tiles button.active {
+  background:#2f6fe4 !important;
+  color:#fff !important;
+  border-color:#8eb8ff !important;
+  box-shadow:0 0 0 4px rgba(47,111,228,.12) !important;
+}
+#produk #ysDigitalServices .ys-digital-tiles button span {
+  filter:none !important;
+}
+@media(prefers-reduced-motion:reduce) {
+  #produk #ysDigitalServices .ys-digital-tiles button {
+    transition:none !important;
+  }
+  #produk #ysDigitalServices .ys-digital-tiles button:hover,
+  #produk #ysDigitalServices .ys-digital-tiles button:focus-visible {
+    transform:none !important;
+  }
+}
