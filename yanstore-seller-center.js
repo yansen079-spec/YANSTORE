@@ -22,7 +22,7 @@
     catch{return false;}
   }
   function sectionFor(el){
-    if(el.id==='ysCenterHeading'||el.id==='ysCenterSummary'||el.classList.contains('ys-center-side')||el.id==='ysCenterStockSearch')return 'shell';
+    if(el.id==='ysCenterHeading'||el.id==='ysCenterSummary'||el.classList.contains('ys-center-side')||el.id==='ysCenterStockSearch'||el.id==='ysCenterProductSearch')return 'shell';
     if(el.matches('input[type=hidden]'))return 'products';
     const id=el.id||'',classes=String(el.className||'');
     if(id==='ysPromoCenter'||classes.includes('ys-promo-center'))return 'promos';
@@ -53,6 +53,7 @@
     });
     if(active==='overview')metrics();
     if(active==='stock')filterStock();
+    if(active==='products')filterProducts();
     // Navigation is local to admin; never change the customer-side URL.
     const card=$('v6912AdminCard');if(card)card.scrollTop=0;
   }
@@ -75,6 +76,15 @@
     let match=0;
     nodes.forEach(el=>{const ok=!query||el.textContent.toLocaleLowerCase('id-ID').includes(query);el.classList.toggle('ys-center-hidden',!ok);if(ok)match++});
     const count=$('ysCenterStockResults');if(count)count.textContent=nodes.length?match+' dari '+nodes.length+' baris stok':'Data stok dikelola di modul aktif di bawah.';
+  }
+  function filterProducts(){
+    const input=$('ysCenterProductInput'),list=$('v6List');if(!input||!list)return;
+    const query=input.value.trim().toLocaleLowerCase('id-ID');
+    const items=[...list.querySelectorAll('.v6item')];
+    let visible=0;
+    items.forEach(item=>{const text=(item.textContent||'').toLocaleLowerCase('id-ID');const show=!query||text.includes(query);item.classList.toggle('ys-center-hidden',!show);if(show)visible++});
+    const counter=$('ysCenterProductResults');
+    if(counter)counter.textContent=items.length?visible+' dari '+items.length+' produk':'Belum ada daftar produk.';
   }
   function sync(){
     const root=panel();if(!root||!root.classList.contains('ys-center-ready'))return;
@@ -115,17 +125,20 @@
     const home=document.createElement('section');home.id='ysCenterSummary';home.className='ys-center-summary';home.dataset.ysCenterPage='overview';
     home.innerHTML='<div class="ys-center-metrics"><div class="ys-center-metric"><small>Total Produk</small><strong id="ysCenterProducts">—</strong><em>Produk tercatat</em></div><div class="ys-center-metric"><small>Produk READY</small><strong id="ysCenterReady">—</strong><em>Berdasarkan status produk</em></div><div class="ys-center-metric"><small>Produk HABIS</small><strong id="ysCenterOut">—</strong><em>Butuh pengecekan stok</em></div></div><div class="ys-center-card"><h2>Selamat datang di Seller Center</h2><p>Setiap pekerjaan punya ruang sendiri. Gunakan menu untuk mengelola stok, mengedit produk, atau memantau ulasan tanpa harus melewati formulir yang panjang.</p><div class="ys-center-shortcuts"><button type="button" class="ys-center-shortcut" data-center-go="products">Kelola produk →</button><button type="button" class="ys-center-shortcut" data-center-go="stock">Cek stok →</button><button type="button" class="ys-center-shortcut" data-center-go="reviews">Lihat testimoni →</button></div><p id="ysCenterDataNote" class="ys-center-muted" style="margin:15px 0 0">Memuat data produk...</p></div>';
     home.addEventListener('click',e=>{const b=e.target.closest('[data-center-go]');if(b)view(b.dataset.centerGo)});
+    const pfilter=document.createElement('div');pfilter.id='ysCenterProductSearch';pfilter.className='ys-center-filterbar';pfilter.dataset.ysCenterPage='products';
+    pfilter.innerHTML='<span aria-hidden="true">⌕</span><input id="ysCenterProductInput" type="search" placeholder="Cari nama produk atau harga..." aria-label="Cari produk"><span id="ysCenterProductResults" class="ys-center-muted"></span>';
+    pfilter.querySelector('input').addEventListener('input',filterProducts);
     const filter=document.createElement('div');filter.id='ysCenterStockSearch';filter.className='ys-center-filterbar';filter.dataset.ysCenterPage='stock';
     filter.innerHTML='<span aria-hidden="true">⌕</span><input id="ysCenterStockInput" type="search" placeholder="Cari baris stok..." aria-label="Cari stok"><span id="ysCenterStockResults" class="ys-center-muted"></span>';
     filter.querySelector('input').addEventListener('input',filterStock);
-    root.prepend(filter);root.prepend(home);root.prepend(head);root.prepend(side);
+    root.prepend(filter);root.prepend(pfilter);root.prepend(home);root.prepend(head);root.prepend(side);
     root.classList.add('ys-center-ready');
     const watch=new MutationObserver(records=>{
       if(records.some(rec=>rec.type==='childList'&&rec.target===root))schedule();
       if(records.some(rec=>rec.type==='childList'&&rec.target!==root&&active==='overview'))metrics();
     });
     watch.observe(root,{childList:true,subtree:false});
-    const list=$('v6List');if(list) new MutationObserver(metrics).observe(list,{childList:true});
+    const list=$('v6List');if(list) new MutationObserver(()=>{metrics();filterProducts()}).observe(list,{childList:true});
     sync();
     metrics();
     // Existing admin UI is still used. A failed enhancement simply leaves legacy DOM intact.
