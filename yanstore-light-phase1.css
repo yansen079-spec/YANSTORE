@@ -1,0 +1,38 @@
+/* YANSTORE Light Refresh - Phase 1: navbar only.
+   This file deliberately does not touch product, order, admin, modal,
+   checkout, inventory, promo logic, or the dark hero/catalog theme.
+   Remove the link in index.html to revert this phase instantly. */
+.nav {
+  background: rgba(255, 255, 255, .97) !important;
+  border-bottom: 1px solid #e4eaf2 !important;
+  box-shadow: 0 5px 24px rgba(15, 32, 66, .06) !important;
+  backdrop-filter: blur(16px);
+}
+.nav .brand {
+  color: #14213b !important;
+  text-shadow: none !important;
+  letter-spacing: -1px;
+}
+.nav .brand b { color: #f2ad00 !important; }
+.nav .navlinks,
+.nav .navlinks a { color: #33425d !important; }
+.nav .navlinks a:hover,
+.nav .navlinks a:focus-visible { color: #1769d9 !important; }
+.nav .navbtns .btn.ghost {
+  color: #1f2b45 !important;
+  background: #f4f7fc !important;
+  border: 1px solid #dce5f1 !important;
+}
+.nav .navbtns .btn.ghost:hover { background: #e9f1ff !important; }
+.nav .navbtns .btn.wa {
+  background: #16c66a !important;
+  color: #fff !important;
+}
+.nav a:focus-visible,
+.nav button:focus-visible {
+  outline: 3px solid #1769d9;
+  outline-offset: 3px;
+}
+@media (max-width: 680px) {
+  .nav { background: #fff !important; }
+}
