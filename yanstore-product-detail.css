@@ -166,3 +166,24 @@ h1{font-size:clamp(31px,3.4vw,48px);line-height:1.15;margin:0 0 15px;letter-spac
   .ys-detail-actions .button > span {font-size:12px;}
   .ys-pay-logo img {max-height:23px;}
 }
+
+/* Mobile detail page — controls remain links to existing catalog / WhatsApp. */
+@media(max-width:650px){
+ html{scroll-padding-top:70px}
+ body{overflow-x:clip}
+ .wrap{width:calc(100% - 28px)!important;max-width:100%}
+ .nav-inner{min-height:60px;gap:9px!important}
+ .brand{font-size:20px!important;white-space:nowrap}
+ .nav-cta{min-height:42px;padding:10px 12px!important;font-size:12px!important}
+ .crumbs{margin:16px 0!important;font-size:12px!important}
+ .product-layout{grid-template-columns:minmax(0,1fr)!important;gap:17px!important}
+ .product-layout>*{min-width:0}
+ .image-panel{max-width:100%;aspect-ratio:16/10!important}
+ .price-box{padding:16px!important;border-radius:14px}
+ .actions.ys-detail-actions{grid-template-columns:minmax(0,1fr)!important;gap:9px!important}
+ .actions.ys-detail-actions .button{min-height:47px!important;padding:12px!important}
+ .ys-payment-logos{width:100%!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .ys-pay-logo{min-width:0}
+ .variants{grid-template-columns:minmax(0,1fr)!important}
+ .section{padding-top:20px}
+}
