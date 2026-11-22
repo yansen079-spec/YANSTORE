@@ -425,3 +425,151 @@ body.ys-admin-fullpage #v6AdminPanel #v68LogoManager #v692LogoLockNote{
   }
   body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-actions button{width:100%;}
 }
+
+
+/* Seller Center / Paket: light cards, readable text, compact actions.
+   Only CSS is changed; package CRUD and stock handlers remain intact. */
+body.ys-admin-fullpage #v6AdminPanel #v64AdminVariants {
+  width:100%;max-width:1100px;box-sizing:border-box;
+  margin:0 0 24px!important;padding:22px!important;
+  background:#fff!important;border:1px solid #dee9f6!important;
+  border-radius:17px!important;color:#193454!important;
+}
+body.ys-admin-fullpage #v64AdminVariants>h3{
+  display:block!important;margin:0 0 7px!important;
+  font-size:19px!important;line-height:1.4;color:#18365b!important;
+}
+body.ys-admin-fullpage #v64AdminVariants>.v64-sub{
+  margin:0 0 17px!important;max-width:740px;
+  color:#6b809c!important;font-size:12px;line-height:1.7;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-admin-grid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:11px!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-admin-grid .full{
+  grid-column:1/-1!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-admin-grid :is(input,select,textarea){
+  width:100%;min-width:0;box-sizing:border-box;
+  padding:12px 14px!important;
+  border:1px solid #d8e5f4!important;
+  border-radius:11px!important;
+  background:#fff!important;color:#203b5b!important;
+  font:inherit;font-size:13px!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-admin-grid :is(input,select,textarea):focus{
+  outline:2px solid #64a3ef;outline-offset:1px;
+}
+body.ys-admin-fullpage #v64AdminVariants .v6actions{
+  display:flex;gap:9px;flex-wrap:wrap;margin:15px 0 8px;
+  padding:0!important;background:transparent!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v6actions button{
+  padding:11px 15px!important;font-size:12px!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v6msg{
+  color:#59718d!important;font-size:12px;line-height:1.6;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6924VariantSearchWrap{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  margin:17px 0 9px;padding:12px;
+  border:1px solid #e1e9f4;border-radius:13px;background:#f7faff;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6924VariantSearch{
+  flex:1;min-width:180px;min-height:43px;
+  border:1px solid #d7e5f4!important;
+  border-radius:10px!important;
+  background:#fff!important;color:#203853!important;
+  padding:11px 13px!important;font-size:13px!important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6924VariantSearchClear{
+  min-height:42px;padding:10px 15px!important;
+  border:1px solid #d3e4f8!important;background:#fff!important;color:#1e66b6!important;
+  font-size:12px!important;font-weight:800;
+}
+body.ys-admin-fullpage #v6AdminPanel #v6924VariantSearchInfo{
+  color:#7a8da6!important;font-size:11px!important;line-height:1.5;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varlist{
+  display:grid;gap:9px!important;margin:11px 0 0!important;
+  max-height:640px;overflow-y:auto;overscroll-behavior:contain;
+  padding:1px 5px 3px 1px;scrollbar-width:thin;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varitem{
+  min-width:0;display:flex;align-items:center;justify-content:space-between;
+  gap:14px!important;
+  padding:15px 16px!important;
+  background:#fff!important;color:#223852!important;
+  border:1px solid #dfe8f4!important;border-radius:13px!important;
+  box-shadow:0 2px 12px rgba(19,60,113,.025)!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varmeta{
+  flex:1;min-width:0;overflow-wrap:anywhere;
+  color:#5b7290!important;font-size:12px!important;line-height:1.7;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varmeta b{
+  color:#18365b!important;font-weight:800;font-size:13px;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varmeta small{
+  color:#7c8fa9!important;font-size:11px!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varmeta .v62badge{
+  display:inline-flex;align-items:center;vertical-align:middle;
+  margin-left:6px;padding:4px 9px;
+  border-radius:999px!important;font-size:10px!important;font-weight:800;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varmeta .v62-ready{
+  background:#e9faf0!important;color:#16834a!important;border:1px solid #bfead2!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varmeta .v62-restock{
+  background:#fff7e8!important;color:#a46a19!important;border:1px solid #f2ddb4!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varmeta .v62-habis{
+  background:#fff1f2!important;color:#b5354d!important;border:1px solid #f3cdd3!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varbuttons{
+  display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px!important;
+  flex:0 0 auto;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varbuttons button{
+  min-height:34px;padding:7px 11px!important;
+  border-radius:8px!important;border:1px solid #d5e5f6!important;
+  background:#f5f9ff!important;color:#1e62b4!important;
+  font-size:11px!important;font-weight:800!important;
+  line-height:1.2;box-shadow:none!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varbuttons button:hover{
+  background:#eaf4ff!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varbuttons button[onclick*="HABIS"],
+body.ys-admin-fullpage #v64AdminVariants .v64-varbuttons button[onclick*="Delete"]{
+  border-color:#f0d3d8!important;background:#fff5f6!important;color:#b73c50!important;
+}
+body.ys-admin-fullpage #v64AdminVariants .v64-varbuttons button:focus-visible{
+  outline:2px solid #2373d0;outline-offset:2px;
+}
+@media(max-width:900px){
+  body.ys-admin-fullpage #v64AdminVariants .v64-varitem{
+    align-items:flex-start;flex-direction:column;
+  }
+  body.ys-admin-fullpage #v64AdminVariants .v64-varbuttons{
+    width:100%;justify-content:flex-start;
+  }
+}
+@media(max-width:590px){
+  body.ys-admin-fullpage #v6AdminPanel #v64AdminVariants{
+    padding:16px!important;border-radius:15px!important;
+  }
+  body.ys-admin-fullpage #v64AdminVariants .v64-admin-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  body.ys-admin-fullpage #v64AdminVariants .v64-admin-grid .full{
+    grid-column:auto!important;
+  }
+  body.ys-admin-fullpage #v64AdminVariants .v64-varlist{max-height:540px;}
+  body.ys-admin-fullpage #v64AdminVariants .v64-varitem{padding:12px!important;}
+  body.ys-admin-fullpage #v64AdminVariants .v64-varbuttons button{
+    min-height:36px;
+  }
+}
