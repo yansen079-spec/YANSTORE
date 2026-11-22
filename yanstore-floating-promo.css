@@ -1,0 +1,132 @@
+/* YANSTORE floating hero product showcase - isolated presentation only.
+   Existing promo slider remains available under "Promo lainnya".
+   Product prices are intentionally omitted because live prices are catalog-driven. */
+.ys-hero-layout .ys-promo.ys-floating-promo {
+  transform: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  max-width: none !important;
+}
+.ys-floating-promo .ys-promo-top { display:none !important; }
+.ys-floating-showcase {
+  position:relative;
+  width:100%;
+  min-height:415px;
+  isolation:isolate;
+  perspective:1000px;
+  background:radial-gradient(ellipse at 54% 54%,rgba(160,198,255,.22),transparent 67%);
+}
+.ys-float-card {
+  --rotate:0deg;
+  position:absolute;
+  display:flex;
+  flex-direction:column;
+  width:43%;
+  max-width:248px;
+  min-width:0;
+  height:260px;
+  background:#fff;
+  border:1px solid #dce5f1;
+  border-radius:19px;
+  overflow:hidden;
+  box-shadow:0 18px 38px rgba(28,50,88,.15);
+  text-decoration:none;
+  color:#182642;
+  transform:translate3d(var(--mx,0px),var(--my,0px),0) rotate(var(--rotate));
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease;
+  will-change:transform;
+}
+.ys-float-card:hover, .ys-float-card:focus-visible {
+  transform:translate3d(var(--mx,0px),calc(var(--my,0px) - 11px),0) rotate(var(--rotate)) scale(1.035);
+  box-shadow:0 26px 50px rgba(28,50,88,.22);
+  outline-offset:4px;
+}
+.ys-float-netflix { --rotate:-7deg; left:2%; top:83px; z-index:1; }
+.ys-float-canva { --rotate:0deg; left:29%; top:120px; z-index:3; }
+.ys-float-capcut { --rotate:7deg; right:1%; top:68px; z-index:2; }
+.ys-float-art {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:177px;
+  flex:1;
+  padding:18px;
+  text-align:center;
+}
+.ys-float-art strong { font-size:clamp(21px,2vw,34px);letter-spacing:-1px;line-height:1.15; }
+.ys-float-netflix .ys-float-art {background:linear-gradient(135deg,#850019,#150b35 76%,#143e75);color:#fff;}
+.ys-float-netflix .ys-float-art strong {letter-spacing:1px;}
+.ys-float-canva .ys-float-art {background:linear-gradient(130deg,#02c9cb,#297ee3 46%,#8b19e4);color:#fff;}
+.ys-float-canva .ys-float-art strong {font-family:Georgia,serif;font-style:italic;font-size:clamp(26px,3vw,42px);font-weight:700;}
+.ys-float-capcut .ys-float-art {background:linear-gradient(125deg,#260a18,#64112c 50%,#0b193c);color:#fff;}
+.ys-float-info {display:flex;flex-direction:column;gap:5px;padding:13px 15px 16px;background:#fff;min-height:80px;}
+.ys-float-info strong {font-size:13px;line-height:1.35;color:#14243d;}
+.ys-float-info span {font-weight:800;font-size:14px;color:#1769d9;}
+.ys-float-badge {
+  position:absolute;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 16px;
+  border:1px solid #e1eaf5;
+  border-radius:16px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 14px 26px rgba(24,44,80,.13);
+  color:#25324a;
+  z-index:4;
+  transform:translate3d(var(--mx,0px),var(--my,0px),0);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1);
+  pointer-events:none;
+}
+.ys-float-badge .ys-badge-icon {display:grid;place-items:center;width:36px;height:36px;flex:none;border-radius:12px;background:#e9f2ff;color:#1769d9;font-size:20px;}
+.ys-float-badge strong {display:block;font-size:13px;}
+.ys-float-badge small {font-size:11px;color:#687994;}
+.ys-float-warranty {right:7%;top:8px;}
+.ys-float-active {left:4%;bottom:8px;}
+.ys-float-legacy {margin-top:0;text-align:center;}
+.ys-float-legacy > summary {
+  display:inline-block;
+  cursor:pointer;
+  color:#486587;
+  font-size:12px;
+  font-weight:700;
+  padding:9px 15px;
+  border-radius:100px;
+  background:#fff;
+  border:1px solid #dae6f4;
+  list-style:none;
+}
+.ys-float-legacy > summary::-webkit-details-marker {display:none;}
+.ys-float-legacy[open] {margin-top:14px;padding:14px;background:#fff;border:1px solid #e0e7f3;border-radius:18px;}
+.ys-float-legacy[open] .ys-promo-stage {margin-top:12px;}
+.ys-float-legacy .ys-promo-stage {aspect-ratio:16/10;}
+.ys-float-legacy .ys-promo-dots {padding-bottom:5px;}
+@media(max-width:1100px){
+  .ys-floating-showcase {min-height:395px;max-width:590px;margin:auto;}
+  .ys-float-card {height:250px;}
+}
+@media(max-width:650px){
+  .ys-floating-showcase {min-height:320px;}
+  .ys-float-card {width:45%;height:205px;border-radius:13px;}
+  .ys-float-netflix {left:0;top:69px;}
+  .ys-float-canva {left:27%;top:98px;}
+  .ys-float-capcut {right:0;top:62px;}
+  .ys-float-art {min-height:130px;padding:8px;}
+  .ys-float-art strong {font-size:clamp(15px,4vw,24px);}
+  .ys-float-canva .ys-float-art strong {font-size:clamp(22px,6vw,33px);}
+  .ys-float-info {padding:8px;min-height:68px;}
+  .ys-float-info strong {font-size:10px;}
+  .ys-float-info span {font-size:11px;}
+  .ys-float-badge {padding:8px;gap:6px;border-radius:12px;}
+  .ys-float-badge .ys-badge-icon {width:27px;height:27px;font-size:15px;}
+  .ys-float-badge strong {font-size:10px;}
+  .ys-float-badge small {font-size:9px;}
+  .ys-float-warranty {right:1%;top:2px;}
+  .ys-float-active {left:0;bottom:4px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .ys-float-card,.ys-float-badge {transition:none!important;will-change:auto!important;}
+}
