@@ -1,0 +1,10 @@
+/* YANSTORE 2.0 — small desktop hero alignment adjustment.
+   Move only the left hero content (title, copy, search, trust cards)
+   28px into the available left whitespace. Promo, other sections,
+   data and JS stay untouched. Tablet/mobile layouts are unchanged. */
+@media (min-width: 1101px) {
+  .ys-hero-layout > .heroCard {
+    position: relative;
+    left: -28px;
+  }
+}
