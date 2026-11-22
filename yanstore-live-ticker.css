@@ -39,3 +39,7 @@
  .ys-ticker-viewport {overflow-x:auto;mask-image:none;-webkit-mask-image:none;scrollbar-width:thin;}
  .ys-ticker-group[aria-hidden="true"] {display:none;}
 }
+
+/* Product WebP banners fill the ticker thumbnail; small legacy logos stay contained. */
+.ys-ticker-thumb.ys-ticker-thumb-banner { background:#e8f0ff; }
+.ys-ticker-thumb.ys-ticker-thumb-banner img { object-fit:cover;padding:0; }
