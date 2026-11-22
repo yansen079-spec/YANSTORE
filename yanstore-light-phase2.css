@@ -1,0 +1,110 @@
+/* YANSTORE 2.0 - Public storefront light surfaces (phase 2)
+ * Additive, reversible stylesheet. No JavaScript or pricing changes.
+ * Admin areas, modals, checkout and embedded widgets retain their existing design.
+ */
+body {
+  background-color:#f7faff !important;
+  background-image:none !important;
+}
+body::before,body::after { content:none !important; background:none !important; }
+.hero {
+  background:radial-gradient(circle at 82% 5%,#e2edff 0%,transparent 38%),linear-gradient(180deg,#fff 0%,#f4f8ff 100%) !important;
+  min-height:unset;
+  padding:68px 0 56px;
+}
+.heroCard h1,.heroCard h1 span { text-shadow:none !important; }
+.heroCard h1 { color:#14213c !important; letter-spacing:-2.4px; }
+.heroCard h1 span { color:#1769d9 !important; }
+.heroCard .lead { color:#52637f !important; text-shadow:none !important; }
+.heroCard .eyebrow {
+  background:#eaf2ff !important;
+  border-color:#cfdef6 !important;
+  color:#1764c7 !important;
+  box-shadow:none !important;
+}
+.heroCard .ys-store-status {
+  color:#19734c !important;
+  background:#eafaf0 !important;
+  border-color:#bde9ce !important;
+  box-shadow:none !important;
+}
+.heroCard .ys-store-status small { color:#377b5e !important; }
+.heroCard .toolbar .search {
+  background:#fff !important;
+  color:#192945 !important;
+  border:1px solid #d5e0f0 !important;
+  box-shadow:0 4px 14px rgba(26,64,127,.045) !important;
+}
+.heroCard .toolbar .search::placeholder { color:#71829d !important; }
+.heroCard .toolbar .search:focus-visible { outline:3px solid #a5c9ff; outline-offset:1px; }
+.heroCard .trust .item {
+  color:#1b2b48 !important;
+  background:#fff !important;
+  border-color:#dce6f3 !important;
+  box-shadow:0 6px 16px rgba(26,64,127,.04);
+}
+.heroCard .trust .item .muted { color:#5c6d85 !important; }
+.hero .ys-promo {
+  background:#fff !important;
+  border-color:#d7e4f4 !important;
+  box-shadow:0 20px 48px rgba(31,65,121,.12) !important;
+}
+.hero .ys-promo-top { color:#243451 !important; }
+.hero .ys-promo-dots button { background:#b8c7dd; }
+.hero .ys-promo-dots button.is-active { background:#1769d9; }
+main.wrap > .banner {
+  margin-top:28px;
+  color:#18365f !important;
+  background:linear-gradient(100deg,#e8f2ff 0%,#fff7e7 100%) !important;
+  border-color:#d8e7fa !important;
+  box-shadow:none !important;
+}
+main.wrap > .banner h2 { color:#14213c !important; }
+main.wrap > .banner h2 span { color:#1769d9 !important; }
+main.wrap > .banner .muted { color:#576982 !important; }
+main.wrap > #produk {
+  background:#fff !important;
+  border-color:#e0e8f3 !important;
+  box-shadow:0 16px 45px rgba(23,54,99,.055) !important;
+}
+main.wrap > #produk::before { background:linear-gradient(90deg,transparent,#1769d9,transparent) !important; }
+#produk > .sectionTitle { border-color:#e9edf5 !important; }
+#produk > .sectionTitle h2 { color:#14213c !important; }
+#produk > .sectionTitle .muted { color:#596a83 !important; }
+#productGrid .card {
+  color:#152541 !important;
+  background:#fff !important;
+  border-color:#dce5f1 !important;
+  box-shadow:0 8px 25px rgba(24,58,110,.07) !important;
+}
+#productGrid .card:hover { box-shadow:0 15px 36px rgba(24,58,110,.12) !important; }
+#productGrid .card h3,#productGrid .card .price { color:#162744 !important; }
+#productGrid .card .desc,#productGrid .card .period { color:#60718b !important; }
+#productGrid .card .stock.ready { color:#177348 !important; background:#e9f9ee !important; border-color:#bde6ce !important; }
+#productGrid .card .stock.habis { color:#ac303b !important; background:#fff0f1 !important; border-color:#f5c7cd !important; }
+#productGrid .card .stock.restock { color:#9b650e !important; background:#fff8e9 !important; border-color:#f6dfa7 !important; }
+main.wrap > #kategori { border-top-color:#dbe6f4 !important; }
+main.wrap > #kategori .sectionTitle h2 { color:#152541 !important; }
+main.wrap > #kategori .cat {
+  color:#20314d !important;
+  background:#fff !important;
+  border-color:#dce6f1 !important;
+  box-shadow:0 4px 14px rgba(25,60,106,.035);
+}
+main.wrap > .cta {
+  color:#1a2d4d !important;
+  background:linear-gradient(105deg,#e8f2ff,#fff) !important;
+  border-color:#d0e2f8 !important;
+  box-shadow:none !important;
+}
+main.wrap > .cta h3 { color:#14213c !important; }
+main.wrap > .cta .muted { color:#556a85 !important; }
+@media (max-width:700px) {
+  .hero { padding:40px 0 38px; }
+  .heroCard h1 { letter-spacing:-1.4px; line-height:1.05; }
+  .hero .ys-promo { box-shadow:0 10px 30px rgba(31,65,121,.09) !important; }
+  main.wrap > #produk { padding:18px !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+  #productGrid .card { transition:none !important; }
+}
