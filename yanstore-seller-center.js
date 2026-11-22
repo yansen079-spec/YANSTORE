@@ -100,6 +100,15 @@
       btn.addEventListener('click',()=>view(item.id));nav.appendChild(btn);
     });
     side.appendChild(nav);
+    const logout=document.createElement('button');
+    logout.type='button';logout.className='ys-center-logout';
+    logout.textContent='Keluar dari admin';
+    logout.addEventListener('click',()=>{
+      if(typeof v6Logout==='function')v6Logout();
+      active='overview';
+      view(active);
+    });
+    side.appendChild(logout);
     const foot=document.createElement('div');foot.className='ys-center-aside-foot';foot.textContent='YANSTORE • Kelola toko dengan lebih nyaman.';side.appendChild(foot);
     const head=document.createElement('div');head.id='ysCenterHeading';head.dataset.ysCenterPage='shell';
     head.innerHTML='<div><h1 id="ysCenterTitle">Ringkasan</h1><p id="ysCenterHint">Pantau kondisi produk tanpa membuka semua formulir.</p></div><a class="ys-center-return" href="/" rel="noopener">Lihat toko ↗</a>';
