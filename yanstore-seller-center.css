@@ -251,3 +251,177 @@ body.ys-admin-fullpage #v6AdminPanel #ys-invite-msg{
     grid-template-columns:minmax(0,1fr)!important;
   }
 }
+
+
+/* Seller Center product logo editor: full-width white card, two-column preview.
+   Presentation-only: the existing upload, URL, reset, preview, and Supabase
+   handlers are intentionally untouched. */
+body.ys-admin-fullpage #v6AdminPanel .v6grid > #v68LogoManager,
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager{
+  grid-column:1 / -1 !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  margin:8px 0 0 !important;
+  padding:22px 24px !important;
+  box-sizing:border-box !important;
+  border:1px solid #dce8f6 !important;
+  border-radius:16px !important;
+  background:#fff !important;
+  color:#1e3654 !important;
+  box-shadow:0 4px 20px rgba(31,78,137,.045) !important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager h4{
+  display:block !important;
+  margin:0 0 6px !important;
+  font-size:17px !important;
+  line-height:1.4;
+  font-weight:800;
+  color:#1b3656 !important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager > p{
+  margin:0 0 18px !important;
+  max-width:720px;
+  color:#687f9c !important;
+  font-size:12px !important;
+  line-height:1.7 !important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-row{
+  display:grid !important;
+  grid-template-columns:minmax(145px,200px) minmax(0,1fr) !important;
+  align-items:start !important;
+  gap:22px !important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-preview{
+  width:100% !important;
+  height:auto !important;
+  aspect-ratio:16/10;
+  min-height:120px;
+  border-radius:13px !important;
+  border:1px dashed #cadbf0 !important;
+  background:#f5f9fe !important;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-preview img{
+  display:block;
+  width:100% !important;
+  height:100% !important;
+  max-height:185px;
+  object-fit:contain !important;
+  padding:10px !important;
+  box-sizing:border-box;
+  color:#7189a3;
+  font-size:12px;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-controls{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  gap:10px !important;
+  min-width:0;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager #v68LogoFile,
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager #v68LogoUrl{
+  display:block;
+  width:100% !important;
+  min-width:0;
+  min-height:46px;
+  padding:10px 12px !important;
+  border:1px solid #d8e5f4 !important;
+  border-radius:11px !important;
+  background:#fafdff !important;
+  color:#243d5b !important;
+  box-shadow:none !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  box-sizing:border-box;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager #v68LogoFile{
+  cursor:pointer;
+  padding:8px 10px !important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager #v68LogoFile::file-selector-button{
+  margin-right:12px;
+  padding:8px 13px;
+  border:1px solid #cfe1f6;
+  border-radius:8px;
+  background:#eaf3ff;
+  color:#155fb2;
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager #v68LogoUrl:focus-visible,
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager #v68LogoFile:focus-visible{
+  outline:2px solid #2b7ddd !important;
+  outline-offset:2px;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-actions{
+  display:flex !important;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px !important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-actions button{
+  min-height:40px;
+  padding:10px 15px !important;
+  border:1px solid #d6e5f5 !important;
+  border-radius:10px !important;
+  background:#f5f9ff !important;
+  color:#225caa !important;
+  font-family:inherit;
+  font-size:12px !important;
+  line-height:1.3;
+  font-weight:800 !important;
+  box-shadow:none !important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-actions button.primary{
+  border-color:#176bd1 !important;
+  background:#176bd1 !important;
+  color:#fff !important;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-actions button:hover:not(:disabled){
+  filter:brightness(.96);
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-actions button:focus-visible{
+  outline:2px solid #216ccd;
+  outline-offset:2px;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager #v68LogoMsg{
+  color:#58728f !important;
+  font-size:12px !important;
+  line-height:1.6;
+  min-height:18px;
+  overflow-wrap:anywhere;
+}
+body.ys-admin-fullpage #v6AdminPanel #v68LogoManager #v692LogoLockNote{
+  margin:15px 0 0 !important;
+  padding:11px 13px !important;
+  border:1px solid #cdebdc !important;
+  border-radius:11px !important;
+  background:#f1fbf6 !important;
+  color:#21734c !important;
+  font-size:11px !important;
+  line-height:1.6;
+}
+@media(max-width:740px){
+  body.ys-admin-fullpage #v6AdminPanel #v68LogoManager{padding:18px !important;}
+  body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-row{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:14px !important;
+  }
+  body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-preview{
+    max-width:280px;
+    min-height:125px;
+  }
+}
+@media(max-width:460px){
+  body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-actions{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+  }
+  body.ys-admin-fullpage #v6AdminPanel #v68LogoManager .v68-logo-actions button{width:100%;}
+}
