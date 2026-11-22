@@ -53,7 +53,14 @@
       card.dataset.ysCatalogEnhanced='1';
       const name=title.textContent.trim();
       const product=catalog.find(p=>normalize(p.name)===normalize(name));
-      const stock=String(product?.stockStatus||card.querySelector('.ys-market-tag')?.textContent||'READY').trim().toUpperCase();
+      // Marketplace badge already reflects the active variant aggregate.
+      // Do not override it with parent product status: that can be HABIS
+      // while one or more packages are READY.
+      const badge=card.querySelector('.ys-market-tag');
+      const visibleStatus=String(badge?.textContent||'').trim().toUpperCase();
+      const stock=['READY','RESTOCK','HABIS'].includes(visibleStatus)
+        ?visibleStatus
+        :String(product?.stockStatus||'READY').trim().toUpperCase();
       card.dataset.ysStock=stock;
       const lower=normalize(name);
       card.dataset.ysBrand=['capcut','canva','netflix','chatgpt'].find(v=>lower.includes(v))||'other';
