@@ -1,0 +1,89 @@
+/* YANSTORE 2.0 — expanded clean navigation */
+.nav .navin { gap:16px; }
+.nav .navlinks.ys-full-nav {
+  display:flex !important;
+  align-items:center;
+  gap:clamp(10px,1.25vw,20px);
+  flex-wrap:nowrap;
+  min-width:0;
+  font-size:13px;
+  font-weight:600;
+}
+.ys-full-nav > a,.ys-full-nav > .ys-nav-more > summary {
+  white-space:nowrap;
+  color:#41516e !important;
+  transition:color .18s ease;
+}
+.ys-full-nav > a:hover,.ys-full-nav > a:focus-visible,
+.ys-nav-more > summary:hover { color:#1267ce !important; }
+.ys-nav-more { position:relative; }
+.ys-nav-more > summary {
+  cursor:pointer;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.ys-nav-more > summary::-webkit-details-marker { display:none; }
+.ys-nav-more > summary::after {content:'⌄';font-size:16px;line-height:1;}
+.ys-nav-more[open] > summary {color:#1267ce !important;}
+.ys-nav-dropdown {
+  position:absolute;
+  right:0;
+  top:calc(100% + 20px);
+  min-width:210px;
+  padding:8px;
+  background:#fff;
+  border:1px solid #dce6f3;
+  border-radius:14px;
+  box-shadow:0 16px 45px rgba(17,40,81,.15);
+  z-index:60;
+  display:grid;
+  gap:2px;
+}
+.ys-nav-dropdown a {
+  display:block;
+  color:#253956 !important;
+  font-size:13px;
+  padding:10px 11px;
+  border-radius:9px;
+  white-space:nowrap;
+}
+.ys-nav-dropdown a:hover,.ys-nav-dropdown a:focus-visible {background:#edf4ff;color:#1267ce !important;}
+#yanstore-blog,#yanstore-tentang {scroll-margin-top:100px;}
+.ys-nav-info {
+  width:min(1180px,92%);
+  margin:34px auto;
+  padding:24px;
+  background:#fff;
+  border:1px solid #dde8f5;
+  border-radius:20px;
+  box-shadow:0 9px 30px rgba(25,60,106,.05);
+}
+.ys-nav-info h2 {margin:0 0 10px;color:#14213c;font-size:24px;}
+.ys-nav-info p {margin:0;line-height:1.7;color:#586982;}
+.ys-nav-info a {color:#1769d9;text-decoration:underline;}
+@media(max-width:1320px) {
+  .nav .navin {gap:9px;}
+  .nav .navlinks.ys-full-nav {gap:11px;font-size:12px;}
+  .nav .brand {font-size:21px;}
+}
+@media(max-width:1080px) {
+  .nav .navin {flex-wrap:wrap;justify-content:space-between;}
+  .nav .navlinks.ys-full-nav {
+    order:3;
+    flex:0 0 100%;
+    width:100%;
+    gap:22px;
+    overflow-x:auto;
+    padding:9px 0 7px;
+    scrollbar-width:thin;
+  }
+  .ys-nav-dropdown {position:fixed;top:110px;right:3%;z-index:100;}
+}
+@media(max-width:650px) {
+  .nav .navlinks.ys-full-nav {gap:18px;font-size:12px;}
+  .nav .navin {padding-bottom:3px;}
+  .ys-nav-dropdown {top:105px;right:12px;}
+  .ys-nav-info {width:calc(100% - 28px);padding:18px;margin:22px auto;}
+}
