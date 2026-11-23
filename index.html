@@ -6092,5 +6092,73 @@ load();resetTimer();
 .ys-pulsa-overlay{background:rgba(13,45,77,.40);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
 @media(max-width:580px){.ys-service-dialog{padding:12px}.ys-service-dialog .ys-service-panel{padding:20px 16px;max-height:calc(100dvh - 24px)}}
 </style>
+
+<!-- YANSTORE: unified blue-white Digital Services modals; specific to storefront dialogs -->
+<style id="ysDigitalFullLight20261123">
+:is(#ysDataV2,#ysEWalletLive,#ysGameCatalog){
+  background:rgba(14,39,70,.50)!important;color:#243c59!important;
+  backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important;
+  overscroll-behavior:contain;
+}
+:is(#ysDataV2,#ysEWalletLive,#ysGameCatalog) .shell,
+#ysGameCatalog .yg-shell{
+  background:#fff!important;background-image:none!important;color:#213b5b!important;
+  border:1px solid #d7e5f3!important;border-radius:21px!important;
+  box-shadow:0 26px 75px rgba(18,50,82,.21)!important;
+}
+:is(#ysDataV2,#ysEWalletLive,#ysGameCatalog) h2,
+#ysGameCatalog .yg-panel h3{color:#153c63!important}
+:is(#ysDataV2,#ysEWalletLive) label,
+#ysGameCatalog .yg-field{color:#375974!important}
+:is(#ysDataV2,#ysEWalletLive) .muted,
+#ysGameCatalog .yg-muted{color:#617b96!important}
+:is(#ysDataV2,#ysEWalletLive) input,
+:is(#ysDataV2,#ysEWalletLive) select,
+#ysGameCatalog .yg-field input,
+#ysGameCatalog .yg-field select{
+  background:#f9fcff!important;color:#183a59!important;
+  border:1px solid #c9ddec!important;border-radius:11px!important;
+  color-scheme:light;
+}
+:is(#ysDataV2,#ysEWalletLive) input::placeholder,
+#ysGameCatalog .yg-field input::placeholder{color:#7c91a7!important}
+:is(#ysDataV2,#ysEWalletLive) input:focus,
+:is(#ysDataV2,#ysEWalletLive) select:focus,
+#ysGameCatalog .yg-field input:focus,
+#ysGameCatalog .yg-field select:focus{outline:2px solid #4e9bd8!important;outline-offset:1px}
+:is(#ysDataV2,#ysEWalletLive) button:not(.go),
+#ysGameCatalog :is(.yg-close,.yg-back){
+  background:#edf6ff!important;color:#175787!important;
+  border:1px solid #c9dff0!important;
+}
+:is(#ysDataV2,#ysEWalletLive) .item,
+#ysGameCatalog :is(.yg-card,.yg-chip){
+  background:#f7fbff!important;background-image:none!important;
+  color:#204263!important;border:1px solid #d6e5f2!important;
+  box-shadow:none!important;
+}
+:is(#ysDataV2,#ysEWalletLive) .item small{color:#69829a!important}
+:is(#ysDataV2,#ysEWalletLive) .item.sel,
+#ysGameCatalog .yg-chip.active{
+  background:#e5f3ff!important;border-color:#2784cc!important;
+  box-shadow:inset 0 0 0 1px #2784cc!important;color:#0c4976!important;
+}
+:is(#ysDataV2,#ysEWalletLive) .summary,
+#ysGameCatalog .yg-panel{
+  background:#f7fbff!important;color:#244361!important;
+  border:1px solid #d3e4f2!important;
+}
+:is(#ysDataV2,#ysEWalletLive) .go,
+#ysGameCatalog .yg-send{
+  background:#0ca775!important;color:#fff!important;border:0!important;
+}
+#ysGameCatalog .yg-art{background:linear-gradient(135deg,#e5f3ff,#d6e9ff)!important;box-shadow:none!important}
+#ysGameCatalog .yg-card strong{color:#214464!important}
+@media(max-width:650px){
+ :is(#ysDataV2,#ysEWalletLive,#ysGameCatalog){padding:10px!important}
+ :is(#ysDataV2,#ysEWalletLive,#ysGameCatalog) .shell,
+ #ysGameCatalog .yg-shell{margin:8px auto!important;padding:16px!important}
+}
+</style>
 </body>
 </html>
