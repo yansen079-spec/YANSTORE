@@ -103,7 +103,7 @@
     $('productStock').className='stock '+s;
     $('productStock').textContent=s==='habis'?'● Stok habis':s==='restock'?'● Menunggu restock':'● Stok tersedia';
     const warranty=warrantyOf([p.warranty,p.garansi,p.description,...active.flatMap(v=>[v.warranty,v.garansi,v.description])]);
-    $('productWarranty').textContent='♢ '+warranty;
+    $('productWarranty').textContent=warranty;
     $('productWarranty').classList.toggle('unknown',warranty.startsWith('Info garansi'));
     $('productPrice').textContent=(hasVariants?'Mulai ':'')+moneyText(p.price);
     const wa=hasVariants
@@ -123,7 +123,7 @@
         const article=document.createElement('article');article.className='variant';
         const status=document.createElement('div');status.className='statusline';
         const st=document.createElement('span');st.className='stock '+stock.cls;st.textContent='● '+stock.text;
-        const wr=document.createElement('span');wr.className='warranty'+(warranty.startsWith('Info garansi')?' unknown':'');wr.textContent='♢ '+warranty;
+        const wr=document.createElement('span');wr.className='warranty'+(warranty.startsWith('Info garansi')?' unknown':'');wr.textContent=warranty;
         status.append(st,wr);
         const h=document.createElement('h3');h.textContent=normalize(v.name)||'Paket '+name;
         const desc=document.createElement('p');desc.textContent=normalize(v.description||v.period)||'Pilihan paket produk YANSTORE';
