@@ -5293,15 +5293,34 @@ window.YANSTORE_CHAT_CONFIG = {
      const thumb=img ? '<img loading="lazy" referrerpolicy="no-referrer" class="'+(isUploaded?'':'ys-logo-placeholder')+'" src="'+src.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" onerror="this.style.display=\'none\';this.insertAdjacentHTML(\'afterend\',\'<span class=ys-initial>📦</span>\')">' : '<span class="ys-initial">'+(fallback?.textContent||'📦')+'</span>';
      return {i,name,html:'<article class="card ys-market-card"><div class="ys-market-thumb">'+thumb+'<span class="ys-market-tag">'+(status==='HABIS'?'HABIS':status==='RESTOCK'?'RESTOCK':'READY')+'</span></div><div class="ys-market-body"><h3>'+name.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</h3><div class="ys-market-price">'+price.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><div class="ys-market-meta">'+(pack||'Lihat detail & pesan').replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div><button class="ys-market-detail" type="button" onclick="ysOpenProduct('+i+')">LIHAT DETAIL</button><button class="ys-market-qr" type="button" '+(status==='HABIS'?'disabled title="Stok habis"':'onclick="ysPayProduct('+i+')"')+'>💳 BAYAR QRIS</button><button class="ys-market-share" type="button" onclick="ysShareProduct('+i+')">🔗 BAGIKAN PRODUK</button></div></article>'};
    });
-   const q=(document.getElementById('search')?.value||'').trim();
+   const q=(document.getElementById('search')?.value||'').toLowerCase().trim();
    const cat=document.getElementById('category')?.value||'all';
-   const heading=(t)=>'<div class="ys-market-heading"><h3>'+t+'</h3></div>';
-   if(!q&&cat==='all'&&records.length>6){
-     const byName=(a,b)=>a.name.trim().localeCompare(b.name.trim(),'id',{sensitivity:'base',numeric:true});
-     const recent=records.slice(-Math.min(6,records.length)).sort(byName);
-     const rest=records.filter(x=>!recent.includes(x)).sort(byName);
-     grid.innerHTML=heading('✨ Produk Pilihan')+recent.map(x=>x.html).join('')+heading('🛍️ Semua Produk')+rest.map(x=>x.html).join('');
-   }else grid.innerHTML=records.sort((a,b)=>a.name.trim().localeCompare(b.name.trim(),'id',{sensitivity:'base',numeric:true})).map(x=>x.html).join('');
+   const byName=(a,b)=>a.name.trim().localeCompare(b.name.trim(),'id',{sensitivity:'base',numeric:true});
+   const groups=[
+     ['streaming','🎬 Streaming'],
+     ['editing','✂️ Editing Video'],
+     ['design','🎨 Desain'],
+     ['music','🎵 Musik'],
+     ['ai','🤖 AI Tools'],
+     ['other','📦 Lainnya']
+   ];
+   const categories=(typeof products!=='undefined'&&Array.isArray(products)?products:[])
+     .filter(p=>(cat==='all'||p.category===cat)&&(`${p.name} ${p.description}`.toLowerCase().includes(q)));
+   // Each raw card from the original renderer corresponds to the same filtered product index.
+   // Preserve record.i for existing detail, QRIS, and sharing handlers.
+   records.forEach((record,i)=>{record.category=String(categories[i]?.category||'other').toLowerCase();});
+   const sections=new Map();
+   for(const record of records){
+     if(!sections.has(record.category))sections.set(record.category,[]);
+     sections.get(record.category).push(record);
+   }
+   const ordered=groups.filter(([key])=>sections.has(key))
+     .concat([...sections.keys()].filter(key=>!groups.some(([known])=>known===key)).sort().map(key=>[key,key.replace(/[-_]/g,' ').replace(/\\b\\w/g,c=>c.toUpperCase())]));
+   const heading=(title,count)=>'<div class="ys-market-heading"><h3>'+title+'</h3><span class="ys-category-count">'+count+' produk</span></div>';
+   grid.innerHTML=ordered.map(([key,title])=>{
+     const items=sections.get(key).sort(byName);
+     return heading(title,items.length)+items.map(item=>item.html).join('');
+   }).join('');
  };
  window.renderProducts();
 })();
@@ -6182,6 +6201,13 @@ load();resetTimer();
 #ysServicesV3 .ys3-summary strong{color:#1564a3!important}
 #ysServicesV3 .ys3-submit{background:#0caf7c!important;color:#fff!important;border:0!important}
 @media(max-width:720px){#ysServicesV3 .ys3-shell{margin:8px auto!important;padding:16px!important}#ysServicesV3 .ys3-panel{padding:15px!important}}
+</style>
+<style id="ysCategoryGroupedCatalogStyle">
+#produk #productGrid > .ys-market-heading{grid-column:1/-1!important;display:flex!important;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin:24px 0 0!important;padding:0 0 12px!important;border-bottom:1px solid #dce8f4}
+#produk #productGrid > .ys-market-heading:first-child{margin-top:8px!important}
+#produk #productGrid > .ys-market-heading h3{margin:0!important;color:#183b60!important}
+#produk #productGrid .ys-category-count{font-size:12px;font-weight:750;color:#356b9c;background:#eef6ff;padding:7px 11px;border-radius:999px}
+@media(max-width:580px){#produk #productGrid > .ys-market-heading{margin-top:18px!important}}
 </style>
 </body>
 </html>
