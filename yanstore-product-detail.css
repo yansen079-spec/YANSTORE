@@ -187,3 +187,10 @@ h1{font-size:clamp(31px,3.4vw,48px);line-height:1.15;margin:0 0 15px;letter-spac
  .variants{grid-template-columns:minmax(0,1fr)!important}
  .section{padding-top:20px}
 }
+
+/* Warranty shield: verified term or admin inquiry, matching Yanstore blue/green UI. */
+.warranty{display:inline-flex;align-items:center;gap:5px;vertical-align:middle}
+.warranty::before{content:"";display:inline-block;width:15px;height:15px;flex:none;background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='m9 12 2 2 4-4' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='m9 12 2 2 4-4' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+}
