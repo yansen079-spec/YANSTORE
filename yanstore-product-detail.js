@@ -66,7 +66,13 @@
       ||fallbackLogo[p.logo]||safeImage(p.logo)||'';
     fallback.textContent=name;
     if(picture){
-      img.onload=()=>{img.hidden=false;fallback.hidden=true;};
+      img.onload=()=>{
+        // Uploaded 16:9 catalog artwork can be stored as logo rather than image_url.
+        // Use natural dimensions so wide banners fill the panel, while square icons stay contained.
+        const wide=img.naturalWidth>0&&img.naturalHeight>0&&img.naturalWidth/img.naturalHeight>=1.35;
+        img.classList.toggle('is-banner',wide);
+        img.hidden=false;fallback.hidden=true;
+      };
       img.onerror=()=>{img.hidden=true;fallback.hidden=false;};
       img.alt='Gambar produk '+name;
       img.classList.toggle('is-banner',Boolean(p.image_url||p.image||p.banner_url));
