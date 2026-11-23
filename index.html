@@ -5304,11 +5304,15 @@ window.YANSTORE_CHAT_CONFIG = {
      ['ai','🤖 AI Tools'],
      ['other','📦 Lainnya']
    ];
+   // The upstream renderer sorts the filtered products A-Z before creating cards.
+   // Match that same ordering, otherwise the unsorted Supabase categories attach
+   // to the wrong cards (e.g. CapCut incorrectly appears under Streaming).
    const categories=(typeof products!=='undefined'&&Array.isArray(products)?products:[])
-     .filter(p=>(cat==='all'||p.category===cat)&&(`${p.name} ${p.description}`.toLowerCase().includes(q)));
-   // Each raw card from the original renderer corresponds to the same filtered product index.
-   // Preserve record.i for existing detail, QRIS, and sharing handlers.
-   records.forEach((record,i)=>{record.category=String(categories[i]?.category||'other').toLowerCase();});
+     .filter(p=>(cat==='all'||p.category===cat)&&(`${p.name||''} ${p.description||''}`.toLowerCase().includes(q)))
+     .slice()
+     .sort((a,b)=>String(a?.name||'').localeCompare(String(b?.name||''),'id',{sensitivity:'base',numeric:true}));
+   // Keep original card indices intact for detail / QRIS / share handlers.
+   records.forEach((record,i)=>{record.category=String(categories[i]?.category||'other').trim().toLowerCase();});
    const sections=new Map();
    for(const record of records){
      if(!sections.has(record.category))sections.set(record.category,[]);
