@@ -211,16 +211,17 @@
   line-height:1.45;
 }
 #produk #productGrid .ys-market-card .ys-warranty-icon {
-  width:14px;
-  height:14px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  flex:none;
-  border:1.5px solid currentColor;
-  border-radius:5px;
-  font-size:11px;
-  line-height:1;
+  width:18px;
+  height:18px;
+  display:inline-block;
+  flex:0 0 18px;
+  border:0;
+  border-radius:0;
+  background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.7 20 6v5.7c0 5.1-3.3 8.2-8 10-4.7-1.8-8-4.9-8-10V6l8-3.3Z' fill='%23E8F8F0' stroke='%23058C50' stroke-width='1.9' stroke-linejoin='round'/%3E%3Cpath d='m8.7 12.1 2.2 2.2 4.6-4.7' fill='none' stroke='%23058C50' stroke-width='2.15' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+#produk #productGrid .ys-catalog-warranty.ys-warranty-unconfirmed .ys-warranty-icon {
+  opacity:.6;
+  filter:grayscale(1);
 }
 #produk #productGrid .ys-market-card .ys-catalog-warranty.ys-warranty-unconfirmed {
   color:#61738d;
