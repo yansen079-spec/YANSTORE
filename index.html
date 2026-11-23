@@ -503,6 +503,13 @@ align-items:center;justify-content:center;font-weight:950;font-size:16px;margin-
 <div><h2 style="margin:0">⚡ Kelola Produk Online</h2><p style="margin:6px 0 0;color:#aab2c8">Perubahan tersimpan ke database dan terlihat oleh customer.</p></div>
 <button class="v6ghost" onclick="v6Logout()">LOGOUT</button>
 </div>
+<section id="ysCategoryAdmin" class="ys-category-admin" aria-label="Manajemen Kategori">
+  <h3>🗂️ Manajemen Kategori</h3>
+  <p>Tambahkan, ubah nama, atau hapus kategori. Kategori tersimpan ke Supabase dan langsung muncul di katalog.</p>
+  <div class="ys-category-add"><input id="ysCategoryName" type="text" maxlength="60" placeholder="Contoh: Produktivitas, Edukasi, AI Tools" aria-label="Nama kategori baru"/><button type="button" id="ysCategoryAdd">＋ Tambah Kategori</button></div>
+  <p id="ysCategoryMessage" role="status" aria-live="polite"></p>
+  <div id="ysCategoryList"></div>
+</section>
 <input id="v6Id" type="hidden"/>
 <div class="v6grid">
 <input id="v6Name" placeholder="Nama produk"/>
@@ -5320,10 +5327,11 @@ window.YANSTORE_CHAT_CONFIG = {
    }
    const ordered=groups.filter(([key])=>sections.has(key))
      .concat([...sections.keys()].filter(key=>!groups.some(([known])=>known===key)).sort().map(key=>[key,key.replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase())]));
+   const categoryLabels=new Map((window.ysCategories||[]).map(c=>[c.slug,c.name]));
    const heading=(title,count)=>'<div class="ys-market-heading"><h3>'+title+'</h3><span class="ys-category-count">'+count+' produk</span></div>';
    grid.innerHTML=ordered.map(([key,title])=>{
      const items=sections.get(key).sort(byName);
-     return heading(title,items.length)+items.map(item=>item.html).join('');
+     return heading(categoryLabels.get(key)||title,items.length)+items.map(item=>item.html).join('');
    }).join('');
  };
  window.renderProducts();
@@ -6213,5 +6221,21 @@ load();resetTimer();
 #produk #productGrid .ys-category-count{font-size:12px;font-weight:750;color:#356b9c;background:#eef6ff;padding:7px 11px;border-radius:999px}
 @media(max-width:580px){#produk #productGrid > .ys-market-heading{margin-top:18px!important}}
 </style>
+<style id="ysCategoryManagementStyles">
+#ysCategoryAdmin{margin:18px 0 24px;padding:20px;border:1px solid #d5e6f4;border-radius:17px;background:#f7fbff;color:#193f63}
+#ysCategoryAdmin h3{margin:0 0 7px;font-size:19px;color:#174a75}
+#ysCategoryAdmin p{font-size:13px;color:#526e87;line-height:1.5}
+#ysCategoryAdmin .ys-category-add{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+#ysCategoryAdmin .ys-category-add input{flex:1;min-width:190px;background:#fff!important;color:#1d405d!important;border:1px solid #c5d9e9;border-radius:10px;padding:12px}
+#ysCategoryAdmin button{cursor:pointer;background:#1679b9;color:white;border:0;border-radius:10px;padding:10px 13px;font-weight:800}
+#ysCategoryAdmin .ys-category-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #dce8f3;flex-wrap:wrap}
+#ysCategoryAdmin .ys-category-row span{font-weight:700;overflow-wrap:anywhere}
+#ysCategoryAdmin .ys-category-row div{display:flex;gap:8px}
+#ysCategoryAdmin .ys-category-row button{font-size:12px;padding:8px 10px;background:#e9f4ff;border:1px solid #bddaf1;color:#175787}
+#ysCategoryAdmin .ys-category-row button:last-child{color:#9a3f43;background:#fff4f4;border-color:#f0cece}
+#ysCategoryAdmin button:disabled{opacity:.5;cursor:wait}
+@media(max-width:550px){#ysCategoryAdmin{padding:15px}#ysCategoryAdmin .ys-category-add button{width:100%}}
+</style>
+<script src="yanstore-categories.js?v=20261123-categories-1" defer></script>
 </body>
 </html>
