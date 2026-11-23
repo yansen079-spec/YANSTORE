@@ -93,7 +93,7 @@
       }
       const warranty=document.createElement('div');
       warranty.className='ys-catalog-warranty';
-      warranty.innerHTML='<span class="ys-warranty-icon" aria-hidden="true">♢</span><span></span>';
+      warranty.innerHTML='<span class="ys-warranty-icon" aria-hidden="true"></span><span></span>';
       const warrantyText=warranty.querySelector('span:last-child');
       warrantyText.textContent=warrantyLabel(product);
       if(warrantyText.textContent.startsWith('Info garansi'))warranty.classList.add('ys-warranty-unconfirmed');
