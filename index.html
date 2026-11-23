@@ -5315,7 +5315,7 @@ window.YANSTORE_CHAT_CONFIG = {
      sections.get(record.category).push(record);
    }
    const ordered=groups.filter(([key])=>sections.has(key))
-     .concat([...sections.keys()].filter(key=>!groups.some(([known])=>known===key)).sort().map(key=>[key,key.replace(/[-_]/g,' ').replace(/\\b\\w/g,c=>c.toUpperCase())]));
+     .concat([...sections.keys()].filter(key=>!groups.some(([known])=>known===key)).sort().map(key=>[key,key.replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase())]));
    const heading=(title,count)=>'<div class="ys-market-heading"><h3>'+title+'</h3><span class="ys-category-count">'+count+' produk</span></div>';
    grid.innerHTML=ordered.map(([key,title])=>{
      const items=sections.get(key).sort(byName);
